@@ -1,0 +1,42 @@
+Brainstorm idéer
+
+Scope: En VR-applikation som antigen är för nytta eller spel. Vad det blir avgörs allteftersom projektet framskrider och vilka problem som uppstår.
+
+Ideer nytta
+Visualisera office (boka konferensrum)
+Lysa upp byggnad (google glasse exempel)
+Musem/Konst/skolrum lära sig om t.ex. historiska händelser genom att vara där
+Time-travel gå igenom tiden (google maps, använda IOT för att styra var i tiden man är) och även framåt
+Visualisera något som har fysisk också (bro exempel)
+Klädaffär (se kläder innan köper)
+
+Ställ ut flera koner, när användaren förflyttar sig mellan så uppdaterar systemet att användaren har ny location, då byts scenen. Scenen ska innehålla ljud, 
+text, animationer som händer när man är på en scen. Exempel är t.ex. att på ett historie musem kunna förflytta sig genom århundraden genom att bara ta ett par steg.
+
+
+Spel
+geocaching fast har gömt iot som lyser upp, 
+använda vr som förlängning av barnlek (dunken), 
+spy vs spy aktigt
+
+
+Teknologi
+- Utveckla i Unity eller utanför 
+
+TODO utforska teknologi
+köra samma projekt i både unity och a-frame
+testa importera, vilka format? vilka format kan a-frame importera? 
+inventera möjligheter för a-frame gällande interaktion? 
+textanvändning? kunna skriva ut texter? 
+få input via andra interfaces? röst? finns via stavar? kommunicera via gester? 
+hur byter man scen i a-frame?
+
+Öppna frågor: 
+- Unity eller inte? Licenser
+- I unity kan vi programmera i c# som blir javascript. Kan exportera scener till a-framedokument eller three.js-scene eller webGL.
+- a-frame får vi använda javascript (fungerar med react också t.ex.)
+
+Språk-preferens? 
+
+Keywords:
+IOT, Virtual reality, Augmented reality
