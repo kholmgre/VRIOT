@@ -24,11 +24,17 @@ Teknologi
 - Utveckla i Unity eller utanför 
 
 TODO utforska teknologi
+
 köra samma projekt i både unity och a-frame
-testa importera, vilka format? vilka format kan a-frame importera? 
+
+testa importera, vilka format? vilka format kan a-frame importera? -> Går att importera modeller av typen .DAE till komponenten collada-model
+
 inventera möjligheter för a-frame gällande interaktion? 
+
 textanvändning? kunna skriva ut texter? 
+
 få input via andra interfaces? röst? finns via stavar? kommunicera via gester? 
+
 hur byter man scen i a-frame?
 
 Öppna frågor: 
