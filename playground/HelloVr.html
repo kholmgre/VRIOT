@@ -15,7 +15,10 @@
       <img id="space" src="space.png">
       <img id="earth" src="earth-sumner.jpg">
       <a-asset-item id="monkey" src="test.dae"></a-asset-item>
-      <a-entity collada-model="#monkey"></a-entity>
+      <!-- Using the asset management system. -->
+  <a-collada-model src="#monkey"></a-collada-model>
+  <!-- Defining the URL inline. Not recommended but more comfortable for web developers. -->
+  <a-collada-model src="test.dae"></a-collada-model>
     </a-assets>
     <a-sound src="#sound" autoplay="true" position="0 2 5" loop="true"></a-sound>
     <a-sphere position="0 1.25 -1" radius="1" src="#earth"></a-sphere>
