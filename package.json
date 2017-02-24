@@ -1,0 +1,22 @@
+{
+  "name": "vriot",
+  "version": "1.0.0",
+  "description": "internal webvr project",
+  "main": "index.js",
+  "scripts": {
+    "dev" : "http-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kholmgre/VRIOT.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kholmgre/VRIOT/issues"
+  },
+  "homepage": "https://github.com/kholmgre/VRIOT#readme",
+  "devDependencies": {
+    "http-server": "^0.9.0"
+  }
+}
