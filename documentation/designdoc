@@ -27,13 +27,15 @@ TODO utforska teknologi
 
 köra samma projekt i både unity och a-frame
 
+augmented reality -> finns community prototyp för att använda kameran som bakgrund
+
 testa importera, vilka format? vilka format kan a-frame importera? -> Går att importera modeller av typen .DAE till komponenten collada-model
 
 inventera möjligheter för a-frame gällande interaktion? 
 
 textanvändning? kunna skriva ut texter? -> fungerar i a-frame, för unity med https://unity3d.com/es/learn/tutorials/topics/virtual-reality/user-interfaces-vr
 
-få input via andra interfaces? röst? finns via stavar? kommunicera via gester? 
+få input via andra interfaces? röst? finns via stavar? kommunicera via gester? -> Går att koppla in t.ex gamepad om det är android kontroll
 
 hur byter man scen i a-frame? -> det är möjligt http://stackoverflow.com/questions/38738147/how-to-load-a-new-scene-in-a-frame
 
