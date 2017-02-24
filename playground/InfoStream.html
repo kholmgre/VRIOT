@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Hello, World! • A-Frame</title>
+    <meta name="description" content="Hello, World! • A-Frame">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/0.5.0/aframe.min.js"></script>
+</head>
+
+<body>
+    <a-scene>
+        <a-assets>
+            <audio id="sound" src="starwars.mp3"></audio>
+            <img id="space" src="space.png">
+            <img id="earth" src="earth-sumner.jpg">
+        </a-assets>
+        <a-sky src="#space"></a-sky>
+        <a-entity position="0 0 0">
+            <a-camera></a-camera>
+        </a-entity>
+    </a-scene>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
+        <script type="text/javascript">
+            function updateWheaterData() {
+                $.getJSON("http://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?",
+                    {
+                        tags: "dogs",
+                        tagmode: "any",
+                        format: "json"
+                    }, function (data) {
+                        for (var prop in data.items) {
+                            var el = document.createElement('a-text');
+
+                            function getRandomInt(min, max) {
+                                min = Math.ceil(min);
+                                max = Math.floor(max);
+                                return Math.floor(Math.random() * (max - min)) + min;
+                            }
+
+                            var x = getRandomInt(-50, 50);
+                            var y = getRandomInt(-50, 50);
+
+                            var position = x + ' ' + y + ' ' + '-20';
+
+                            el.setAttribute('value', JSON.stringify(data.items[prop]));
+                            el.setAttribute('position', position);
+                            el.setAttribute('scale', '1.5 1.5 1.5');
+                            el.setAttribute('color', '#FFFF00');
+
+                            var endPosition = getRandomInt(-50, 50) + ' 0 0';
+
+                            var anim = document.createElement('a-animation');
+                            anim.setAttribute('attribute', 'position');
+                            anim.setAttribute('dur', '10000');
+                            anim.setAttribute('to', '0 0 0');
+                            anim.setAttribute('direction', 'normal');
+                            el.appendChild(anim);
+
+                            var scene = document.querySelector('a-scene');
+
+                            scene.appendChild(el);
+                        }
+                    });
+
+            }
+            setInterval(updateWheaterData, 10000);
+        </script>
+</body>
+
+</html>
