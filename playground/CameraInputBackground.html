@@ -28,11 +28,19 @@
                 }
             })
 
-            var videoId = devicesIds[1].deviceId;
+            var videoId;
+
+            if(devicesIds.length === 1){
+                videoId = devicesIds[0].deviceId;
+            } else {
+                videoId = devicesIds[1].deviceId;
+            }
+
+            
 
             navigator.getUserMedia({
                 audio: false,
-                video:  { deviceId: "08afdfdad3eb0e4ccc7fce4eb9d17a8128cc0e8bf5518e926b774e8fe53fc989" }
+                video:  { deviceId: videoId }
             }, function (localMediaStream) {
 
                 var video = document.getElementById('kentucky-derby');
@@ -72,7 +80,7 @@
             <video id="kentucky-derby" autoplay="true"></video>
         </a-assets>
         <a-sky src="#kentucky-derby" opacity="0.7"></a-sky>
-        <a-box id="cube" opacity="0.5" color="red" position="0 2 5" rotation="0 45 45" scale="5 5 5"></a-box>
+        <a-box id="cube" opacity="0.5" color="red" position="-6.5 1.6 14.06" rotation="0 0 0" scale="3 3 3"></a-box>
         <a-entity position="0 0 0">
             <a-camera>
             </a-camera>
