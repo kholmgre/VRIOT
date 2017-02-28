@@ -65,6 +65,9 @@ Jag har även fått kämpa för att visa upp något från kameran inne i en a-fr
 kameran till en "plane". Det verkar inte finnas något inbyggt sätt att sätta en statisk bakgrund. Detta kan påverka hur svårt det blir att
 klura ut hur vi ska placera ut 3d modeller i scenen. 
 
+En idé för att göra Augmented reality är att fästa en 360 graders kamera på användaren. Sedan används streamen från denna kameran till att göra
+en <a-sky></a-sky>. Sedan får man räkna ut hur långt bort i scenen man ska placera saker. 
+
 Språk-preferens? 
 
 Keywords:
