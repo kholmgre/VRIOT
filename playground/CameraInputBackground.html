@@ -20,6 +20,19 @@
     <script>
         // Not showing vendor prefixes.
         navigator.getUserMedia({ video: { facingMode: { exact: "rear" } }, audio: false, }, function (localMediaStream) {
+
+
+            navigator.mediaDevices.enumerateDevices().then(function (devices) {
+                devices.forEach(function (device) {
+
+                    if (device.kind == "videoinput") {
+                        console.log(device.kind)
+                    }
+                })
+            });
+            //If device is a video input add to array.
+
+
             var video = document.getElementById('kentucky-derby');
             video.src = window.URL.createObjectURL(localMediaStream);
 
@@ -28,21 +41,21 @@
             video.onloadedmetadata = function (e) {
                 // Ready to go. Do some stuff.
             };
-        }, function(error){
+        }, function (error) {
             console.log(JSON.stringify(error))
         });
 
-        function fakeOnMessage(){
+        function fakeOnMessage() {
             var el = document.getElementById('cube');
             var currentPosition = el.getAttribute('position');
 
-            el.setAttribute('position', {x: 1, y: 5, z: -3});
+            el.setAttribute('position', { x: 1, y: 5, z: -3 });
         }
 
         setInterval(fakeOnMessage, 5000);
-
-    </script>   
+    </script>
 </head>
+
 <body>
     <a-scene>
         <a-assets>
@@ -56,4 +69,5 @@
         </a-entity>
     </a-scene>
 </body>
+
 </html>
