@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
     <title>Hello, World! • A-Frame</title>
@@ -23,7 +22,7 @@
         };
 
         // Not showing vendor prefixes.
-        navigator.getUserMedia({ video: true, audio: true }, function (localMediaStream) {
+        navigator.getUserMedia({ video: { facingMode: { exact: "environment" } }, audio: true,  }, function (localMediaStream) {
             var video = document.querySelector('video');
             video.src = window.URL.createObjectURL(localMediaStream);
 
@@ -35,16 +34,15 @@
         }, errorCallback);
     </script>
 </head>
-
 <body>
-    <a-scene>
-        <a-box color="red" rotation="0 45 45" scale="2 2 2"></a-box>
-        <a-entity position="0 0 3.8">
-            <a-camera>
-            </a-camera>
-        </a-entity>
-    </a-scene>
-    <video autoplay id="space"></video>
+    <video autoplay></video>
+        <a-scene>
+            <a-box color="red" rotation="0 45 45" scale="2 2 2"></a-box>
+            <a-entity position="0 0 3.8">
+                <a-camera>
+                </a-camera>
+            </a-entity>
+        </a-scene>    
 </body>
 
 </html>
