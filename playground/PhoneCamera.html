@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>Hello, World! • A-Frame</title>
@@ -9,21 +10,23 @@
             width: 100% !important;
             max-width: 100% !important;
             height: auto !important;
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             z-index: -1000;
         }
+        
+        h3 {
+            color: white;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/0.5.0/aframe.min.js"></script>
     <script>
-        var errorCallback = function (e) {
-            console.log('Reeeejected!', e);
-        };
+
 
         // Not showing vendor prefixes.
-        navigator.getUserMedia({ video: { facingMode: { exact: "environment" } }, audio: true,  }, function (localMediaStream) {
-            var video = document.querySelector('video');
+        navigator.getUserMedia({ video: { facingMode: { exact: "environment" } }, audio: true, }, function (localMediaStream) {
+            var video = document.getElementById('kentucky-derby');
             video.src = window.URL.createObjectURL(localMediaStream);
 
             // Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
@@ -31,18 +34,25 @@
             video.onloadedmetadata = function (e) {
                 // Ready to go. Do some stuff.
             };
-        }, errorCallback);
+        }, function(error){
+            console.log(JSON.stringify(error))
+        });
     </script>
 </head>
+
 <body>
-    <video autoplay></video>
-        <a-scene>
-            <a-box color="red" rotation="0 45 45" scale="2 2 2"></a-box>
-            <a-entity position="0 0 3.8">
-                <a-camera>
-                </a-camera>
-            </a-entity>
-        </a-scene>    
+    <a-scene>
+        <a-assets>
+            <video id="kentucky-derby" autoplay="true"></video>
+        </a-assets>
+        <a-box color="red" rotation="0 45 45" scale="2 2 2" src="#kentucky-derby" crossorigin="true">
+
+        </a-box>
+        <a-entity position="0 0 3.8">
+            <a-camera>
+            </a-camera>
+        </a-entity>
+    </a-scene>
 </body>
 
 </html>
