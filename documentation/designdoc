@@ -4,6 +4,10 @@ Scope: En VR-applikation som antigen är för nytta eller spel. Vad det blir avg
 
 Ideer nytta
 - Visualisera office (boka konferensrum)
+Augmented reality. Användaren tar på sig glasögon och ser vilka konferensrum som är bokade. Som jag (Kristofer) blir lösningen för detta 
+dels en a-frame webbapp men vi måste också hämta informationen som berättar om ett rum är bokat eller ej samt position för det. Jag tror att vi 
+måste ha en central server som webbappen kommunicerar med för att få denna information. 
+
 - Lysa upp byggnad (google glasse exempel)
 - Musem/Konst/skolrum lära sig om t.ex. historiska händelser genom att vara där
 - Time-travel gå igenom tiden (google maps, använda IOT för att styra var i tiden man är) och även framåt
@@ -13,12 +17,10 @@ Ideer nytta
 Ställ ut flera koner, när användaren förflyttar sig mellan så uppdaterar systemet att användaren har ny location, då byts scenen. Scenen ska innehålla ljud, 
 text, animationer som händer när man är på en scen. Exempel är t.ex. att på ett historie musem kunna förflytta sig genom århundraden genom att bara ta ett par steg.
 
-
 Spel
 - Geocaching fast har gömt iot som lyser upp, 
 - Använda vr som förlängning av barnlek (dunken), 
 - Spy vs spy aktigt
-
 
 Teknologi
 - Utveckla i Unity eller utanför 
