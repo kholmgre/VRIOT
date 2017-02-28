@@ -31,19 +31,29 @@
         }, function(error){
             console.log(JSON.stringify(error))
         });
-    </script>
+
+        function fakeOnMessage(){
+            var el = document.getElementById('cube');
+            var currentPosition = el.getAttribute('position');
+
+            el.setAttribute('position', {x: 1, y: 5, z: -3});
+        }
+
+        setInterval(fakeOnMessage, 5000);
+
+    </script>   
 </head>
 <body>
     <a-scene>
         <a-assets>
             <video id="kentucky-derby" autoplay="true"></video>
         </a-assets>
-        <a-sky src="#kentucky-derby" opacity="0.5"></a-sky>
+        <a-sky src="#kentucky-derby" opacity="0.7"></a-sky>
+        <a-box id="cube" color="red" position="0 2 -5" rotation="0 45 45" scale="2 2 2"></a-box>
         <a-entity position="-8 0 0">
             <a-camera>
             </a-camera>
         </a-entity>
     </a-scene>
 </body>
-
 </html>
