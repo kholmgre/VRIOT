@@ -9,6 +9,10 @@ dels en a-frame webbapp men vi måste också hämta informationen som berättar 
 måste ha en central server som webbappen kommunicerar med för att få denna information. Den centrala servern ger ut en json innehållande alla
 konferensrum samt deras position och status (bokad, ej bokad).
 
+- Virtuell video-konferens
+Under mina experiment med att få in video till en a-frame scen så kom jag på idéen att flera användare kan ansluta till en server och dela
+sina videoströmmar och dessa visas upp på monitorer i en a-frame scen. Som skype samtal med flera deltagare fast i en 3d-miljö.
+
 - Lysa upp byggnad (google glasse exempel)
 Augmented reality. Denna idé är i stort sett samma som Visualisera office
 
