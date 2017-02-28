@@ -30,17 +30,17 @@
 
             var videoId;
 
-            if(devicesIds.length === 1){
+            if (devicesIds.length === 1) {
                 videoId = devicesIds[0].deviceId;
             } else {
                 videoId = devicesIds[1].deviceId;
             }
 
-            
+
 
             navigator.getUserMedia({
                 audio: false,
-                video:  { deviceId: videoId }
+                video: { deviceId: videoId }
             }, function (localMediaStream) {
 
                 var video = document.getElementById('kentucky-derby');
@@ -63,14 +63,27 @@
             var el = document.getElementById('cube');
             var currentPosition = el.getAttribute('position');
 
-            el.setAttribute('position', { x: 1, y: 5, z: -3 });
+            var animation = document.createElement('a-animation');
+            animation.setAttribute('dur', '2000');
+            animation.setAttribute('attribute', 'position');
+
+            function rand(endNumber){
+                return Math.floor(Math.random() * endNumber) + 1; 
+            }
+            
+            var newPos = rand(5).toString() + ' ' + rand(5).toString() + ' ' + rand(5).toString();
+
+            animation.setAttribute('to', newPos);
+            animation.setAttribute('fill', 'forwards');
+
+            el.appendChild(animation);
         }
 
-        function faceOnMove(){
+        function faceOnMove() {
 
         }
 
-        // setInterval(fakeOnMessage, 5000);
+        setInterval(fakeOnMessage, 5000);
     </script>
 </head>
 
