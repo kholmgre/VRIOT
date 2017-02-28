@@ -19,7 +19,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/0.5.0/aframe.min.js"></script>
     <script>
         // Not showing vendor prefixes.
-        navigator.getUserMedia({ video: { facingMode: { exact: "user" } }, audio: false, }, function (localMediaStream) {
+        navigator.getUserMedia({ video: { facingMode: { exact: "rear" } }, audio: false, }, function (localMediaStream) {
             var video = document.getElementById('kentucky-derby');
             video.src = window.URL.createObjectURL(localMediaStream);
 
