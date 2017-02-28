@@ -52,6 +52,15 @@ TODO utforska teknologi
 - I unity kan vi programmera i c# som blir javascript. Kan exportera scener till a-framedokument eller three.js-scene eller webGL.
 - a-frame får vi använda javascript (fungerar med react också t.ex.)
 
+Problem: 
+- Augmented reality. Om vi ska ha augmented reality måste vi ta in en video feed från en kamera. Problemet är att med mobiltelefon och cardboard
+eller liknande så är kameran blockerad. Vi måste då alltså på något sätt plugga in en extern kamera som sätts utan på cardboarden t.ex. Detta
+gör att isåfall kommer appen inte vara lika tillgänglig för alla då man måste göra setup med kamera först. 
+
+Jag har även fått kämpa för att visa upp något från kameran inne i en a-frame scen. Det bästa jag lyckats med hittils är att strömma från 
+kameran till en "plane". Det verkar inte finnas något inbyggt sätt att sätta en statisk bakgrund. Detta kan påverka hur svårt det blir att
+klura ut hur vi ska placera ut 3d modeller i scenen. 
+
 Språk-preferens? 
 
 Keywords:
