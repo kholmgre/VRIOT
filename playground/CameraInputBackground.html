@@ -21,14 +21,13 @@
         // Not showing vendor prefixes.
         navigator.getUserMedia({ video: { id: "08afdfdad3eb0e4ccc7fce4eb9d17a8128cc0e8bf5518e926b774e8fe53fc989" }, audio: false, }, function (localMediaStream) {
 
+            // if (navigator.mediaDevices.getSupportedConstraints()["facingMode"]) {
+            //     console.log("Supported!");
+            // } else {
+            //     consol.log("Not supported!");
+            // }
 
-            if (navigator.mediaDevices.getSupportedConstraints()["facingMode"]) {
-                console.log("Supported!");
-            } else {
-                consol.log("Not supported!");
-            }
-
-            console.log(JSON.stringify(navigator.mediaDevices.getSupportedConstraints()));
+            // console.log(JSON.stringify(navigator.mediaDevices.getSupportedConstraints()));
 
             var video = document.getElementById('kentucky-derby');
 
