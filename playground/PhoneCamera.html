@@ -15,15 +15,9 @@
             left: 0;
             z-index: -1000;
         }
-        
-        h3 {
-            color: white;
-        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/0.5.0/aframe.min.js"></script>
     <script>
-
-
         // Not showing vendor prefixes.
         navigator.getUserMedia({ video: { facingMode: { exact: "environment" } }, audio: true, }, function (localMediaStream) {
             var video = document.getElementById('kentucky-derby');
@@ -69,11 +63,11 @@
         </a-box>
         <a-entity position="-8 0 0">
             <a-camera>
-                <a-animation attribute="position"
+                <!--<a-animation attribute="position"
                dur="10000"
                fill="forwards"
                to="16 2 0"
-               repeat="indefinite"></a-animation>
+               repeat="indefinite"></a-animation>-->
             </a-camera>
         </a-entity>
     </a-scene>
