@@ -19,28 +19,25 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/0.5.0/aframe.min.js"></script>
     <script>
         // Not showing vendor prefixes.
-        navigator.getUserMedia({ video: { facingMode: { exact: "rear" } }, audio: false, }, function (localMediaStream) {
+        navigator.getUserMedia({ video: { facingMode: { exact: "environment" } }, audio: false, }, function (localMediaStream) {
 
 
             navigator.mediaDevices.enumerateDevices().then(function (devices) {
                 devices.forEach(function (device) {
 
-                    if (device.kind == "videoinput") {
-                        console.log(device.kind)
+                    if (device.kind == "videoinput" && device.label == 'camera2 0, facing back') {
+                        var video = document.getElementById('kentucky-derby');
+                        
+                        video.src = window.URL.createObjectURL(localMediaStream);
+
+                        // Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
+                        // See crbug.com/110938.
+                        video.onloadedmetadata = function (e) {
+                            // Ready to go. Do some stuff.
+                        };
                     }
                 })
             });
-            //If device is a video input add to array.
-
-
-            var video = document.getElementById('kentucky-derby');
-            video.src = window.URL.createObjectURL(localMediaStream);
-
-            // Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
-            // See crbug.com/110938.
-            video.onloadedmetadata = function (e) {
-                // Ready to go. Do some stuff.
-            };
         }, function (error) {
             console.log(JSON.stringify(error))
         });
