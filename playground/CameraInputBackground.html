@@ -18,7 +18,10 @@
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/0.5.0/aframe.min.js"></script>
     <script>
-        navigator.mediaDevices.getUserMedia({ video: true })
+        navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: { facingMode: { exact: "environment" } }
+        })
             .then(function (stream) {
                 var videoTracks = stream.getVideoTracks();
                 // console.log('Got stream with constraints:', constraints);
@@ -26,12 +29,12 @@
 
                 var video = document.getElementById('kentucky-derby');
 
-                video.src = window.URL.createObjectURL(videoTracks[0]);
+                video.src = window.URL.createObjectURL(stream);
 
                 stream.onended = function () {
                     console.log('Stream ended');
                 };
-                window.stream = stream; // make variable available to console
+                // window.stream = stream; // make variable available to console
                 // video.srcObject = stream;
             })
             .catch(function (error) {
