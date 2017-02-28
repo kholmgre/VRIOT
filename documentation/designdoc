@@ -25,7 +25,7 @@ Teknologi
 
 TODO utforska teknologi
 - Köra samma projekt i både unity och a-frame
-- Augmented reality -> finns community prototyp för a-frame för att använda kameran som bakgrund
+- Augmented reality -> finns community prototyp för a-frame för att använda kameran som bakgrund (dock ej som plugin än)
 - Testa importera, vilka format? vilka format kan a-frame importera? -> Går att importera modeller av typen .DAE till komponenten collada-model
 - Textanvändning? kunna skriva ut texter? -> fungerar i a-frame, för unity med https://unity3d.com/es/learn/tutorials/topics/virtual-reality/user-interfaces-vr
 - Få input via andra interfaces? röst? finns via stavar? kommunicera via gester? -> Går att koppla in t.ex gamepad (endast för Android, ej IOS)
