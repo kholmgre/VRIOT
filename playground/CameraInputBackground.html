@@ -18,23 +18,37 @@
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/0.5.0/aframe.min.js"></script>
     <script>
-        navigator.getUserMedia({
-            audio: false,
-            video: { facingMode: { exact: "environment" } }
-        }, function (localMediaStream) {
+        var devicesIds = [];
 
-            var video = document.getElementById('kentucky-derby');
+        navigator.mediaDevices.enumerateDevices().then(function (devices) {
+            devices.forEach(function (device) {
 
-            video.src = window.URL.createObjectURL(localMediaStream);
+                if (device.kind == "videoinput") {
+                    devicesIds.push(device);
+                }
+            })
 
-            // Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
-            // See crbug.com/110938.
-            video.onloadedmetadata = function (e) {
-                // Ready to go. Do some stuff.
-            };
+            var videoId = devicesIds[0].SourceId;
 
-        }, function (error) {
-            console.log(JSON.stringify(error))
+            navigator.getUserMedia({
+                audio: false,
+                video:  { sourceId: videoId }
+            }, function (localMediaStream) {
+
+                var video = document.getElementById('kentucky-derby');
+
+                video.src = window.URL.createObjectURL(localMediaStream);
+
+                // Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
+                // See crbug.com/110938.
+                video.onloadedmetadata = function (e) {
+                    // Ready to go. Do some stuff.
+                };
+
+            }, function (error) {
+                console.log(JSON.stringify(error))
+            });
+
         });
 
         function fakeOnMessage() {
