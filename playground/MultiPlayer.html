@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Chat example</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/0.5.0/aframe.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.slim.js"></script>
+	<script>
+		var socket = io.connect('http://localhost:3000', { reconnection: false });
+
+		window.addEventListener("load", function () {
+			var nickname = prompt('Name: ');
+
+			socket.emit('register', nickname);
+
+			let newEl = document.createElement('a-camera');
+			newEl.setAttribute('rotation', '45');
+			newEl.setAttribute('camera', '');
+			newEl.setAttribute('look-controls', '');
+			newEl.setAttribute('wasd-controls', '');
+
+			newEl.addEventListener('componentchanged', function (evt) {
+				if (evt.detail.name === 'position') {
+					socket.emit('movement', { id: nickname, pos: evt.detail.newData });
+				}
+			});
+
+			let scene = document.getElementById("scene");
+
+			scene.appendChild(newEl);
+
+			socket.on('broadcast', function (data) {
+				console.log(data);
+			});
+
+			socket.on('newPlayer', function (data) {
+				if (data === nickname)
+					return;
+				let newEl = document.createElement('a-sphere');
+				newEl.setAttribute('id', data);
+				newEl.setAttribute('rotation', '45');
+				newEl.setAttribute('position', '0 0 0');
+				newEl.setAttribute('color', 'red');
+
+				let scene = document.getElementById('scene');
+
+				scene.appendChild(newEl);
+			});
+
+			socket.on('playerMoved', function (data) {
+				if (data.id === nickname)
+					return;
+				var playerElement = document.getElementById(data.id);
+
+				if (playerElement === null) {
+					let newEl = document.createElement('a-sphere');
+					newEl.setAttribute('id', data.id);
+					newEl.setAttribute('rotation', '45');
+					newEl.setAttribute('position', '0 0 0');
+					newEl.setAttribute('color', 'red');
+
+					let scene = document.getElementById('scene');
+					scene.appendChild(newEl);
+				} else {
+					playerElement.setAttribute('position', data.pos);
+				}
+			});
+		});
+	</script>
+</head>
+
+<body>
+	<a-scene id="scene">
+		<a-sky src="#space"></a-sky>
+		<a-plane color="gray" scale="49 10 47" position="0 -10 0" rotation="-90 0 90"></a-plane>
+	</a-scene>
+</body>
+</html>

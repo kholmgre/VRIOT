@@ -4,7 +4,8 @@
   "description": "internal webvr project",
   "main": "index.js",
   "scripts": {
-    "dev" : "http-server"
+    "dev": "http-server",
+	"multiplayer" : "node playground/server.js"
   },
   "repository": {
     "type": "git",
@@ -18,5 +19,9 @@
   "homepage": "https://github.com/kholmgre/VRIOT#readme",
   "devDependencies": {
     "http-server": "^0.9.0"
+  },
+  "dependencies": {
+    "express": "^4.14.1",
+    "socket.io": "^1.7.3"
   }
 }
