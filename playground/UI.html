@@ -62,7 +62,7 @@
                 let element = document.getElementById('textui');
 
                 window.addEventListener('devicemotion', function (event) {
-                    element.setAttribute('value', event.accelerationIncludingGravity.toString());
+                    element.setAttribute('value', JSON.stringify(event.accelerationIncludingGravity));
                 });
             }
         });
