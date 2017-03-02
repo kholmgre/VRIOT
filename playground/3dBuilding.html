@@ -31,29 +31,28 @@
 
                 setInterval(() => {
 
-                    let avg = accelerationY.reduce((acc, val) => { 
-                        if(val > 0.06){
+                    let avg = accelerationY.reduce((acc, val) => {
+                        if (val > 0.06) {
                             return acc + val
                         } else {
                             return acc;
                         }
                     }) / accelerationY.length;
 
-                    let newPos = 1/2*avg*Math.pow(updateTime, 2);
+                    if (avg < 0.02){
+                        accelerationY.length = 0;
+                        return;
+                    }
 
-                    console.log(newPos);
+                    let newPos = 1 / 2 * avg * Math.pow(updateTime, 2);
+
+                    let currentPos = player.getAttribute('position');
+
+                    currentPos.y = currentPos.y + newPos;
+
+                    player.setAttribute('position', currentPos);
 
                     accelerationY.length = 0;
-
-                    // let currentPos = player.getAttribute('position');
-
-                    // let newPosY = (1/2) * 
-
-                    // currentPos.y = event.acceleration.z;
-
-                    // player.setAttribute('position', currentPos);
-
-
                 }, updateTime);
 
                 window.addEventListener('devicemotion', function (event) {
