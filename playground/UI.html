@@ -37,7 +37,7 @@
                 let element = document.getElementById('textui');
 
                 window.addEventListener('devicemotion', function (event) {
-                    element.setAttribute('value', JSON.stringify(event.accelerationIncludingGravity));
+                    element.setAttribute('value', event.accelerationIncludingGravity.toString());
                 });
             }
         });
@@ -54,7 +54,7 @@
                 <a-entity position="0 0 -1" rotation="5 0 0">
                     <a-plane rotation="0 0 0" src="#kentucky-derby" depth-test="false" shader="flat" crossorigin="anonymous" position="0 0 -1"
                         height="5" width="7"></a-plane>
-                    <a-text id="textui" motion-tracker value="hej" color="green" position="0 0 0.5" width="1" height="1"></a-text>
+                    <a-text id="textui" motion-tracker value="" color="green" position="0 0 0.5" width="1" height="1"></a-text>
                 </a-entity>
             </a-camera>
         </a-entity>
