@@ -78,6 +78,8 @@ I testet med att ha flera användare i samma a-frame scen så skickade varje bro
 som uppdaterade rätt a-frame element med nu position. 
 
 Om vi ska ha fler användare i samma miljö bör vi dock implementera något slags client/server där klienterna bara skickar kommandon (t.ex. gå framåt) och server räknar ut ny state för scenen och skickar ut till alla klienter. 
+Det finns community komponent för att hindra så kameran inte rör sig när wasd knapparna trycks in, istället skapas event. Detta skulle vi kunna använda för att skicka kommandon till servern 
+som sedan räknar ut ny state och returnerar.
 
 Språk-preferens? 
 
