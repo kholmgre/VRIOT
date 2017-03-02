@@ -20,6 +20,22 @@
             }
         });
 
+        AFRAME.registerComponent('motion-tracker', {
+            init: function (e) {
+                let player = document.getElementById('player');
+
+                window.addEventListener('devicemotion', function (event) {
+                    let str = event.acceleration.x.toString()
+                        + ' '
+                        + event.acceleration.y.toString()
+                        + ' '
+                        + event.acceleration.z.toString();
+
+                    element.setAttribute('position', str);
+                });
+            }
+        });
+
         AFRAME.registerComponent('open-inventory-listener', {
             init: function () {
                 this.el.addEventListener('click', function (evt) {
