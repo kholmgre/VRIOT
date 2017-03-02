@@ -1,6 +1,5 @@
 <!DOCTYPE HTML>
 <html>
-
 <head>
 	<meta charset="utf-8">
 	<title>Chat example</title>
@@ -14,21 +13,33 @@
 
 			socket.emit('register', nickname);
 
-			let newEl = document.createElement('a-camera');
-			newEl.setAttribute('rotation', '45');
-			newEl.setAttribute('camera', '');
-			newEl.setAttribute('look-controls', '');
-			newEl.setAttribute('wasd-controls', '');
+			let cameraEntityWrapper = document.createElement('a-entity');
+			cameraEntityWrapper.setAttribute('position', '0 0 0');
+			cameraEntityWrapper.setAttribute('id', 'player');
 
-			newEl.addEventListener('componentchanged', function (evt) {
+			let cameraElement = document.createElement('a-camera');
+			cameraElement.setAttribute('rotation', '45');
+			cameraElement.setAttribute('camera', '');
+			cameraElement.setAttribute('look-controls', '');
+			cameraElement.setAttribute('wasd-controls', '');
+
+			cameraElement.addEventListener('componentchanged', function (evt) {
 				if (evt.detail.name === 'position') {
 					socket.emit('movement', { id: nickname, pos: evt.detail.newData });
 				}
 			});
 
+			setInterval(() => {
+				let playerElement = document.getElementById('player');
+				var playerPos = playerElement.getAttribute('position');
+				socket.emit('movement', { id: nickname, pos: playerPos });
+			}, 1000);
+
+			cameraEntityWrapper.appendChild(cameraElement);
+
 			let scene = document.getElementById("scene");
 
-			scene.appendChild(newEl);
+			scene.appendChild(cameraEntityWrapper);
 
 			socket.on('broadcast', function (data) {
 				console.log(data);
@@ -37,11 +48,11 @@
 			socket.on('newPlayer', function (data) {
 				if (data === nickname)
 					return;
-				let newEl = document.createElement('a-sphere');
-				newEl.setAttribute('id', data);
-				newEl.setAttribute('rotation', '45');
-				newEl.setAttribute('position', '0 0 0');
-				newEl.setAttribute('color', 'red');
+				let playerElement = document.createElement('a-sphere');
+				playerElement.setAttribute('id', data);
+				playerElement.setAttribute('rotation', '45');
+				playerElement.setAttribute('position', '0 0 0');
+				playerElement.setAttribute('color', 'red');
 
 				let playerName = document.createElement('a-text');
 				playerName.setAttribute('value', data);
@@ -51,10 +62,10 @@
 				playerName.setAttribute('side', 'double');
 				playerName.setAttribute('transparent', 'false');
 
-				newEl.appendChild(playerName);
+				playerElement.appendChild(playerName);
 
 				let scene = document.getElementById('scene');
-				scene.appendChild(newEl);
+				scene.appendChild(playerElement);
 			});
 
 			socket.on('playerMoved', function (data) {
@@ -63,11 +74,11 @@
 				var playerElement = document.getElementById(data.id);
 
 				if (playerElement === null) {
-					let newEl = document.createElement('a-sphere');
-					newEl.setAttribute('id', data.id);
-					newEl.setAttribute('rotation', '45');
-					newEl.setAttribute('position', '0 0 0');
-					newEl.setAttribute('color', 'red');
+					let playerElement = document.createElement('a-sphere');
+					playerElement.setAttribute('id', data.id);
+					playerElement.setAttribute('rotation', '45');
+					playerElement.setAttribute('position', '0 0 0');
+					playerElement.setAttribute('color', 'red');
 
 					let playerName = document.createElement('a-text');
 					playerName.setAttribute('value', data.id);
@@ -77,10 +88,10 @@
 					playerName.setAttribute('side', 'double');
 					playerName.setAttribute('transparent', 'false');
 
-					newEl.appendChild(playerName);
+					playerElement.appendChild(playerName);
 
 					let scene = document.getElementById('scene');
-					scene.appendChild(newEl);
+					scene.appendChild(playerElement);
 				} else {
 					playerElement.setAttribute('position', data.pos);
 				}
