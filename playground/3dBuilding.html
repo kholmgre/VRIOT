@@ -64,6 +64,8 @@
 
                 window.addEventListener('devicemotion', function (event) {
 
+                    console.log(event.acceleration.z);
+
                     accelerationY.push(event.acceleration.z);
 
                     // let currentPos = player.getAttribute('position');
