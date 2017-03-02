@@ -83,7 +83,7 @@
         <a-plane src="#grass" scale="10 10 10" position="0 0 0" rotation="-90 0 90" visible="" material="" geometry=""></a-plane>
         <a-box color="blue" scale="2 2 2" position="0 6 0" cursor-listener></a-box>
         <a-box color="blue" scale="2 2 2" position="13 6 0" cursor-listener></a-box>
-        <a-entity id="player">
+        <a-entity id="player" motion-tracker>
             <a-box color="red" scale="0.5 0.5 0.5" position="0 3 0" open-inventory-listener></a-box>
             <a-camera look-controls wasd-controls>
                 <a-entity cursor="fuse: true; fuseTimeout: 500" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
