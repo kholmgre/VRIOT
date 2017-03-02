@@ -31,13 +31,15 @@
 
                 setInterval(() => {
 
-                    let avg = accelerationY.reduce((acc, val) => {
+                    let sum = accelerationY.reduce((acc, val) => {
                         if (val > 0.06) {
                             return acc + val
                         } else {
                             return acc;
                         }
-                    }) / accelerationY.length;
+                    }, 0);
+
+                    let avg = sum / accelerationY.length;
 
                     if (avg < 0.02){
                         accelerationY.length = 0;
