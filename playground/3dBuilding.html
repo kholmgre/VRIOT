@@ -31,7 +31,13 @@
 
                 setInterval(() => {
 
-                    let avg = accelerationY.reduce((acc, val) => { return acc + val }) / accelerationY.length;
+                    let avg = accelerationY.reduce((acc, val) => { 
+                        if(val > 0.06){
+                            return acc + val
+                        } else {
+                            return acc;
+                        }
+                    }) / accelerationY.length;
 
                     let newPos = 1/2*avg*Math.pow(updateTime, 2);
 
