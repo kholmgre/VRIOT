@@ -24,18 +24,21 @@
             init: function (e) {
                 let player = document.getElementById('player');
 
+                let accelerations = [];
+
                 window.addEventListener('devicemotion', function (event) {
-                    // let str = event.acceleration.x.toString()
-                    //     + ' '
-                    //     + event.acceleration.y.toString()
-                    //     + ' '
-                    //     + event.acceleration.z.toString();
 
-                    let currentPos = player.getAttribute('position');
+                    accelerations.push(event.acceleration.y);
 
-                    currentPos.y = event.acceleration.y;
+                    if (accelerations.reduce((acc, val) => { return acc + val }) > 2) {
+                        let currentPos = player.getAttribute('position');
 
-                    player.setAttribute('position', currentPos);
+                        currentPos.y = event.acceleration.y;
+
+                        player.setAttribute('position', currentPos);
+
+                        accelerations.lengt = 0;
+                    }
                 });
             }
         });
@@ -69,7 +72,7 @@
                 this.el.addEventListener('click', function (evt) {
                     console.log('close inventory');
                     let inventoryElement = document.getElementById('inventory');
-  
+
                     inventoryElement.parentNode.removeChild(inventoryElement);
                 });
             }
@@ -92,8 +95,8 @@
             <a-camera look-controls wasd-controls>
                 <a-entity cursor="fuse: true; fuseTimeout: 500" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
                     material="color: black; shader: flat">
-        </a-entity>
-        </a-camera>
+                </a-entity>
+            </a-camera>
         </a-entity>
     </a-scene>
 </body>
