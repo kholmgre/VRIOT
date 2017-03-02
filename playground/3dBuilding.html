@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Chat example</title>
+    <title>Teleport</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/0.5.0/aframe.min.js"></script>
     <script>
         AFRAME.registerComponent('cursor-listener', {
@@ -19,6 +19,41 @@
                 });
             }
         });
+
+        AFRAME.registerComponent('open-inventory-listener', {
+            init: function () {
+                this.el.addEventListener('click', function (evt) {
+                    let inventoryElement = document.createElement('a-plane');
+                    inventoryElement.setAttribute('position', '0 2.6 0');
+                    inventoryElement.setAttribute('rotation', '90 0 -90');
+                    inventoryElement.setAttribute('id', 'inventory');
+
+                    let exitElement = document.createElement('a-plane');
+                    exitElement.setAttribute('value', 'X');
+                    exitElement.setAttribute('position', '0 0.4 0.05');
+                    exitElement.setAttribute('rotation', '0 0 -90');
+                    exitElement.setAttribute('scale', '0.2 0.2 1');
+                    exitElement.setAttribute('color', 'green');
+                    exitElement.setAttribute('close-inventory-listener', '');
+
+                    inventoryElement.appendChild(exitElement);
+
+                    let playerElement = document.getElementById('player');
+                    playerElement.appendChild(inventoryElement);
+                });
+            }
+        });
+
+        AFRAME.registerComponent('close-inventory-listener', {
+            init: function () {
+                this.el.addEventListener('click', function (evt) {
+                    console.log('close inventory');
+                    let inventoryElement = document.getElementById('inventory');
+  
+                    inventoryElement.parentNode.removeChild(inventoryElement);
+                });
+            }
+        });
     </script>
 </head>
 
@@ -30,10 +65,11 @@
         <a-sky color="gray"></a-sky>
         <a-plane src="#grass" scale="10 10 10" position="10 0 0" rotation="-90 0 90" visible="" material="" geometry=""></a-plane>
         <a-plane src="#grass" scale="10 10 10" position="0 0 0" rotation="-90 0 90" visible="" material="" geometry=""></a-plane>
-        <a-box color="blue" scale="2 2 2" position="0 5 0" cursor-listener></a-box>
-        <a-box color="blue" scale="2 2 2" position="13 5 0" cursor-listener></a-box>
-        <a-entity>
-            <a-camera look-controls wasd-controls id="player">
+        <a-box color="blue" scale="2 2 2" position="0 6 0" cursor-listener></a-box>
+        <a-box color="blue" scale="2 2 2" position="13 6 0" cursor-listener></a-box>
+        <a-entity id="player">
+            <a-box color="red" scale="0.5 0.5 0.5" position="0 3 0" open-inventory-listener></a-box>
+            <a-camera look-controls wasd-controls>
                 <a-entity cursor="fuse: true; fuseTimeout: 500" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
                     material="color: black; shader: flat">
         </a-entity>
