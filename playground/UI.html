@@ -62,11 +62,11 @@
                 let element = document.getElementById('textui');
 
                 window.addEventListener('devicemotion', function (event) {
-                    let str = event.accelerationIncludingGravity.x.toString() 
+                    let str = event.acceleration.x.toString() 
                     + ' ' 
-                    + event.accelerationIncludingGravity.y.toString() 
+                    + event.acceleration.y.toString() 
                     + ' '
-                    + event.accelerationIncludingGravity.z.toString();
+                    + event.acceleration.z.toString();
 
                     element.setAttribute('value', str);
                 });
