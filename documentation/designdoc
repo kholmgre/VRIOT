@@ -2,6 +2,11 @@ Brainstorm idéer
 
 Scope: En VR-applikation som antigen är för nytta eller spel. Vad det blir avgörs allteftersom projektet framskrider och vilka problem som uppstår.
 
+Begränsningar: 
+
+Vi vill att det ska vara tillgängligt för så många som möjligt.
+Vi vill att det inte ska kosta för mycket. 
+
 Ideer nytta
 - Visualisera office (boka konferensrum)
 Augmented reality. Användaren tar på sig glasögon och ser vilka konferensrum som är bokade. Som jag (Kristofer) blir lösningen för detta 
@@ -36,9 +41,18 @@ text, animationer som händer när man är på en scen. Exempel är t.ex. att p�
 Påminner om Museum/Konst/Skolrum idéen.
 
 Spel
-- Geocaching fast har gömt iot som lyser upp, 
-- Använda vr som förlängning av barnlek (dunken), 
+- Geocaching fast har gömt iot som lyser upp
+
+- Worms Vr?
+
+- Använda vr som förlängning av barnlek (dunken)
+En användare utses som "dunkaren" (??). Den får inte se något under x antal sekunder. Under tiden ska de andra användarna gömma sig någonstans i spelvärlden. 
+De förflytta sig genom att titta på platsen dit de vill förflytta sig. Kan begränsa så att man bara får flytta x antal meter per "teleportering". Dunkaren måste
+"låsa in" på en användare och sedan förflytta sig till ursprungsplatsen för att dunka. 
+
 - Spy vs spy aktigt
+Virtual reality. Efter att ha testat att köra två klienter med en nodejs server så verkar det inte alltför krångligt att skapa någon slags spy vs spy variant.
+Användarna skulle kunna börja på varsitt ställe och sedan sätta ut fällor som den andra ska undvika.
 
 Teknologi
 - Utveckla i Unity eller utanför 
@@ -80,6 +94,10 @@ som uppdaterade rätt a-frame element med nu position.
 Om vi ska ha fler användare i samma miljö bör vi dock implementera något slags client/server där klienterna bara skickar kommandon (t.ex. gå framåt) och server räknar ut ny state för scenen och skickar ut till alla klienter. 
 Det finns community komponent för att hindra så kameran inte rör sig när wasd knapparna trycks in, istället skapas event. Detta skulle vi kunna använda för att skicka kommandon till servern 
 som sedan räknar ut ny state och returnerar.
+
+Antagligen kommer synkronisering av data över server inte vara alltför komplext. Det är troligt att användarna kommer begränsas till att stå still och endast teleportera
+sig genom att kolla på ett element i scenen. Det enda som skulle kunna skapa komplexitet är om användarna kan påverka objekt i scenen så att de rör sig och rörelse-data 
+måste synkas mellan alla klienter.
 
 Språk-preferens? 
 
