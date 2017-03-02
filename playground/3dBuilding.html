@@ -25,13 +25,17 @@
                 let player = document.getElementById('player');
 
                 window.addEventListener('devicemotion', function (event) {
-                    let str = event.acceleration.x.toString()
-                        + ' '
-                        + event.acceleration.y.toString()
-                        + ' '
-                        + event.acceleration.z.toString();
+                    // let str = event.acceleration.x.toString()
+                    //     + ' '
+                    //     + event.acceleration.y.toString()
+                    //     + ' '
+                    //     + event.acceleration.z.toString();
 
-                    player.setAttribute('position', str);
+                    let currentPos = player.getAttribute('position');
+
+                    currentPos.y = event.acceleration.y;
+
+                    player.setAttribute('position', currentPos);
                 });
             }
         });
