@@ -68,6 +68,17 @@ klura ut hur vi ska placera ut 3d modeller i scenen.
 En idé för att göra Augmented reality är att fästa en 360 graders kamera på användaren. Sedan används streamen från denna kameran till att göra
 en <a-sky></a-sky>. Sedan får man räkna ut hur långt bort i scenen man ska placera saker. 
 
+För att kunna "röra sig" naturligt i WebVr krävs att användaren har HTC Vive vilket kostar. Möjliga sätt att komma undan så man kan röra sig ändå är att 
+sätta ut punkter som användaren tittar på och sedan transporteras till. 
+
+För att låta användaren utföra "kommandon" så kan vi ha en svävande meny framför användar avataren och då kan användaren titta på ett alternativ för att utföra handlingen. 
+
+Nätverk
+I testet med att ha flera användare i samma a-frame scen så skickade varje browser x-y-z data från ett event som spelar-elementet skapar. Denna data skickades till varje klient
+som uppdaterade rätt a-frame element med nu position. 
+
+Om vi ska ha fler användare i samma miljö bör vi dock implementera något slags client/server där klienterna bara skickar kommandon (t.ex. gå framåt) och server räknar ut ny state för scenen och skickar ut till alla klienter. 
+
 Språk-preferens? 
 
 Keywords:
