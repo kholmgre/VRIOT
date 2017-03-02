@@ -22,45 +22,42 @@
 
         AFRAME.registerComponent('motion-tracker', {
             init: function (e) {
-                // let player = document.getElementById('player');
 
-                // let accelerations = [];
+                // s = (1/2)acceleration*t^2
+                // tid vet jag
 
-                // let y = 1;
+                let accelerationY = [];
+                let updateTime;
 
-                // setInterval(() => {
-                //     let currentPos = player.getAttribute('position');
+                setInterval(() => {
 
-                //     y = y + 0.5;
+                    let avg = accelerationY.reduce((acc, val) => { return acc + val }) / accelerationY.length;
 
-                //     let newPos = y;
+                    let newPos = 1/2*avg*Math.pow(updateTime, 2);
 
-                //     currentPos.y = newPos;
+                    console.log(newPos);
 
-                //     player.setAttribute('position', currentPos);
-                // }, 100);
+                    // let currentPos = player.getAttribute('position');
+
+                    // let newPosY = (1/2) * 
+
+                    // currentPos.y = event.acceleration.z;
+
+                    // player.setAttribute('position', currentPos);
+
+
+                }, updateTime);
 
                 window.addEventListener('devicemotion', function (event) {
 
-                    let currentPos = player.getAttribute('position');
+                    accelerationY.push(event.acceleration.z);
 
-                    currentPos.y = event.acceleration.z;
+                    // let currentPos = player.getAttribute('position');
 
-                    player.setAttribute('position', currentPos);
+                    // currentPos.y = event.acceleration.z;
 
-                    // accelerations.length = 0;
+                    // player.setAttribute('position', currentPos);
 
-                    // accelerations.push(event.acceleration.z);
-
-                    // if (accelerations.reduce((acc, val) => { return acc + val }) > 2) {
-                    //     let currentPos = player.getAttribute('position');
-
-                    //     currentPos.y = event.acceleration.z;
-
-                    //     player.setAttribute('position', currentPos);
-
-                    //     accelerations.length = 0;
-                    // }
                 });
             }
         });
