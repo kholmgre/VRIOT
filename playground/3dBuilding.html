@@ -66,7 +66,8 @@
 
                     console.log(event.acceleration.z);
 
-                    accelerationY.push(event.acceleration.z);
+                    if(event.acceleration.z > 0.1)
+                        accelerationY.push(event.acceleration.z);
 
                     // let currentPos = player.getAttribute('position');
 
