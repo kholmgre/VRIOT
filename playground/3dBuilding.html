@@ -22,15 +22,29 @@
 
         AFRAME.registerComponent('motion-tracker', {
             init: function (e) {
-                let player = document.getElementById('player');
+                // let player = document.getElementById('player');
 
-                let accelerations = [];
+                // let accelerations = [];
+
+                // let y = 1;
+
+                // setInterval(() => {
+                //     let currentPos = player.getAttribute('position');
+
+                //     y = y + 0.5;
+
+                //     let newPos = y;
+
+                //     currentPos.y = newPos;
+
+                //     player.setAttribute('position', currentPos);
+                // }, 100);
 
                 window.addEventListener('devicemotion', function (event) {
 
                     let currentPos = player.getAttribute('position');
 
-                    currentPos.z = event.acceleration.z;
+                    currentPos.y = event.acceleration.z;
 
                     player.setAttribute('position', currentPos);
 
