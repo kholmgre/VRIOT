@@ -28,17 +28,25 @@
 
                 window.addEventListener('devicemotion', function (event) {
 
-                    accelerations.push(event.acceleration.y);
+                    let currentPos = player.getAttribute('position');
 
-                    if (accelerations.reduce((acc, val) => { return acc + val }) > 2) {
-                        let currentPos = player.getAttribute('position');
+                    currentPos.z = event.acceleration.z;
 
-                        currentPos.y = event.acceleration.y;
+                    player.setAttribute('position', currentPos);
 
-                        player.setAttribute('position', currentPos);
+                    // accelerations.length = 0;
 
-                        accelerations.lengt = 0;
-                    }
+                    // accelerations.push(event.acceleration.z);
+
+                    // if (accelerations.reduce((acc, val) => { return acc + val }) > 2) {
+                    //     let currentPos = player.getAttribute('position');
+
+                    //     currentPos.y = event.acceleration.z;
+
+                    //     player.setAttribute('position', currentPos);
+
+                    //     accelerations.length = 0;
+                    // }
                 });
             }
         });
