@@ -52,7 +52,8 @@ De förflytta sig genom att titta på platsen dit de vill förflytta sig. Kan be
 
 - Spy vs spy aktigt
 Virtual reality. Efter att ha testat att köra två klienter med en nodejs server så verkar det inte alltför krångligt att skapa någon slags spy vs spy variant.
-Användarna skulle kunna börja på varsitt ställe och sedan sätta ut fällor som den andra ska undvika.
+Användarna skulle kunna börja på varsitt ställe och sedan sätta ut fällor som den andra ska undvika. Använd ljud. När någon går in i rummet kan ljudet av en 
+dörr som öppnas spela. En powerup är att man kan gå mellan rum utan att det låter. En powerup kan vara att man blir osynlig för andra spelaren en tidsperiod. 
 
 Teknologi
 - Utveckla i Unity eller utanför 

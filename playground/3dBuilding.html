@@ -23,23 +23,33 @@
         AFRAME.registerComponent('motion-tracker', {
             init: function (e) {
 
-                let options = {
-                    enableHighAccuracy: true,
-                    timeout: 5000,
-                    maximumAge: 0
-                }
+                window.addEventListener('devicemotion', function (event) {
 
-                var watchID = navigator.geolocation.watchPosition(function (position) {
+                    let element = document.getElementById('textui');
 
-                    let userPos = position.coords;
+                    let str = '';
 
-                    let currentPos = player.getAttribute('position');
+                    if (event.acceleration.x === "0" && event.acceleration.y === "0" && event.acceleration.z === "0") {
+                        str = 'NOT MOVING';
+                    } else if (event.acceleration.x === "0" && Number(event.acceleration.y) > 2 && event.acceleration.z === "0") {
+                        str = 'UP';
+                    } else if (event.acceleration.x === "0" && Number(event.acceleration.y) < -1 && event.acceleration.z === "0") {
+                        str = 'DOWN';
+                    } else {
+                        str = 'Unkown';
+                    }
 
-                    player.setAttribute('position', currentPos);
+                    // if (event.acceleration.x === "0" && Number(event.acceleration.y) > 2 && event.acceleration.z === "0")
+                    //     str = 'RIGHT';
 
-                }, (err) => {
+                    // let currentPos = player.getAttribute('position');
 
-                }, options);
+                    // currentPos.y = event.acceleration.z;
+
+                    // player.setAttribute('position', currentPos);
+
+                    element.setAttribute('value', str);
+                });
             }
         });
 
@@ -96,6 +106,7 @@
                 <a-entity cursor="fuse: true; fuseTimeout: 500" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
                     material="color: black; shader: flat">
                 </a-entity>
+                <a-text id="textui" motion-tracker value="" color="green" position="1 -0.5 -1" width="0.8" height="1.3"></a-text>
             </a-camera>
         </a-entity>
     </a-scene>
