@@ -35,12 +35,12 @@
                         && (event.acceleration.y < 1 && event.acceleration.y > -1)
                         && event.acceleration.z < 1 && event.acceleration.z > -1) {
                         str = 'NOT MOVING';
-                    } else if (Number(event.acceleration.x) > 7) {
+                    } else if (Number(event.acceleration.x) > 5) {
                         str = 'UP';
                         currentPos.y = currentPos.y + 1;
 
                         player.setAttribute('position', currentPos);
-                    } else if (Number(event.acceleration.x) < -7) {
+                    } else if (Number(event.acceleration.x) < -5) {
                         str = 'DOWN';
 
                         if (currentPos.y < 0) {
@@ -113,7 +113,7 @@
                     material="color: black; shader: flat">
                 </a-entity>
                 <a-text id="textui" motion-tracker value="" color="green" position="0 -0.5 -1" width="0.8" height="1.3"></a-text>
-                <a-text value="4" color="red" position="0.5 -0.5 -1" width="0.8" height="1.3"></a-text>
+                <a-text value="5" color="red" position="0.5 -0.5 -1" width="0.8" height="1.3"></a-text>
             </a-camera>
         </a-entity>
     </a-scene>
