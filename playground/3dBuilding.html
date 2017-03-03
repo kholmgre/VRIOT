@@ -23,59 +23,23 @@
         AFRAME.registerComponent('motion-tracker', {
             init: function (e) {
 
-                // s = (1/2)acceleration*t^2
-                // tid vet jag
+                let options = {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                }
 
-                let accelerationY = [];
-                let updateTime = 50;
+                var watchID = navigator.geolocation.watchPosition(function (position) {
 
-                setInterval(() => {
-
-                    let sum = accelerationY.reduce((acc, val) => {
-                        if (val > 0.06) {
-                            return acc + val
-                        } else {
-                            return acc;
-                        }
-                    }, 0);
-
-                    if(sum === 0){
-                        accelerationY.length = 0;
-                        return;
-                    }
-
-                    let avg = sum / accelerationY.length;
-
-                    if (avg < 0.1){
-                        accelerationY.length = 0;
-                        return;
-                    }
-
-                    let newPos = 1 / 2 * avg * Math.pow(0.5, 2);
+                    let userPos = position.coords;
 
                     let currentPos = player.getAttribute('position');
 
-                    currentPos.y = currentPos.y + newPos;
-
                     player.setAttribute('position', currentPos);
 
-                    accelerationY.length = 0;
-                }, updateTime);
+                }, (err) => {
 
-                window.addEventListener('devicemotion', function (event) {
-
-                    console.log(event.acceleration.x);
-
-                    if(event.acceleration.x > 0.1 || event.acceleration.x < -0.1)
-                        accelerationY.push(event.acceleration.z);
-
-                    // let currentPos = player.getAttribute('position');
-
-                    // currentPos.y = event.acceleration.z;
-
-                    // player.setAttribute('position', currentPos);
-
-                });
+                }, options);
             }
         });
 
