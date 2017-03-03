@@ -88,6 +88,9 @@ sätta ut punkter som användaren tittar på och sedan transporteras till.
 
 För att låta användaren utföra "kommandon" så kan vi ha en svävande meny framför användar avataren och då kan användaren titta på ett alternativ för att utföra handlingen. 
 
+Idéen med att använda device motion för att låta användaren gå runt kan ev fungera. Dock så vill vi ju t.ex. inte att användaren ska flyttas när denne bara tittar runt
+(att titta runt kommer ge utslag på device motion) så vi måste komma på något sätt att skilja på detta. Kolla om rotation ingår i eventet? 
+
 Nätverk
 I testet med att ha flera användare i samma a-frame scen så skickade varje browser x-y-z data från ett event som spelar-elementet skapar. Denna data skickades till varje klient
 som uppdaterade rätt a-frame element med nu position. 
