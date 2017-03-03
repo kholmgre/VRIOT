@@ -33,9 +33,9 @@
                     && (event.acceleration.y < 1 && event.acceleration.y > -1) 
                     && event.acceleration.z < 1 && event.acceleration.z > -1) {
                         str = 'NOT MOVING';
-                    } else if (Number(event.acceleration.y) > 2 ) {
+                    } else if (Number(event.acceleration.x) > 1 ) {
                         str = 'UP';
-                    } else if (Number(event.acceleration.y) < -2) {
+                    } else if (Number(event.acceleration.x) < -1) {
                         str = 'DOWN';
                     } else {
                         str = 'Unknown';
