@@ -35,12 +35,12 @@
                         && (event.acceleration.y < 1 && event.acceleration.y > -1)
                         && event.acceleration.z < 1 && event.acceleration.z > -1) {
                         str = 'NOT MOVING';
-                    } else if (Number(event.acceleration.x) > 5) {
+                    } else if (Number(event.acceleration.x) > 4) {
                         str = 'UP';
                         currentPos.y = currentPos.y + 1;
 
                         player.setAttribute('position', currentPos);
-                    } else if (Number(event.acceleration.x) < -5) {
+                    } else if (Number(event.acceleration.x) < -4) {
                         str = 'DOWN';
 
                         if (currentPos.y < 0) {
