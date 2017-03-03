@@ -46,7 +46,7 @@
         });
 
         if (navigator.geolocation) {
-            setImmediate(() => {
+            setInterval(() => {
                 navigator.geolocation.getCurrentPosition((pos) => {
                     let gpsElement = document.getElementById('gps-text');
 
