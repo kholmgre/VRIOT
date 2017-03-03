@@ -50,7 +50,7 @@
                 navigator.geolocation.getCurrentPosition((pos) => {
                     let gpsElement = document.getElementById('gps-text');
 
-                    let str = JSON.stringify(pos.coords);
+                    let str = pos.coords.latitude + ' ' + pos.coords.longitude + ' ' + pos.coords.altitude;
 
                     gpsElement.setAttribute('value', str);
                 });
