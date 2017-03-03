@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Hello, World! • A-Frame</title>
+    <meta name="description" content="Hello camera!">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/0.5.0/aframe.min.js"></script>
+    <script>
+        var devicesIds = [];
+
+        navigator.mediaDevices.enumerateDevices().then(function (devices) {
+            devices.forEach(function (device) {
+
+                if (device.kind == "videoinput") {
+                    devicesIds.push(device);
+                }
+            })
+
+            var videoId;
+
+            if (devicesIds.length === 1) {
+                videoId = devicesIds[0].deviceId;
+            } else {
+                videoId = devicesIds[1].deviceId;
+            }
+
+            navigator.getUserMedia({
+                audio: false,
+                video: { deviceId: videoId }
+            }, function (localMediaStream) {
+
+                var video = document.getElementById('kentucky-derby');
+
+                video.src = window.URL.createObjectURL(localMediaStream);
+
+                // Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
+                // See crbug.com/110938.
+                video.onloadedmetadata = function (e) {
+                    // Ready to go. Do some stuff.
+                };
+
+            }, function (error) {
+                console.log(JSON.stringify(error))
+            });
+        });
+
+        if (navigator.geolocation) {
+            setImmediate(() => {
+                navigator.geolocation.getCurrentPosition((pos) => {
+                    let gpsElement = document.getElementById('gps-text');
+
+                    let str = JSON.stringify(pos.coords);
+
+                    gpsElement.setAttribute('value', str);
+                });
+            }, 1000)
+        } else {
+            x.innerHTML = "Geolocation is not supported by this browser.";
+        }
+    </script>
+</head>
+
+<body>
+    <a-scene>
+        <a-assets>
+            <video id="user_feed" autoplay="true"></video>
+        </a-assets>
+        <a-entity position="0 0 0">
+            <a-camera>
+                <a-entity position="0 0 -1" rotation="5 0 0">
+                    <a-plane rotation="0 0 0" src="user_feed" depth-test="false" shader="flat" crossorigin="anonymous" position="0 0 -1" height="5"
+                        width="7"></a-plane>
+                    <a-text id="textui" motion-tracker value="" color="green" position="0 0 0" width="0.8" height="1.3"></a-text>
+                    <a-text id="gps-text" color="red" position="0.5 -0.5 -1" width="0.8" height="1.3"></a-text>
+                </a-entity>
+            </a-camera>
+        </a-entity>
+    </a-scene>
+</body>
+
+</html>
