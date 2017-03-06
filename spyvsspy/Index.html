@@ -67,6 +67,12 @@
                 });
             }
         });
+
+        AFRAME.registerComponent('game-timer', {
+            tick: function(time, timeDelta){
+                this.el.setAttribute('value', new Date().toLocaleTimeString());
+            }
+        });
     </script>
 </head>
 
@@ -74,12 +80,14 @@
     <a-scene id="scene">
         <a-assets>
             <audio id="door" src="door.mp3"></audio>
+            <image id="spy" src="spy.jpeg"></audio>
         </a-assets>
         <a-sky color="gray"></a-sky>
         <a-entity id="opendoor" sound="src: #door"></a-entity>
         <a-entity motion-tracker id="player" position="0 0 0">
-            <!--<a-box color="red" scale="0.5 0.5 0.5" position="0 3 0" open-inventory-listener></a-box>-->
             <a-camera look-controls wasd-controls position="0 1.83 0">
+                <a-text game-timer position="0 0 -0.5" scale="0.6 0.6 0.6"></a-text>
+                <!--<a-image src="#spy" position="0 0 -2"></a-image>-->
                 <a-entity cursor="fuse: true; fuseTimeout: 500" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
                     material="color: black; shader: flat">
                 </a-entity>
@@ -121,6 +129,9 @@
                 if (wallColor === undefined) {
                     wallColor = '#A0B8FF';
                 }
+
+                let countDownTimer = document.createElement('a-text');
+
 
                 let floor = document.createElement('a-plane');
                 floor.setAttribute('color', floorColor);
