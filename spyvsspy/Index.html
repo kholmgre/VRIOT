@@ -1,0 +1,209 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Spy vs Spy</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/0.5.0/aframe.min.js"></script>
+    <script>
+        AFRAME.registerComponent('open-door', {
+            init: function () {
+                this.el.addEventListener('click', function (evt) {
+
+                    let entity = document.querySelector('[sound]');
+
+                    entity.components.sound.playSound();
+
+                    setTimeout(() => {
+                        let target = document.getElementById(this.getAttribute('room'));
+                        let targetPos = target.getAttribute('position');
+
+                        let newPos = { x: targetPos.x, y: targetPos.y, z: targetPos.z };
+
+                        let playerElement = document.getElementById('player');
+                        playerElement.setAttribute('position', newPos);
+                    }, 1800);
+                });
+            }
+        });
+
+        AFRAME.registerComponent('room-factory', {
+            init: () => {
+
+            }
+        });
+
+        AFRAME.registerComponent('open-inventory-listener', {
+            init: function () {
+                this.el.addEventListener('click', function (evt) {
+                    let inventoryElement = document.createElement('a-plane');
+                    inventoryElement.setAttribute('position', '0 2.6 0');
+                    inventoryElement.setAttribute('rotation', '90 0 -90');
+                    inventoryElement.setAttribute('id', 'inventory');
+
+                    let exitElement = document.createElement('a-plane');
+                    exitElement.setAttribute('value', 'X');
+                    exitElement.setAttribute('position', '0 0.4 0.05');
+                    exitElement.setAttribute('rotation', '0 0 -90');
+                    exitElement.setAttribute('scale', '0.2 0.2 1');
+                    exitElement.setAttribute('color', 'green');
+                    exitElement.setAttribute('close-inventory-listener', '');
+
+                    inventoryElement.appendChild(exitElement);
+
+                    let playerElement = document.getElementById('player');
+                    playerElement.appendChild(inventoryElement);
+                });
+            }
+        });
+
+        AFRAME.registerComponent('close-inventory-listener', {
+            init: function () {
+                this.el.addEventListener('click', function (evt) {
+                    console.log('close inventory');
+                    let inventoryElement = document.getElementById('inventory');
+
+                    inventoryElement.parentNode.removeChild(inventoryElement);
+                });
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <a-scene id="scene">
+        <a-assets>
+            <audio id="door" src="door.mp3"></audio>
+        </a-assets>
+        <a-sky color="gray"></a-sky>
+        <a-entity id="opendoor" sound="src: #door"></a-entity>
+        <a-entity motion-tracker id="player" position="0 0 0">
+            <!--<a-box color="red" scale="0.5 0.5 0.5" position="0 3 0" open-inventory-listener></a-box>-->
+            <a-camera look-controls wasd-controls position="0 1.83 0">
+                <a-entity cursor="fuse: true; fuseTimeout: 500" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+                    material="color: black; shader: flat">
+                </a-entity>
+            </a-camera>
+        </a-entity>
+    </a-scene>
+    <script>
+        (() => {
+
+            let scene = document.getElementById('scene');
+
+            let options = {
+                "0": {
+                    wall: "#FFD79F",
+                    floor: "#F5EBCD"
+                },
+                "1": {
+                    wall: "#A0B8FF",
+                    floor: "#BCC9E5"
+                },
+                "2": {
+                    wall: "#FA74B3",
+                    floor: "#DC9BBD"
+                }
+            }
+
+            for (let i = 0; i < 3; i++) {
+                let room = document.createElement('a-entity');
+                room.setAttribute('position', '0 ' + i * 5 + ' 0')
+                room.setAttribute('id', i);
+
+                let floorColor = options[i].floor;
+                let wallColor = options[i].wall;
+
+                if (floorColor === undefined) {
+                    floorColor = '#000fff';
+                }
+
+                if (wallColor === undefined) {
+                    wallColor = '#A0B8FF';
+                }
+
+                let floor = document.createElement('a-plane');
+                floor.setAttribute('color', floorColor);
+                floor.setAttribute('width', '10');
+                floor.setAttribute('height', '10');
+                floor.setAttribute('position', '0 1.5 0');
+                floor.setAttribute('rotation', '-90 0 90');
+                floor.setAttribute('side', 'double');
+
+                let roof = document.createElement('a-plane');
+                roof.setAttribute('color', floorColor);
+                roof.setAttribute('width', '10');
+                roof.setAttribute('height', '10');
+                roof.setAttribute('position', '0 5.5 0');
+                roof.setAttribute('rotation', '-90 0 90');
+                roof.setAttribute('side', 'double');
+
+                let door = document.createElement('a-plane');
+                door.setAttribute('color', '#000000');
+                door.setAttribute('open-door', '');
+                door.setAttribute('position', '5 3.5 0');
+                door.setAttribute('rotation', '0 90 0');
+                door.setAttribute('height', '4');
+                door.setAttribute('width', '2');
+                door.setAttribute('side', 'double');
+
+                let wall1 = document.createElement('a-plane');
+                wall1.setAttribute('color', wallColor);
+                wall1.setAttribute('position', '0 3.5 -5');
+                wall1.setAttribute('rotation', '0 0 0');
+                wall1.setAttribute('height', '4');
+                wall1.setAttribute('width', '10');
+                wall1.setAttribute('side', 'double');
+
+                let wall2 = document.createElement('a-plane');
+                wall2.setAttribute('color', wallColor);
+                wall2.setAttribute('position', '0 3.5 5');
+                wall2.setAttribute('rotation', '0 0 0');
+                wall2.setAttribute('height', '4');
+                wall2.setAttribute('width', '10');
+                wall2.setAttribute('side', 'double');
+
+                let wall3 = document.createElement('a-plane');
+                wall3.setAttribute('color', wallColor);
+                wall3.setAttribute('position', '-5 3.5 0');
+                wall3.setAttribute('rotation', '0 90 0');
+                wall3.setAttribute('height', '4');
+                wall3.setAttribute('width', '10');
+                wall3.setAttribute('side', 'double');
+
+                let wall4 = document.createElement('a-plane');
+                wall4.setAttribute('color', wallColor);
+                wall4.setAttribute('position', '5 3.5 3');
+                wall4.setAttribute('rotation', '0 90 0');
+                wall4.setAttribute('height', '4');
+                wall4.setAttribute('width', '4');
+                wall4.setAttribute('side', 'double');
+
+                let wall5 = document.createElement('a-plane');
+                wall5.setAttribute('color', wallColor);
+                wall5.setAttribute('position', '5 3.5 -3');
+                wall5.setAttribute('rotation', '0 90 0');
+                wall5.setAttribute('height', '4');
+                wall5.setAttribute('width', '4');
+                wall5.setAttribute('side', 'double');
+
+                let roomLink = i + 1;
+
+                door.setAttribute('room', roomLink.toString());
+
+                room.appendChild(floor);
+                room.appendChild(wall1);
+                room.appendChild(wall2);
+                room.appendChild(wall3);
+                room.appendChild(wall4);
+                room.appendChild(wall5);
+                room.appendChild(roof);
+                room.appendChild(door);
+
+                scene.appendChild(room);
+            }
+        })();
+    </script>
+</body>
+
+</html>
