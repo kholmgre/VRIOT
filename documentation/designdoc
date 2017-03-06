@@ -1,0 +1,109 @@
+Brainstorm idéer
+
+Scope: En VR-applikation som antigen är för nytta eller spel. Vad det blir avgörs allteftersom projektet framskrider och vilka problem som uppstår.
+
+Begränsningar: 
+
+Vi vill att det ska vara tillgängligt för så många som möjligt.
+Vi vill att det inte ska kosta för mycket. 
+
+Ideer nytta
+- Visualisera office (boka konferensrum)
+Augmented reality. Användaren tar på sig glasögon och ser vilka konferensrum som är bokade. Som jag (Kristofer) blir lösningen för detta 
+dels en a-frame webbapp men vi måste också hämta informationen som berättar om ett rum är bokat eller ej samt position för det. Jag tror att vi 
+måste ha en central server som webbappen kommunicerar med för att få denna information. Den centrala servern ger ut en json innehållande alla
+konferensrum samt deras position och status (bokad, ej bokad).
+
+- Virtuell video-konferens
+Under mina experiment med att få in video till en a-frame scen så kom jag på idéen att flera användare kan ansluta till en server och dela
+sina videoströmmar och dessa visas upp på monitorer i en a-frame scen. Som skype samtal med flera deltagare fast i en 3d-miljö.
+
+- Lysa upp byggnad (google glasse exempel)
+Augmented reality. Denna idé är i stort sett samma som Visualisera office
+
+- Musem/Konst/Skolrum lära sig om t.ex. historiska händelser genom att vara där
+Virtual reality. Användarna tar på sig VR-glasögon och får se olika scener beroende på vart de står i rummet. Hur ska appen veta när en 
+scen ska bytas? Kommunicera direkt med IOT devices? Antar att vi måste ha tillgång till telefonens hårdvara för att kommunicera med IOT enheter
+så någon slags phonegap-app blir valet isåfall? Mina gissnignar (Kristofer)
+
+- Time-travel gå igenom tiden (google maps, använda IOT för att styra var i tiden man är) och även framåt
+Virtual Reality. Samma idé som Musem/Konst/Skolrum fast man vandrar genom 360 bilder i google maps när man rör sig. Rörelse tas upp av IOT. 
+
+- Visualisera något som har fysisk också (bro exempel)
+Augmented reality. Kräver att vi kan ha ganska precis positionering av modeller. Kräver även att vi skapar 3d-modeller i t.ex. Blend. 
+
+- Klädaffär (se kläder innan köper)
+Virtual reality. Gå runt i affär och se på olika kläder. Ungefär som man kan konfigurera sin karaktärs utseende i dataspel. Kräver att vi skapar 3d-modeller. 
+
+- Senate idéen
+Ställ ut flera koner, när användaren förflyttar sig mellan så uppdaterar systemet att användaren har ny location, då byts scenen. Scenen ska innehålla ljud, 
+text, animationer som händer när man är på en scen. Exempel är t.ex. att på ett historie musem kunna förflytta sig genom århundraden genom att bara ta ett par steg.
+Påminner om Museum/Konst/Skolrum idéen.
+
+Spel
+- Geocaching fast har gömt iot som lyser upp
+
+- Worms Vr?
+
+- Använda vr som förlängning av barnlek (dunken)
+En användare utses som "dunkaren" (??). Den får inte se något under x antal sekunder. Under tiden ska de andra användarna gömma sig någonstans i spelvärlden. 
+De förflytta sig genom att titta på platsen dit de vill förflytta sig. Kan begränsa så att man bara får flytta x antal meter per "teleportering". Dunkaren måste
+"låsa in" på en användare och sedan förflytta sig till ursprungsplatsen för att dunka. 
+
+- Spy vs spy aktigt
+Virtual reality. Efter att ha testat att köra två klienter med en nodejs server så verkar det inte alltför krångligt att skapa någon slags spy vs spy variant.
+Användarna skulle kunna börja på varsitt ställe och sedan sätta ut fällor som den andra ska undvika. Använd ljud. När någon går in i rummet kan ljudet av en 
+dörr som öppnas spela. En powerup är att man kan gå mellan rum utan att det låter. En powerup kan vara att man blir osynlig för andra spelaren en tidsperiod. 
+
+Teknologi
+- Utveckla i Unity eller utanför 
+
+TODO utforska teknologi
+- Köra samma projekt i både unity och a-frame
+- Augmented reality -> finns community prototyp för a-frame för att använda kameran som bakgrund (dock ej som plugin än)
+- Testa importera, vilka format? vilka format kan a-frame importera? -> Går att importera modeller av typen .DAE till komponenten collada-model
+- Textanvändning? kunna skriva ut texter? -> fungerar i a-frame, för unity med https://unity3d.com/es/learn/tutorials/topics/virtual-reality/user-interfaces-vr
+- Få input via andra interfaces? röst? finns via stavar? kommunicera via gester? -> Går att koppla in t.ex gamepad (endast för Android, ej IOS)
+- Hur byter man scen i a-frame? -> det är möjligt http://stackoverflow.com/questions/38738147/how-to-load-a-new-scene-in-a-frame
+
+Öppna frågor: 
+- Unity eller inte? Licenser
+- I unity kan vi programmera i c# som blir javascript. Kan exportera scener till a-framedokument eller three.js-scene eller webGL.
+- a-frame får vi använda javascript (fungerar med react också t.ex.)
+
+Problem: 
+- Augmented reality. Om vi ska ha augmented reality måste vi ta in en video feed från en kamera. Problemet är att med mobiltelefon och cardboard
+eller liknande så är kameran blockerad. Vi måste då alltså på något sätt plugga in en extern kamera som sätts utanpå cardboarden t.ex. Detta
+gör att isåfall kommer appen inte vara lika tillgänglig för alla då man måste göra setup med kamera först. 
+
+Jag har även fått kämpa för att visa upp något från kameran inne i en a-frame scen. Det bästa jag lyckats med hittils är att strömma från 
+kameran till en "plane". Det verkar inte finnas något inbyggt sätt att sätta en statisk bakgrund. Detta kan påverka hur svårt det blir att
+klura ut hur vi ska placera ut 3d modeller i scenen. 
+
+En idé för att göra Augmented reality är att fästa en 360 graders kamera på användaren. Sedan används streamen från denna kameran till att göra
+en <a-sky></a-sky>. Sedan får man räkna ut hur långt bort i scenen man ska placera saker. 
+
+För att kunna "röra sig" naturligt i WebVr krävs att användaren har HTC Vive vilket kostar. Möjliga sätt att komma undan så man kan röra sig ändå är att 
+sätta ut punkter som användaren tittar på och sedan transporteras till. 
+
+För att låta användaren utföra "kommandon" så kan vi ha en svävande meny framför användar avataren och då kan användaren titta på ett alternativ för att utföra handlingen. 
+
+Idéen med att använda device motion för att låta användaren gå runt kan ev fungera. Dock så vill vi ju t.ex. inte att användaren ska flyttas när denne bara tittar runt
+(att titta runt kommer ge utslag på device motion) så vi måste komma på något sätt att skilja på detta. Kolla om rotation ingår i eventet? 
+
+Nätverk
+I testet med att ha flera användare i samma a-frame scen så skickade varje browser x-y-z data från ett event som spelar-elementet skapar. Denna data skickades till varje klient
+som uppdaterade rätt a-frame element med nu position. 
+
+Om vi ska ha fler användare i samma miljö bör vi dock implementera något slags client/server där klienterna bara skickar kommandon (t.ex. gå framåt) och server räknar ut ny state för scenen och skickar ut till alla klienter. 
+Det finns community komponent för att hindra så kameran inte rör sig när wasd knapparna trycks in, istället skapas event. Detta skulle vi kunna använda för att skicka kommandon till servern 
+som sedan räknar ut ny state och returnerar.
+
+Antagligen kommer synkronisering av data över server inte vara alltför komplext. Det är troligt att användarna kommer begränsas till att stå still och endast teleportera
+sig genom att kolla på ett element i scenen. Det enda som skulle kunna skapa komplexitet är om användarna kan påverka objekt i scenen så att de rör sig och rörelse-data 
+måste synkas mellan alla klienter.
+
+Språk-preferens? 
+
+Keywords:
+IOT, Virtual reality, Augmented reality

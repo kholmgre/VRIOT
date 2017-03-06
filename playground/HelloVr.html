@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Hello, World! • A-Frame</title>
+  <meta name="description" content="Hello, World! • A-Frame">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/0.5.0/aframe.min.js"></script>
+</head>
+
+<body>
+  <a-scene>
+    <a-assets>
+      <audio id="sound" src="sound.mp3"></audio>
+      <img id="space" src="space.png">
+      <img id="earth" src="earth-sumner.jpg">
+      <a-asset-item id="monkey" src="test.dae"></a-asset-item>
+    </a-assets>
+    <a-collada-model src="#monkey"></a-collada-model>
+    <a-sound src="#sound" autoplay="true" position="0 2 5" loop="true"></a-sound>
+    <a-sphere position="0 1.25 -1" radius="1" src="#earth"></a-sphere>
+    <a-sky src="#space"></a-sky>
+    <a-entity position="0 0 3.8">
+      <a-camera>
+        <a-animation attribute="position" dur="10000" easing="linear" to="10 5 -5" repeat="indefinite"></a-animation>
+      </a-camera>
+    </a-entity>
+  </a-scene>
+</body>
+
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello, World! • A-Frame</title>
+    <meta name="description" content="Hello camera!">
+    <style>
+        video {
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto !important;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1000;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/0.5.0/aframe.min.js"></script>
+    <script>
+        var devicesIds = [];
+
+        navigator.mediaDevices.enumerateDevices().then(function (devices) {
+            devices.forEach(function (device) {
+
+                if (device.kind == "videoinput") {
+                    devicesIds.push(device);
+                }
+            })
+
+            var videoId;
+
+            if (devicesIds.length === 1) {
+                videoId = devicesIds[0].deviceId;
+            } else {
+                videoId = devicesIds[1].deviceId;
+            }
+
+
+
+            navigator.getUserMedia({
+                audio: false,
+                video: { deviceId: videoId }
+            }, function (localMediaStream) {
+
+                var video = document.getElementById('kentucky-derby');
+
+                video.src = window.URL.createObjectURL(localMediaStream);
+
+                // Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
+                // See crbug.com/110938.
+                video.onloadedmetadata = function (e) {
+                    // Ready to go. Do some stuff.
+                };
+
+            }, function (error) {
+                console.log(JSON.stringify(error))
+            });
+
+        });
+
+        function fakeOnMessage() {
+            var el = document.getElementById('cube');
+            var currentPosition = el.getAttribute('position');
+
+            var animation = document.createElement('a-animation');
+            animation.setAttribute('dur', '2000');
+            animation.setAttribute('attribute', 'position');
+
+            function rand(endNumber){
+                return Math.floor(Math.random() * endNumber) + 1; 
+            }
+            
+            var newPos = rand(5).toString() + ' ' + rand(5).toString() + ' ' + rand(5).toString();
+
+            animation.setAttribute('to', newPos);
+            animation.setAttribute('fill', 'forwards');
+
+            el.appendChild(animation);
+        }
+
+        function faceOnMove() {
+
+        }
+
+        setInterval(fakeOnMessage, 5000);
+    </script>
+</head>
+
+<body>
+    <a-scene>
+        <a-assets>
+            <a-asset-item id="monkey" src="test.dae"></a-asset-item>
+            <video id="kentucky-derby" autoplay="true"></video>
+        </a-assets>
+        <a-sky src="#kentucky-derby" opacity="0.7"></a-sky>
+        <a-collada-model src="#monkey" position="2 5 0"></a-collada-model>
+        <a-box id="cube" opacity="1" color="red" position="0 1.6 14.06" rotation="0 0 0" scale="1 1 1"></a-box>
+        <a-entity position="0 0 0">
+            <a-camera>
+            </a-camera>
+        </a-entity>
+    </a-scene>
+</body>
+
+</html>
