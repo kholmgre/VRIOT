@@ -27,9 +27,37 @@
             }
         });
 
-        AFRAME.registerComponent('room-factory', {
+        AFRAME.registerComponent('game-loop', {
             init: () => {
+                setTimeout(() => {
+                    let samara = document.createElement('a-entity');
+                    samara.setAttribute('id', 'samara');
+                    samara.setAttribute('position', '3 3.5 3');
 
+                    let avatar = document.createElement('a-image');
+                    avatar.setAttribute('src', 'lol.png');
+                    avatar.setAttribute('position', '0 0 0');
+
+                    let sound = document.createElement('a-sound');
+                    sound.setAttribute('src', 'lol.mp3');
+                    sound.setAttribute('autoplay', 'true');
+                    sound.setAttribute('loop', 'infinite');
+
+                    let animation = document.createElement('a-animation');
+                    animation.setAttribute('attribute', 'position');
+                    animation.setAttribute('dur', '5000');
+                    animation.setAttribute('fill', 'forwards');
+                    let player = document.getElementById('player');
+                    animation.setAttribute('to', '0 3.5 0');
+
+                    samara.appendChild(avatar);
+                    samara.appendChild(sound);
+                    samara.appendChild(animation);
+
+                    let room = document.getElementById('1');
+
+                    room.appendChild(samara);
+                }, 5000);
             }
         });
 
@@ -77,18 +105,19 @@
 </head>
 
 <body>
-    <a-scene id="scene">
+    <a-scene id="scene" game-loop>
         <a-assets>
             <audio id="door" src="door.mp3"></audio>
             <image id="spy" src="spy.jpeg">
-                </audio>
+            <image id="lol" src="lol.png">
         </a-assets>
         <a-sky color="gray"></a-sky>
         <a-entity motion-tracker id="player" position="0 0 0">
             <a-camera look-controls wasd-controls position="0 1.83 0">
                 <a-entity id="opendoor" sound="src: #door"></a-entity>
                 <a-text game-timer color="black" position="-2.6 -1.2 -1.5" scale="0.2 0.2 0.2"></a-text>
-                <!--<a-image src="#spy" position="0 0 -2"></a-image>-->
+                <!--<img src="#lol" position="0 0 -2"></a-image>-->
+                
                 <a-entity cursor="fuse: true; fuseTimeout: 500" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
                     material="color: black; shader: flat">
                 </a-entity>
