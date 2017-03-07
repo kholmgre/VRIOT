@@ -6,6 +6,12 @@
     <title>Spy vs Spy</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/0.5.0/aframe.min.js"></script>
     <script>
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
+
         AFRAME.registerComponent('open-door', {
             init: function () {
                 this.el.addEventListener('click', function (evt) {
@@ -21,43 +27,62 @@
                         let newPos = { x: targetPos.x, y: targetPos.y, z: targetPos.z };
 
                         let playerElement = document.getElementById('player');
-                        playerElement.setAttribute('position', newPos);
+
+                        let moveAnimation = document.createElement('a-animation');
+                        moveAnimation.setAttribute('attribute', 'position');
+                        moveAnimation.setAttribute('dur', '2500');
+                        moveAnimation.setAttribute('fill', 'forwards');
+                        let doorPosition = this.parentEl.parentEl.getAttribute('position');
+
+                        // this is to not move the camera through the door
+
+                        if (doorPosition.x > 0)
+                            doorPosition.x = doorPosition.x - 0.20;
+
+                        if (doorPosition.z > 0)
+                            doorPosition.z = doorPosition.z - 0.20;
+
+                        let animationEndPosition = doorPosition.x + ' ' + playerElement.getAttribute('position').y + ' ' + doorPosition.z;
+                        moveAnimation.setAttribute('to', animationEndPosition);
+
+                        playerElement.appendChild(moveAnimation);
+
+                        setTimeout(() => {
+                            playerElement.setAttribute('position', newPos);
+
+                            let number = getRandomInt(0, 20);
+
+                            if (number === 19) {
+                                let samara = document.createElement('a-entity');
+                                samara.setAttribute('id', 'samara');
+                                samara.setAttribute('position', '3 3.5 3');
+
+                                let avatar = document.createElement('a-image');
+                                avatar.setAttribute('src', 'lol.png');
+                                avatar.setAttribute('position', '0 0 0');
+
+                                let sound = document.createElement('a-sound');
+                                sound.setAttribute('src', 'lol.mp3');
+                                sound.setAttribute('autoplay', 'true');
+                                sound.setAttribute('loop', 'infinite');
+
+                                let animation = document.createElement('a-animation');
+                                animation.setAttribute('attribute', 'position');
+                                animation.setAttribute('dur', '10000');
+                                animation.setAttribute('fill', 'forwards');
+                                animation.setAttribute('to', '0 3.5 0');
+
+                                samara.appendChild(avatar);
+                                samara.appendChild(sound);
+                                samara.appendChild(animation);
+
+                                let player = document.getElementById('player');
+
+                                player.appendChild(samara);
+                            }
+                        }, 2550);
                     }, 1200);
                 });
-            }
-        });
-
-        AFRAME.registerComponent('game-loop', {
-            init: () => {
-                setTimeout(() => {
-                    let samara = document.createElement('a-entity');
-                    samara.setAttribute('id', 'samara');
-                    samara.setAttribute('position', '3 3.5 3');
-
-                    let avatar = document.createElement('a-image');
-                    avatar.setAttribute('src', 'lol.png');
-                    avatar.setAttribute('position', '0 0 0');
-
-                    let sound = document.createElement('a-sound');
-                    sound.setAttribute('src', 'lol.mp3');
-                    sound.setAttribute('autoplay', 'true');
-                    sound.setAttribute('loop', 'infinite');
-
-                    let animation = document.createElement('a-animation');
-                    animation.setAttribute('attribute', 'position');
-                    animation.setAttribute('dur', '5000');
-                    animation.setAttribute('fill', 'forwards');
-                    let player = document.getElementById('player');
-                    animation.setAttribute('to', '0 3.5 0');
-
-                    samara.appendChild(avatar);
-                    samara.appendChild(sound);
-                    samara.appendChild(animation);
-
-                    let room = document.getElementById('1');
-
-                    room.appendChild(samara);
-                }, 5000);
             }
         });
 
@@ -97,27 +122,33 @@
         });
 
         AFRAME.registerComponent('game-timer', {
-            tick: function (time, timeDelta) {
-                this.el.setAttribute('value', new Date().toLocaleTimeString());
+            init: () => {
+                let time = 180;
+                setInterval(() => {
+
+                    time = time - 1;
+
+                    let timeElement = document.getElementById('timer');
+
+                    timeElement.setAttribute('value', time);
+                }, 1000);
             }
         });
     </script>
 </head>
 
 <body>
-    <a-scene id="scene" game-loop>
+    <a-scene id="scene">
         <a-assets>
             <audio id="door" src="door.mp3"></audio>
             <image id="spy" src="spy.jpeg">
-            <image id="lol" src="lol.png">
+                <image id="lol" src="lol.png">
         </a-assets>
         <a-sky color="gray"></a-sky>
         <a-entity motion-tracker id="player" position="0 0 0">
             <a-camera look-controls wasd-controls position="0 1.83 0">
                 <a-entity id="opendoor" sound="src: #door"></a-entity>
-                <a-text game-timer color="black" position="-2.6 -1.2 -1.5" scale="0.2 0.2 0.2"></a-text>
-                <!--<img src="#lol" position="0 0 -2"></a-image>-->
-                
+                <a-text id="timer" game-timer color="red" position="-2.6 -1.2 -1.5" scale="0.2 0.2 0.2"></a-text>
                 <a-entity cursor="fuse: true; fuseTimeout: 500" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
                     material="color: black; shader: flat">
                 </a-entity>
@@ -136,9 +167,12 @@
                     ,
                     { "Id": "2", "Directions": { "S": "1", "W": "3" }, "Colors": { "Floor": "#BCC9E5", "Wall": "#A0B8FF" } }
                     ,
-                    { "Id": "3", "Directions": { "E": "2" }, "Colors": { "Floor": "#DC9BBD", "Wall": "#FA74B3" } }
+                    { "Id": "3", "Directions": { "E": "2", "W": "4" }, "Colors": { "Floor": "#DC9BBD", "Wall": "#FA74B3" } },
+                    { "Id": "4", "Directions": { "N": "5", "E": "3" }, "Colors": { "Floor": "#DB9FC0", "Wall": "#F973B2" } },
+                    { "Id": "5", "Directions": { "S": "4" }, "Colors": { "Floor": "#F2FBD0", "Wall": "#E4FCA4" } }
                 ]
-            }
+            };
+
             function CreateRooms(template) {
 
                 function getPosition(direction) {
@@ -157,6 +191,27 @@
                             break;
                         case 'W':
                             position.z = '5';
+                            break;
+                    }
+
+                    return position.x + ' ' + position.y + ' ' + position.z;
+                }
+
+                function getDoorknobPosition(direction) {
+                    let position = { x: '0.6', y: '0', z: '0' }
+
+                    switch (direction) {
+                        case 'N':
+                            position.z = "-0.01";
+                            break;
+                        case 'S':
+                            position.z = "0.01";
+                            break;
+                        case 'E':
+                            position.z = '0.01';
+                            break;
+                        case 'W':
+                            position.z = '-0.01';
                             break;
                     }
 
@@ -197,14 +252,24 @@
                     wall.setAttribute('position', getPosition(direction));
 
                     let door = document.createElement('a-plane');
-                    door.setAttribute('color', '#000000');
-                    door.setAttribute('open-door', '');
-                    door.setAttribute('target', targetRoomId);
+                    door.setAttribute('color', '#FF7562');
                     door.setAttribute('position', '0 0 0');
                     door.setAttribute('rotation', getRotation(direction));
                     door.setAttribute('height', '4');
                     door.setAttribute('width', '2');
                     door.setAttribute('side', 'double');
+
+                    let doorKnob = document.createElement('a-circle');
+                    doorKnob.setAttribute('color', '#000000');
+                    doorKnob.setAttribute('open-door', '');
+                    doorKnob.setAttribute('target', targetRoomId);
+                    doorKnob.setAttribute('position', getDoorknobPosition(direction));
+                    doorKnob.setAttribute('height', '1');
+                    doorKnob.setAttribute('width', '1');
+                    doorKnob.setAttribute('radius', '0.05');
+                    doorKnob.setAttribute('side', 'double');
+
+                    door.appendChild(doorKnob);
 
                     let wall1 = document.createElement('a-plane');
                     wall1.setAttribute('color', color);
