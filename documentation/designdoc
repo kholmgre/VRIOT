@@ -103,6 +103,8 @@ Antagligen kommer synkronisering av data över server inte vara alltför komplex
 sig genom att kolla på ett element i scenen. Det enda som skulle kunna skapa komplexitet är om användarna kan påverka objekt i scenen så att de rör sig och rörelse-data 
 måste synkas mellan alla klienter.
 
+
+
 Språk-preferens? 
 
 Keywords:
