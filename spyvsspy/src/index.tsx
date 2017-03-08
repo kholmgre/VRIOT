@@ -60,26 +60,6 @@ AFRAME.registerComponent('close-inventory-listener', {
     }
 });
 
-AFRAME.registerComponent('game-timer', {
-    init: () => {
-        let time = 180;
-        setInterval(() => {
-
-            time = time - 1;
-
-            let timeElement = document.getElementById('timer');
-
-            timeElement.setAttribute('value', time.toString());
-        }, 1000);
-    }
-});
-
-AFRAME.registerComponent('player-pos', {
-    init: function(evt: any){
-        // setInterval(() => {console.log(this.el.getAttribute('position'));}, 1000);
-    }
-})
-
 window.addEventListener("load", function () {
 
     socket.emit('join', playerName);
@@ -142,7 +122,8 @@ window.addEventListener("load", function () {
         enemyElement.appendChild(enemyAvatar);
         let roomElement = document.getElementById(state.playerData.Room);
         let pos: any = roomElement.getAttribute('position');
-        pos.y = pos.y + 2.0;
+        pos.y = pos.y + 2;
+        pos.z = pos.z + 2;
         enemyElement.setAttribute('position', pos);
 
         scene.appendChild(enemyElement);
@@ -268,11 +249,12 @@ window.addEventListener("load", function () {
             }, 1200);
         } else {
             let enemyElement = document.getElementById(state.player);
-
             let roomElement = document.getElementById(state.move.to.id);
-            let newPos: any = roomElement.getAttribute('position');
-            newPos.y = newPos.y + 2;
-            enemyElement.setAttribute('position', newPos);
+            let roomPos: any = roomElement.getAttribute('position');
+            roomPos.y = roomPos.y + 2;
+            roomPos.z = roomPos.z + 2;
+
+            enemyElement.setAttribute('position', roomPos);
         }
     });
 
