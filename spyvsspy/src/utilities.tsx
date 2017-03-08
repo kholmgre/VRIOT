@@ -14,4 +14,18 @@ export class Utilities {
         return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
             s4() + '-' + s4() + s4() + s4();
     }
+    static getOppositeDirection(direction: string){
+        switch(direction){
+            case 'N':
+                return 'S';
+            case 'S':
+                return 'N';
+            case 'W':
+                return 'E';
+            case 'E':
+                return 'W';
+            default: 
+                return 'Unkown';
+        }
+    }
 }

@@ -22,7 +22,7 @@ export class LevelFactory {
             return position.x + ' ' + position.y + ' ' + position.z;
         }
 
-        function getDoorknobPosition(direction: string) {
+        function getdoorknobPosition(direction: string) {
             let position = { x: '0.6', y: '0', z: '0' }
 
             switch (direction) {
@@ -75,27 +75,31 @@ export class LevelFactory {
 
             let wall = document.createElement('a-entity');
             wall.setAttribute('position', getPosition(direction));
+            wall.setAttribute('target', targetRoomId);
+            wall.setAttribute('direction', direction);
+            wall.setAttribute('id', targetRoomId + currentRoomId);
+            wall.setAttribute('type', 'wallcontainer');
 
             let door = document.createElement('a-plane');
             door.setAttribute('color', '#FF7562');
             door.setAttribute('position', '0 0 0');
+            door.setAttribute('type', 'door');
             door.setAttribute('rotation', getRotation(direction));
             door.setAttribute('height', '4');
             door.setAttribute('width', '2');
             door.setAttribute('side', 'double');
-            door.setAttribute('id', targetRoomId + currentRoomId);
 
-            let doorKnob = document.createElement('a-circle');
-            doorKnob.setAttribute('color', '#000000');
-            doorKnob.setAttribute('open-door', '');
-            doorKnob.setAttribute('target', targetRoomId);
-            doorKnob.setAttribute('position', getDoorknobPosition(direction));
-            doorKnob.setAttribute('height', '1');
-            doorKnob.setAttribute('width', '1');
-            doorKnob.setAttribute('radius', '0.05');
-            doorKnob.setAttribute('side', 'double');
+            let doorknob = document.createElement('a-circle');
+            doorknob.setAttribute('color', '#000000');
+            doorknob.setAttribute('type', 'doorknob');
+            doorknob.setAttribute('open-door', '');
+            doorknob.setAttribute('position', getdoorknobPosition(direction));
+            doorknob.setAttribute('height', '1');
+            doorknob.setAttribute('width', '1');
+            doorknob.setAttribute('radius', '0.05');
+            doorknob.setAttribute('side', 'double');
 
-            door.appendChild(doorKnob);
+            door.appendChild(doorknob);
 
             let wall1 = document.createElement('a-plane');
             wall1.setAttribute('color', color);

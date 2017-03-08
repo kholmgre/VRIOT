@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Spy vs Spy 2</title>
+    <title>Sogeti</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/0.5.0/aframe.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.slim.js"></script>
     <script src="dist/bundle.js"></script>
@@ -17,10 +17,10 @@
             <image id="lol" src="lol.png"></image>
         </a-assets>
         <a-sky color="gray"></a-sky>
-        <a-entity motion-tracker id="player" position="0 -50 0">
+        <a-entity motion-tracker id="player" position="0 -50 0" player-pos>
             <a-camera look-controls wasd-controls position="0 1.83 0">
                 <a-entity id="opendoor" sound="src: #door" position="0 0 -0.5"></a-entity>
-                <a-text id="timer" game-timer color="red" position="-2.6 -1.2 -1.5" scale="0.2 0.2 0.2"></a-text>
+                <a-text id="timer" game-timer color="red" position="-2.6 -1.2 -1.5" scale="0.1 0.1 0.1"></a-text>
                 <a-entity cursor="fuse: true; fuseTimeout: 500" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
                     material="color: black; shader: flat">
                 </a-entity>

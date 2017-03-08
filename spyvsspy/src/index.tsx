@@ -5,16 +5,23 @@ declare var AFRAME: any;
 
 let socket = io.connect('http://localhost:3000', { reconnection: false });
 let playerName = Utilities.generateGuid();
+let scareUsers: boolean = false;
 
 AFRAME.registerComponent('open-door', {
     init: function () {
         this.el.addEventListener('click', function (evt: any) {
 
-            let target = this.getAttribute('target');
+            let target = '';
 
             let playerElement = document.getElementById('player');
 
-            socket.emit('player-move', { currentRoom: playerElement.getAttribute('currentroom'), targetRoom: target, player: playerName, doorElementId: this.parentEl.getAttribute('id') });
+            if (this.getAttribute('type') === 'door') {
+                target = this.parentEl.getAttribute('target');
+            } else {
+                target = this.parentEl.parentEl.getAttribute('target');
+            }
+
+            socket.emit('player-move', { currentRoom: playerElement.getAttribute('currentroom'), targetRoom: target, player: playerName });
         });
     }
 });
@@ -46,7 +53,6 @@ AFRAME.registerComponent('open-inventory-listener', {
 AFRAME.registerComponent('close-inventory-listener', {
     init: function () {
         this.el.addEventListener('click', function (evt: any) {
-            console.log('close inventory');
             let inventoryElement = document.getElementById('inventory');
 
             inventoryElement.parentNode.removeChild(inventoryElement);
@@ -67,6 +73,12 @@ AFRAME.registerComponent('game-timer', {
         }, 1000);
     }
 });
+
+AFRAME.registerComponent('player-pos', {
+    init: function(evt: any){
+        // setInterval(() => {console.log(this.el.getAttribute('position'));}, 1000);
+    }
+})
 
 window.addEventListener("load", function () {
 
@@ -138,15 +150,45 @@ window.addEventListener("load", function () {
 
     });
 
+    /* 
+     * This event notifies the all clients that a door has been opened and they should update
+     * the dom to reflect this. The door should turn black to signify it has been opened (both in the 
+     * room where the door was opened but also in the connecting room). This logic could possibly be
+     * handled in the player-moved event.
+    */
     socket.on('door-opened', function (data: any) {
-        // TODO: stop server from sending?
+        // TODO: only send to clients except sender client. 
         if (data.sender === playerName)
             return;
 
-        let targetDoor: any = document.getElementById(data.doorId);
-        targetDoor.setAttribute('color', '#000000');
+        let fromWall: any = document.getElementById(data.moveInfo.from.id).querySelectorAll('[type=wallcontainer]')[0];
+        let fromDoor: any = fromWall.querySelectorAll('[type=door]')[0];
+        let fromdoorknob: any = fromWall.querySelectorAll('[type=doorknob]')[0];
+
+        let roomTargetId = fromWall.getAttribute('target');
+
+        let targetRoom = document.getElementById(roomTargetId);
+        let toWall: any = targetRoom.querySelectorAll('[type=wallcontainer][direction=' + Utilities.getOppositeDirection(fromWall.getAttribute('direction')) + ']')[0];
+        let toDoor: any = toWall.querySelectorAll('[type=door]')[0];
+        let todoorknob: any = toWall.querySelectorAll('[type=doorknob]')[0];
+        toDoor.setAttribute('color', '#000000');
+
+        // This is not a very good solution but it should work atm. The issue it solves is that after the player
+        // had looked at the doorknob and started the move animation, the door got the open-door component and would
+        // emit the player-move event again wich was not correct behaviour
+        setTimeout(() => {
+            // If the user looks at the door it will get transported to correc target 
+            toDoor.setAttribute('open-door', '');
+            fromDoor.setAttribute('open-door', '');
+        }, 2000);
+
+        // TODO: remove doorknob elements in connecting rooms..
     });
 
+    /*
+    * This event should notify the sender client that it is ok to move the player to a new room and location (and play animation for example).
+    * The other clients will use this event do for example display the user avatar if they are in the same room. 
+    */
     socket.on('player-moved', function (state: any) {
 
         // Separate this logic?
@@ -155,25 +197,29 @@ window.addEventListener("load", function () {
 
             entity.components.sound.playSound();
 
+            let playerElement: any = document.getElementById('player');
+            playerElement.setAttribute('currentroom', state.move.to.id);
+
             setTimeout(() => {
-                let target = document.getElementById(state.room);
-                let targetPos: any = target.getAttribute('position');
+                let targetRoom = document.getElementById(state.move.to.id);
+                let targetRoomPos: any = targetRoom.getAttribute('position');
 
-                let newPos: any = { x: targetPos.x, y: targetPos.y, z: targetPos.z };
-
-                let playerElement: any = document.getElementById('player');
+                let playerNewPos: any = { x: targetRoomPos.x, y: targetRoomPos.y, z: targetRoomPos.z };
 
                 let moveAnimation = document.createElement('a-animation');
                 moveAnimation.setAttribute('attribute', 'position');
-                moveAnimation.setAttribute('dur', '2500');
+                // NOTE!!!! If this duration is higher, the player will not be moved to the next room. It must be lower than the milliseconds intervall for the nested setTimeout that actually changes the 
+                // players position
+                moveAnimation.setAttribute('dur', '2400');
                 moveAnimation.setAttribute('fill', 'forwards');
 
-                let targetDoor: any = document.getElementById(state.doorElementId);
-                targetDoor.setAttribute('color', '#000000');
+                let targetWallInCurrentRoom: any = document.getElementById(state.move.from.id).querySelectorAll('[direction=' + state.move.from.direction + ']')[0];
+                let targetDoorInCurrentRoom: any = targetWallInCurrentRoom.querySelectorAll('[type=door]')[0];
+                targetDoorInCurrentRoom.setAttribute('color', '#000000');
 
-                socket.emit('door-opened', { doorId: targetDoor.getAttribute('id') });
+                socket.emit('door-opened', { moveInfo: state.move });
 
-                let doorPosition = targetDoor.parentEl.getAttribute('position');
+                let doorPosition = targetWallInCurrentRoom.getAttribute('position');
 
                 // this is to not move the camera through the door
 
@@ -186,22 +232,15 @@ window.addEventListener("load", function () {
                 let animationEndPosition = doorPosition.x + ' ' + playerElement.getAttribute('position').y + ' ' + doorPosition.z;
                 moveAnimation.setAttribute('to', animationEndPosition);
 
-                // Set state instead?
-                // if (this.getAttribute('opened') === 'false') {
-                //     this.setAttribute('opened', 'true');
-                //     this.parentEl.parentEl.setAttribute('color', '#000000');
-                // }
-
-                // this.parentEl.setAttribute('color', '#000000');
-
                 playerElement.appendChild(moveAnimation);
 
                 setTimeout(() => {
-                    playerElement.setAttribute('position', newPos);
 
                     let number = Utilities.getRandomInt(0, 20);
 
-                    if (number === 19) {
+                    playerElement.setAttribute('position', playerNewPos);
+
+                    if (number === 19 && scareUsers === true) {
                         let samara = document.createElement('a-entity');
                         samara.setAttribute('id', 'samara');
                         samara.setAttribute('position', '3 3.5 3');
@@ -229,7 +268,7 @@ window.addEventListener("load", function () {
 
                         player.appendChild(samara);
                     }
-                }, 2550);
+                }, 2500);
             }, 1200);
         } else {
             let enemyElement = document.getElementById(state.player);
