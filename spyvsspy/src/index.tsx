@@ -3,10 +3,8 @@ import { LevelFactory } from './LevelFactory';
 declare var io: any;
 declare var AFRAME: any;
 
-let playerName = Utilities.generateGuid();
-console.debug(playerName);
-
 let socket = io.connect('http://localhost:3000', { reconnection: false });
+let playerName = Utilities.generateGuid();
 
 AFRAME.registerComponent('open-door', {
     init: function () {
@@ -74,49 +72,84 @@ window.addEventListener("load", function () {
 
     socket.emit('join', playerName);
 
-    socket.on('joined', function (state: any) {
+    socket.on('you-joined', function (data: any) {
+
+        console.debug('you have joined the game');
 
         let scene = document.getElementById('scene');
 
-        if (state.playerData.Name !== playerName) {
-            // store somewhere? react on disconnect and other states?
+        let rooms = LevelFactory.createRooms(data.template);
+
+        for (let player in data.players) {
+            if (player === playerName)
+                continue;
 
             let enemyElement = document.createElement('a-entity');
-            enemyElement.setAttribute('id', state.playerData.Name);
+            enemyElement.setAttribute('id', data.players[player].Name);
 
             let enemyAvatar = document.createElement('a-image');
             enemyAvatar.setAttribute('src', 'spy.jpeg');
             enemyAvatar.setAttribute('side', 'double');
             enemyAvatar.setAttribute('visible', 'true');
-            enemyAvatar.setAttribute('position', '0 0 -2');
 
             enemyElement.appendChild(enemyAvatar);
-            let roomElement = document.getElementById(state.playerData.Room);
-            enemyElement.setAttribute('position', roomElement.getAttribute('position'));
-
+            let roomElement = document.getElementById(data.players[player].Room);
+            let pos: any = roomElement.getAttribute('position');
+            pos.y = 1.8;
+            enemyElement.setAttribute('position', pos);
             scene.appendChild(enemyElement);
-        } else {
-            let rooms = LevelFactory.createRooms(state.template);
-
-            rooms.forEach((room: any) => {
-                if (room.getAttribute("id") === state.players[playerName].Room) {
-                    let playerElement = document.getElementById('player');
-                    playerElement.setAttribute('currentroom', room.id);
-
-                    let roomPos = room.components.position.attrValue;
-
-                    playerElement.setAttribute('position', roomPos);
-                }
-
-                scene.appendChild(room);
-            });
         }
+
+        rooms.forEach((room: any) => {
+            if (room.getAttribute("id") === data.players[playerName].Room) {
+                let playerElement = document.getElementById('player');
+                playerElement.setAttribute('currentroom', room.id);
+
+                let roomPos = room.components.position.attrValue;
+
+                playerElement.setAttribute('position', roomPos);
+            }
+
+            scene.appendChild(room);
+        });
+    });
+
+    socket.on('player-joined', function (state: any) {
+
+        console.debug(state.playerData.Name + ' have joined the game');
+
+        let scene = document.getElementById('scene');
+
+        let enemyElement = document.createElement('a-entity');
+        enemyElement.setAttribute('id', state.playerData.Name);
+
+        let enemyAvatar = document.createElement('a-image');
+        enemyAvatar.setAttribute('src', 'spy.jpeg');
+        enemyAvatar.setAttribute('side', 'double');
+        enemyAvatar.setAttribute('visible', 'true');
+
+        enemyElement.appendChild(enemyAvatar);
+        let roomElement = document.getElementById(state.playerData.Room);
+        let pos: any = roomElement.getAttribute('position');
+        pos.y = 1.8;
+        enemyElement.setAttribute('position', pos);
+
+        scene.appendChild(enemyElement);
+
+    });
+
+    socket.on('door-opened', function (data: any) {
+        // TODO: stop server from sending?
+        if (data.sender === playerName)
+            return;
+
+        let targetDoor: any = document.getElementById(data.doorId);
+        targetDoor.setAttribute('color', '#000000');
     });
 
     socket.on('player-moved', function (state: any) {
 
-        console.log(state);
-
+        // Separate this logic?
         if (state.player === playerName) {
             let entity: any = document.querySelector('[sound]');
 
@@ -136,6 +169,9 @@ window.addEventListener("load", function () {
                 moveAnimation.setAttribute('fill', 'forwards');
 
                 let targetDoor: any = document.getElementById(state.doorElementId);
+                targetDoor.setAttribute('color', '#000000');
+
+                socket.emit('door-opened', { doorId: targetDoor.getAttribute('id') });
 
                 let doorPosition = targetDoor.parentEl.getAttribute('position');
 
@@ -199,8 +235,18 @@ window.addEventListener("load", function () {
             let enemyElement = document.getElementById(state.player);
 
             let roomElement = document.getElementById(state.room);
-            enemyElement.setAttribute('position', roomElement.getAttribute('position'));
+            let newPos: any = roomElement.getAttribute('position');
+            newPos.y = newPos.y + 2;
+            enemyElement.setAttribute('position', newPos);
         }
+    });
+
+    socket.on('player-left', function (data: any) {
+        console.debug('removing ' + data + ' element');
+        let enemyEntity: any = document.getElementById(data);
+        console.debug('parentEl ' + enemyEntity.parentEl);
+        enemyEntity.parentEl.removeChild(enemyEntity);
+        console.debug(data + ' has left the building.');
     });
 });
 
