@@ -71,35 +71,40 @@ export class LevelFactory {
             return wall;
         }
 
-        function createConnectingWall(currentRoomId: string, targetRoomId: string, direction: string, color: string) {
+        function createConnectingWall(currentRoomId: string, door: any, direction: string, color: string) {
 
             let wall = document.createElement('a-entity');
             wall.setAttribute('position', getPosition(direction));
-            wall.setAttribute('target', targetRoomId);
+            wall.setAttribute('target', door.TargetRoom);
             wall.setAttribute('direction', direction);
-            wall.setAttribute('id', targetRoomId + currentRoomId);
+            wall.setAttribute('id', door.TargetRoom + currentRoomId);
             wall.setAttribute('type', 'wallcontainer');
 
-            let door = document.createElement('a-plane');
-            door.setAttribute('color', '#FF7562');
-            door.setAttribute('position', '0 0 0');
-            door.setAttribute('type', 'door');
-            door.setAttribute('rotation', getRotation(direction));
-            door.setAttribute('height', '4');
-            door.setAttribute('width', '2');
-            door.setAttribute('side', 'double');
+            let doorEl = document.createElement('a-plane');
+            doorEl.setAttribute('position', '0 0 0');
+            doorEl.setAttribute('type', 'door');
+            doorEl.setAttribute('rotation', getRotation(direction));
+            doorEl.setAttribute('height', '4');
+            doorEl.setAttribute('width', '2');
+            doorEl.setAttribute('side', 'double');
 
-            let doorknob = document.createElement('a-circle');
-            doorknob.setAttribute('color', '#000000');
-            doorknob.setAttribute('type', 'doorknob');
-            doorknob.setAttribute('open-door', '');
-            doorknob.setAttribute('position', getdoorknobPosition(direction));
-            doorknob.setAttribute('height', '1');
-            doorknob.setAttribute('width', '1');
-            doorknob.setAttribute('radius', '0.05');
-            doorknob.setAttribute('side', 'double');
+            if (door.Open === true) {
+                doorEl.setAttribute('color', '#000000');
+                doorEl.setAttribute('open-door', '');
+            } else {
+                doorEl.setAttribute('color', '#FF7562');
 
-            door.appendChild(doorknob);
+                let doorknob = document.createElement('a-circle');
+                doorknob.setAttribute('color', '#000000');
+                doorknob.setAttribute('type', 'doorknob');
+                doorknob.setAttribute('open-door', '');
+                doorknob.setAttribute('position', getdoorknobPosition(direction));
+                doorknob.setAttribute('height', '1');
+                doorknob.setAttribute('width', '1');
+                doorknob.setAttribute('radius', '0.05');
+                doorknob.setAttribute('side', 'double');
+                doorEl.appendChild(doorknob);
+            }
 
             let wall1 = document.createElement('a-plane');
             wall1.setAttribute('color', color);
@@ -130,7 +135,7 @@ export class LevelFactory {
             wall2.setAttribute('width', '4');
             wall2.setAttribute('side', 'double');
 
-            wall.appendChild(door);
+            wall.appendChild(doorEl);
             wall.appendChild(wall1);
             wall.appendChild(wall2);
 
@@ -164,8 +169,11 @@ export class LevelFactory {
             let createdWalls: any = { "N": "", "S": "", "W": "", "E": "" };
 
             // Create connecting rooms
-            for (let direction in room.Directions) {
-                let wall = createConnectingWall(room.Id, room.Directions[direction], direction, room.Colors.Wall);
+            if (room.Doors === null || room.Doors === undefined)
+                throw 'A room needs some doors! Invalid map.';
+
+            for (let direction in room.Doors) {
+                let wall = createConnectingWall(room.Id, room.Doors[direction], direction, room.Colors.Wall);
                 createdWalls[direction] = wall;
                 roomElement.appendChild(wall);
             }

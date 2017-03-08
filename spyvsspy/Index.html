@@ -6,6 +6,7 @@
     <title>Sogeti</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/0.5.0/aframe.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.slim.js"></script>
+    <script src="dist/aframe-sprite-component.min.js"></script>
     <script src="dist/bundle.js"></script>
 </head>
 
@@ -17,7 +18,7 @@
             <image id="lol" src="lol.png"></image>
         </a-assets>
         <a-sky color="gray"></a-sky>
-        <a-entity motion-tracker id="player" position="0 -50 0" player-pos>
+        <a-entity motion-tracker id="player" player-pos>
             <a-camera look-controls wasd-controls position="0 1.83 0">
                 <a-entity id="opendoor" sound="src: #door" position="0 0 -0.5"></a-entity>
                 <a-text id="timer" game-timer color="red" position="-2.6 -1.2 -1.5" scale="0.1 0.1 0.1"></a-text>

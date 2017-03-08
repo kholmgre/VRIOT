@@ -92,26 +92,6 @@ window.addEventListener("load", function () {
 
         let rooms = LevelFactory.createRooms(data.template);
 
-        for (let player in data.players) {
-            if (player === playerName)
-                continue;
-
-            let enemyElement = document.createElement('a-entity');
-            enemyElement.setAttribute('id', data.players[player].Name);
-
-            let enemyAvatar = document.createElement('a-image');
-            enemyAvatar.setAttribute('src', 'spy.jpeg');
-            enemyAvatar.setAttribute('side', 'double');
-            enemyAvatar.setAttribute('visible', 'true');
-
-            enemyElement.appendChild(enemyAvatar);
-            let roomElement = document.getElementById(data.players[player].Room);
-            let pos: any = roomElement.getAttribute('position');
-            pos.y = 1.8;
-            enemyElement.setAttribute('position', pos);
-            scene.appendChild(enemyElement);
-        }
-
         rooms.forEach((room: any) => {
             if (room.getAttribute("id") === data.players[playerName].Room) {
                 let playerElement = document.getElementById('player');
@@ -124,6 +104,27 @@ window.addEventListener("load", function () {
 
             scene.appendChild(room);
         });
+
+        // Hack because the dom had to update with the changes in the room forEach above.. Use mutation observers? Something native to a-frame?
+        setTimeout(() => {
+            for (let enemy in data.players) {
+            if (enemy === playerName)
+                continue;
+
+            let enemyElement = document.createElement('a-entity');
+            enemyElement.setAttribute('id', data.players[enemy].Name);
+
+            let enemyAvatar = document.createElement('a-sprite');
+            enemyAvatar.setAttribute('src', 'spy' + Utilities.getRandomInt(1, 3) + '.png');
+
+            enemyElement.appendChild(enemyAvatar);
+            let roomElement = document.getElementById(data.players[enemy].Room);
+            let pos: any = roomElement.getAttribute('position');
+            pos.y = pos.y + 2;
+            enemyElement.setAttribute('position', pos);
+            scene.appendChild(enemyElement);
+        }
+        }, 10); 
     });
 
     socket.on('player-joined', function (state: any) {
@@ -135,19 +136,16 @@ window.addEventListener("load", function () {
         let enemyElement = document.createElement('a-entity');
         enemyElement.setAttribute('id', state.playerData.Name);
 
-        let enemyAvatar = document.createElement('a-image');
-        enemyAvatar.setAttribute('src', 'spy.jpeg');
-        enemyAvatar.setAttribute('side', 'double');
-        enemyAvatar.setAttribute('visible', 'true');
+        let enemyAvatar = document.createElement('a-sprite');
+        enemyAvatar.setAttribute('src', 'spy' + Utilities.getRandomInt(1, 3) + '.png');
 
         enemyElement.appendChild(enemyAvatar);
         let roomElement = document.getElementById(state.playerData.Room);
         let pos: any = roomElement.getAttribute('position');
-        pos.y = 1.8;
+        pos.y = pos.y + 2.0;
         enemyElement.setAttribute('position', pos);
 
         scene.appendChild(enemyElement);
-
     });
 
     /* 
@@ -158,8 +156,6 @@ window.addEventListener("load", function () {
     */
     socket.on('door-opened', function (data: any) {
         // TODO: only send to clients except sender client. 
-        if (data.sender === playerName)
-            return;
 
         let fromWall: any = document.getElementById(data.moveInfo.from.id).querySelectorAll('[type=wallcontainer]')[0];
         let fromDoor: any = fromWall.querySelectorAll('[type=door]')[0];
@@ -273,7 +269,7 @@ window.addEventListener("load", function () {
         } else {
             let enemyElement = document.getElementById(state.player);
 
-            let roomElement = document.getElementById(state.room);
+            let roomElement = document.getElementById(state.move.to.id);
             let newPos: any = roomElement.getAttribute('position');
             newPos.y = newPos.y + 2;
             enemyElement.setAttribute('position', newPos);

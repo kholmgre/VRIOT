@@ -20,10 +20,12 @@ let template = {
 	},
 	rooms: [
 		// { "Id": "1", "Directions": { "N": "2", "S": "3", "E": "4", "W": "5" }, "Colors": { "Floor": "#F5EBCD", "Wall": "#FFD79F" } }
-		{ "Id": "1", "Directions": { "N": "2" }, "Colors": { "Floor": "#F5EBCD", "Wall": "#FFD79F" } }
-		,
-		// { "Id": "2", "Directions": { "W": "6", "E": "7", "S": "1" }, "Colors": { "Floor": "#BCC9E5", "Wall": "#A0B8FF" } }
-		{ "Id": "2", "Directions": { "S": "1" }, "Colors": { "Floor": "#BCC9E5", "Wall": "#A0B8FF" } }
+		{ 
+			"Id": "1", "Doors": { "N": { "TargetRoom": "2", "Open": false } }, "Colors": { "Floor": "#F5EBCD", "Wall": "#FFD79F" } 
+		},
+		{
+			"Id": "2", "Doors": { "S": { "TargetRoom": "1", "Open": false } }, "Colors": { "Floor": "#BCC9E5", "Wall": "#A0B8FF" }
+		}
 		// 	,
 		// 	{ "Id": "3", "Directions": { "N": "1", "W": "8", "E": "9" }, "Colors": { "Floor": "#DC9BBD", "Wall": "#FA74B3" } },
 		// 	{ "Id": "4", "Directions": { "N": "7", "E": "1", "S": "9" }, "Colors": { "Floor": "#DB9FC0", "Wall": "#F973B2" } },
@@ -36,12 +38,6 @@ let template = {
 };
 
 let state = { players: {}, template: template }
-
-function getRandomInt(min, max) {
-	min = Math.ceil(min);
-	max = Math.floor(max);
-	return Math.floor(Math.random() * (max - min)) + min;
-}
 
 io.on('connection', function (socket) {
 
@@ -60,7 +56,7 @@ io.on('connection', function (socket) {
 		state.players[data] = { Name: data, Room: randomRoom.toString() };
 
 		console.log(data + ' registered, is in room ' + state.players[data].Room);
-		console.log(Object.keys(state.players).length);
+		console.log('Current players ' + Object.keys(state.players).length);
 		socket.emit('you-joined', { template: state.template, playerData: state.players[data], players: state.players });
 		socket.broadcast.emit('player-joined', { template: state.template, playerData: state.players[data], players: state.players });
 	});
@@ -74,19 +70,25 @@ io.on('connection', function (socket) {
 
 		console.log('input player-move ' + JSON.stringify(input));
 
-		let currentRoom = state.template.rooms.filter((r) => { return r.Id === input.currentRoom });
-		let targetRoom = state.template.rooms.filter((r) => { return r.Id === input.targetRoom });
+		let currentRoom = state.template.rooms.filter((r) => { return r.Id === input.currentRoom })[0];
+		let targetRoom = state.template.rooms.filter((r) => { return r.Id === input.targetRoom })[0];
 
 		let fromDirection = '';
-		for(let dir in currentRoom[0].Directions){
-			if(currentRoom[0].Directions[dir] === input.targetRoom)
+		for (let dir in currentRoom.Doors) {
+			if (currentRoom.Doors[dir].TargetRoom === input.targetRoom){
 				fromDirection = dir;
+				currentRoom.Doors[dir].Open = true;
+				console.log('opening door ' + dir);
+			}
 		}
 
 		let toDirection = '';
-		for(let dir in targetRoom[0].Directions){
-			if(targetRoom[0].Directions[dir] === input.currentRoom)
+		for (let dir in targetRoom.Doors) {
+			if (targetRoom.Doors[dir].TargetRoom === input.currentRoom){
 				toDirection = dir;
+				targetRoom.Doors[dir].Open = true;
+				console.log('opening door ' + dir);
+			}
 		}
 
 		let output = {
@@ -96,17 +98,22 @@ io.on('connection', function (socket) {
 			}
 		};
 
-		console.log('output player-move ' + JSON.stringify(output));
+		// console.log('output player-move ' + JSON.stringify(output));
 
-		console.log(input.player + ' moved to ' + input.targetRoom);
+		// console.log(input.player + ' moved to ' + input.targetRoom);
+		console.log('state changed: ' + JSON.stringify(state.template.rooms));
 
 		io.sockets.emit('player-moved', output);
 	});
 
 	socket.on('disconnect', function () {
 		delete state.players[userName];
-		console.log(Object.keys(state.players).length);
 		socket.broadcast.emit('player-left', userName);
+		console.log(Object.keys(state.players).length + ' players on server.');
+
+		let keys = Object.keys(state.players);
+		let combined = keys.reduce((acc, val) => { return acc + ' ' + val; }, 'Players: ');
+		console.log(combined);
 	});
 });
 
