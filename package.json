@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "http-server",
-    "multiplayer": "node playground/server.js",
-    "buildspy": "webpack -w"
+    "spyvsspywebpack": "webpack -w",
+    "spyvsspygameserver": "node spyvsspy/Game-Server.js",
+    "spyvsspycontentserver": "node spyvsspy/Content-Server.js"
   },
   "repository": {
     "type": "git",
