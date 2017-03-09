@@ -3,12 +3,10 @@ var path = require('path');
 var app = express()
 app.set('etag', false);
 
-// var publicPath = path.resolve(__dirname, '\\spyvsspy');
-
 app.use(express.static(__dirname));
 
 app.get('/', function (req, res) {
-  res.sendFile('Index.html');
+  res.sendFile(path.join(__dirname + '/Index.html'));
 });
 
 app.listen(8080);

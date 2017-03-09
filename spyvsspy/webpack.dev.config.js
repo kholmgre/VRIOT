@@ -2,7 +2,7 @@
 var webpack = require('webpack');
 
 module.exports = {
-    entry: "./src/index.tsx",
+    entry: "./spyvsspy/src/index.tsx",
     output: {
         filename: "bundle.js",
         path: __dirname + "/dist"
