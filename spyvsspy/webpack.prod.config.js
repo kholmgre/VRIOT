@@ -19,7 +19,7 @@ module.exports = {
     plugins: [
         new webpack.DefinePlugin({
             'process.env': {
-                'API_URL': "\"http://13.81.210.106:3000/\""
+                'API_URL': "\"http://40.68.89.76:3000/\""
             }
         })
     ],
