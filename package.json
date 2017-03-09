@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "http-server",
-    "spyvsspywebpack": "webpack -w",
+    "spyvsspywebpack": "webpack -w --config spyvsspy/webpack.dev.config.js",
+    "spyvsspybuildproduction": "webpack --config spyvsspy/webpack.prod.config.js",
+    "spyvsspybuilddev": "webpack --config spyvsspy/webpack.dev.config.js",
     "spyvsspygameserver": "node spyvsspy/Game-Server.js",
     "spyvsspycontentserver": "node spyvsspy/Content-Server.js"
   },

@@ -2,8 +2,10 @@ import { Utilities } from './utilities';
 import { LevelFactory } from './LevelFactory';
 declare var io: any;
 declare var AFRAME: any;
+declare var process: any;
+let url:string = process.env.API_URL;
 
-let socket = io.connect('http://localhost:3000', { reconnection: false });
+let socket = io.connect(url, { reconnection: false });
 let playerName = Utilities.generateGuid();
 let scareUsers: boolean = false;
 
