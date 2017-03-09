@@ -121,6 +121,14 @@ window.addEventListener("load", function () {
         let enemyAvatar = document.createElement('a-sprite');
         enemyAvatar.setAttribute('src', 'spy' + Utilities.getRandomInt(1, 3) + '.png');
 
+        let enemyName = document.createElement('a-text');
+        enemyName.setAttribute('position', '-1 1.1 -0.2');
+        enemyName.setAttribute('side', 'double');
+        enemyName.setAttribute('value', state.playerData.Name);
+        enemyName.setAttribute('color', 'red');
+
+        enemyElement.appendChild(enemyName);
+
         enemyElement.appendChild(enemyAvatar);
         let roomElement = document.getElementById(state.playerData.Room);
         let pos: any = roomElement.getAttribute('position');
