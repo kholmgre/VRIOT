@@ -12,7 +12,7 @@ AFRAME.registerComponent('open-door', {
         this.el.addEventListener('click', function (evt: any) {
 
             let target = '';
-
+            
             let playerElement = document.getElementById('player');
 
             if (this.getAttribute('type') === 'door') {
