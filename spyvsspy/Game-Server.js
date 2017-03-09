@@ -78,7 +78,7 @@ io.on('connection', function (socket) {
 			if (currentRoom.Doors[dir].TargetRoom === input.targetRoom){
 				fromDirection = dir;
 				currentRoom.Doors[dir].Open = true;
-				console.log('opening door ' + dir);
+				console.log('opening door ' + dir + ' in room ' + currentRoom.Id);
 			}
 		}
 
@@ -87,7 +87,7 @@ io.on('connection', function (socket) {
 			if (targetRoom.Doors[dir].TargetRoom === input.currentRoom){
 				toDirection = dir;
 				targetRoom.Doors[dir].Open = true;
-				console.log('opening door ' + dir);
+				console.log('opening door ' + dir + ' in room ' + currentRoom.Id);
 			}
 		}
 
