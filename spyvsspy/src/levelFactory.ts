@@ -1,5 +1,7 @@
+import { Room } from './rooms';
+
 export class LevelFactory {
-    static createRooms(template: any) {
+    static createRooms(rooms: Array<Room>): Array<HTMLElement> {
         function getPosition(direction: string) {
 
             let position = { x: '0', y: '3.5', z: '0' }
@@ -142,21 +144,22 @@ export class LevelFactory {
             return wall;
         }
 
-        let rooms = template.rooms.map((room: any) => {
+        const mappedRooms = rooms.map((room: Room) => {
 
             let roomElement = document.createElement('a-entity');
-            roomElement.setAttribute('id', room.Id);
+            roomElement.setAttribute('id', room.id);
 
             let floor = document.createElement('a-plane');
-            floor.setAttribute('color', room.Colors.Floor);
+            floor.setAttribute('color', room.floor.color);
             floor.setAttribute('width', '10');
             floor.setAttribute('height', '10');
             floor.setAttribute('position', '0 1.5 0');
             floor.setAttribute('rotation', '-90 0 90');
             floor.setAttribute('side', 'double');
+            floor.setAttribute('movearea', '');
 
             let roof = document.createElement('a-plane');
-            roof.setAttribute('color', room.Colors.Floor);
+            roof.setAttribute('color', room.floor.color);
             roof.setAttribute('width', '10');
             roof.setAttribute('height', '10');
             roof.setAttribute('position', '0 5.5 0');
@@ -169,31 +172,43 @@ export class LevelFactory {
             let createdWalls: any = { "N": "", "S": "", "W": "", "E": "" };
 
             // Create connecting rooms
-            if (room.Doors === null || room.Doors === undefined)
-                throw 'A room needs some doors! Invalid map.';
+            if (room.doors !== null && room.doors !== undefined) {
 
-            for (let direction in room.Doors) {
-                let wall = createConnectingWall(room.Id, room.Doors[direction], direction, room.Colors.Wall);
-                createdWalls[direction] = wall;
-                roomElement.appendChild(wall);
-            }
-
-            for (let dir in createdWalls) {
-                if (createdWalls[dir] === "") {
-                    let wall = createWall(dir, room.Colors.Wall);
-                    createdWalls[dir] = wall;
+                if (room.doors.E !== null && room.doors.E !== undefined) {
+                    let wall = createConnectingWall(room.id, room.doors.E, "E", room.doors.E.color);
+                    createdWalls["E"] = wall;
                     roomElement.appendChild(wall);
+                } else if (room.doors.W !== null && room.doors.W !== undefined) {
+                    let wall = createConnectingWall(room.id, room.doors.W, "W", room.doors.W.color);
+                    createdWalls["W"] = wall;
+                    roomElement.appendChild(wall);
+                } else if (room.doors.N !== null && room.doors.N !== undefined) {
+                    let wall = createConnectingWall(room.id, room.doors.N, "N", room.doors.N.color);
+                    createdWalls["N"] = wall;
+                    roomElement.appendChild(wall);
+                } else if (room.doors.S !== null && room.doors.S !== undefined) {
+                    let wall = createConnectingWall(room.id, room.doors.S, "S", room.doors.S.color);
+                    createdWalls["S"] = wall;
+                    roomElement.appendChild(wall);
+                }
+
+                for (let dir in createdWalls) {
+                    if (createdWalls[dir] === "") {
+                        let wall = createWall(dir, "#000FFF");
+                        createdWalls[dir] = wall;
+                        roomElement.appendChild(wall);
+                    }
                 }
             }
 
             return roomElement;
         });
 
-        rooms.forEach((room: any, index: number, array: Array<any>) => {
+        mappedRooms.forEach((room: any, index: number, array: Array<any>) => {
             let pos = '0 ' + index * 5 + ' 0';
             room.setAttribute('position', pos);
         });
 
-        return rooms;
+        return mappedRooms;
     }
 }

@@ -1,0 +1,1 @@
+export interface IGameRelated { gameId: string }
