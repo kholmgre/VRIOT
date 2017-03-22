@@ -7,16 +7,17 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
-            "program": "${workspaceRoot}\\spyvsspy\\Game-Server.js"
+            "name": "Launch game server",
+            "program": "${workspaceRoot}/spyvsspy/dist/server.js",
+            "sourceMaps": false,
+            "cwd": "${workspaceRoot}"
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach to Process",
+            "address": "localhost",
+            "port": 3000
         }
-        // ,
-        // {
-        //     "type": "node",
-        //     "request": "attach",
-        //     "name": "Attach to Process",
-        //     "address": "localhost",
-        //     "port": 5858
-        // }
     ]
 }

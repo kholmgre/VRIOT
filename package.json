@@ -4,12 +4,10 @@
   "description": "internal webvr project",
   "main": "index.js",
   "scripts": {
-    "dev": "http-server",
-    "spyvsspywebpack": "webpack -w --config spyvsspy/webpack.dev.config.js",
-    "spyvsspybuildproduction": "webpack --config spyvsspy/webpack.prod.config.js",
-    "spyvsspybuilddev": "webpack --config spyvsspy/webpack.dev.config.js",
-    "spyvsspygameserver": "node spyvsspy/Game-Server.js",
-    "spyvsspycontentserver": "node spyvsspy/Content-Server.js"
+    "bserver": "webpack -w --config spyvsspy/webpack.server.config.js --display-modules",
+    "bclient": "webpack -w --config spyvsspy/webpack.client.config.js --display-modules",
+    "gserver": "node spyvsspy/dist/server.js",
+    "cserver": "node spyvsspy/Content-Server.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +20,10 @@
   },
   "homepage": "https://github.com/kholmgre/VRIOT#readme",
   "devDependencies": {
+    "@types/express": "^4.0.35",
+    "@types/node": "^7.0.8",
+    "@types/socket.io": "^1.4.28",
+    "@types/socket.io-client": "^1.4.29",
     "awesome-typescript-loader": "^3.1.1",
     "http-server": "^0.9.0",
     "source-map-loader": "^0.1.6",
