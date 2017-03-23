@@ -1,10 +1,10 @@
-import { Room } from './rooms';
-import { Player } from './player';
+import { Room } from '../shared/rooms';
+import { Player } from '../shared/player';
 import { LevelFactory } from './levelFactory';
-import { GameState } from './gameState';
-import { DoorOpened, PlayerChangedRoom, PlayerMoved, PlayerLeft, YouJoined } from './events/events';
-import { Utilities } from './utilities';
-import { Position } from './position';
+import { GameState } from '../server/gameState';
+import { DoorOpened, PlayerChangedRoom, PlayerMoved, PlayerLeft, YouJoined } from '../events/events';
+import { Utilities } from '../shared/utilities';
+import { Position } from '../shared/position';
 
 export class Game {
     scene: HTMLElement;
@@ -68,10 +68,12 @@ export class Game {
     }
 
     playerJoined(event: Player): void {
-        // Create new enemy obj
+        // conversion to get access to getPositionString member function
+        const pos = new Position(null, null, null, event.position);
+
         let enemyElement = document.createElement('a-entity');
         enemyElement.setAttribute('id', event.id);
-        enemyElement.setAttribute('position', event.position.getPositionString());
+        enemyElement.setAttribute('position', pos.getPositionString());
 
         let enemyAvatar = document.createElement('a-sprite');
         enemyAvatar.setAttribute('src', 'spy' + Utilities.getRandomInt(1, 3) + '.png');
@@ -158,9 +160,6 @@ export class Game {
                 playerElement.appendChild(moveAnimation);
 
                 setTimeout(() => {
-
-                    let number = Utilities.getRandomInt(0, 20);
-                    this.socket.emit('door-opened', { moveInfo: new DoorOpened(event.from.sourceId, event.to.targetId, event.playerId, this.gameId) });
                     playerElement.setAttribute('position', playerNewPos);
                 }, 2500);
             }, 1200);

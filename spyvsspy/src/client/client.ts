@@ -1,10 +1,10 @@
-import { Utilities } from './utilities';
+import { Utilities } from '../shared/utilities';
 import { LevelFactory } from './levelFactory';
 import { Game } from './game';
-import { GameState } from './gameState';
-import { DoorOpened, PlayerChangedRoom, PlayerMoved, PlayerLeft, YouJoined } from './events/events';
-import { PlayerMoveCommand } from './commands/commands';
-import { Player } from './player';
+import { GameState } from '../server/gameState';
+import { DoorOpened, PlayerChangedRoom, PlayerMoved, PlayerLeft, YouJoined } from '../events/events';
+import { PlayerMoveCommand, ChangeRoomCommand } from '../commands/commands';
+import { Player } from '../shared/player';
 
 declare var io: any;
 declare var AFRAME: any;
@@ -30,8 +30,10 @@ AFRAME.registerComponent('open-door', {
                 target = this.parentEl.parentEl.getAttribute('target');
             }
 
+            const command = new ChangeRoomCommand(playerElement.getAttribute('currentroom'), target, currentGame.playerId, currentGame.gameId);
+
             // Are we keeping track of current room still?
-            socket.emit('player-change-room-command', new DoorOpened(playerElement.getAttribute('currentroom'), target, currentGame.playerId, currentGame.gameId));
+            socket.emit('player-change-room-command', command);
         });
     }
 });

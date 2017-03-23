@@ -1,8 +1,8 @@
-import { Player } from '../player';
-import { GameState, MapTemplate } from '../gameState';
-import { JoinGameCommand, OpenDoorCommand, PlayerMoveCommand } from '../commands/commands';
+import { Player } from '../shared/player';
+import { GameState, MapTemplate } from './gameState';
+import { JoinGameCommand, ChangeRoomCommand, PlayerMoveCommand } from '../commands/commands';
 import { DoorOpened, PlayerChangedRoom, YouJoined } from '../events/events';
-import { Room } from '../rooms';
+import { Room } from '../shared/rooms';
 import { oneRoomMap } from '../maps/mapLibrary';
 
 const express = require('express');
@@ -59,40 +59,48 @@ io.on('connection', function (socket: any) {
 		socket.broadcast.emit('player-joined', newPlayer);
 	});
 
-	socket.on('door-opened', function (data: DoorOpened) {
-		io.sockets.emit('door-opened', data);
+	socket.on('open-door', function (data: ChangeRoomCommand) {
+
+		// TODO: Send to correct game/channel and verify that this move is legal
+
+		const event = new DoorOpened(data.sourceId, data.targetId, data.playerId, data.gameId);
+
+		io.sockets.emit('door-opened', event);
 	});
 
 	socket.on('player-move', function (input: PlayerMoveCommand) {
+
+		// Todo verify legal
+
 		console.log(JSON.stringify(input));
 		io.sockets.emit('player-move', input);
 	});
 
 	// Warning, code smell..
-	function findDirection(room: Room, command: DoorOpened): string {
+	function findDirection(room: Room, target: string): string {
 		let direction = '';
 		if (room.doors.E !== null && room.doors.E !== undefined) {
-			if (room.doors["E"].targetRoom === command.targetId) {
+			if (room.doors["E"].targetRoom === target) {
 				room.doors["E"].open = true;
 				direction = "E";
 			}
-		} 
-		
+		}
+
 		if (room.doors["N"] !== null && room.doors["N"] !== undefined) {
-			if (room.doors["N"].targetRoom === command.targetId) {
+			if (room.doors["N"].targetRoom === target) {
 				room.doors["N"].open = true;
 				direction = "N";
 			}
-		} 
+		}
 		if (room.doors["S"] !== null && room.doors["S"] !== undefined) {
-			if (room.doors["S"].targetRoom === command.targetId) {
+			if (room.doors["S"].targetRoom === target) {
 				room.doors["S"].open = true;
 				direction = "S";
 			}
-		} 
-		
+		}
+
 		if (room.doors["W"] !== null && room.doors["W"] !== undefined) {
-			if (room.doors["W"].targetRoom === command.targetId) {
+			if (room.doors["W"].targetRoom === target) {
 				room.doors["W"].open = true;
 				direction = "W";
 			}
@@ -101,7 +109,7 @@ io.on('connection', function (socket: any) {
 		return direction;
 	}
 
-	socket.on('player-change-room-command', function (command: OpenDoorCommand) {
+	socket.on('player-change-room-command', function (command: ChangeRoomCommand) {
 
 		console.log('player-change-room' + JSON.stringify(command));
 
@@ -113,9 +121,50 @@ io.on('connection', function (socket: any) {
 		const currentRoom = currentGame.rooms.find((r: Room) => { return r.id === command.sourceId });
 		const targetRoom = currentGame.rooms.find((r: Room) => { return r.id === command.targetId });
 
-		const fromDirection = findDirection(currentRoom, command);
+		const fromDirection = findDirection(currentRoom, command.targetId);
 
-		const toDirection = findDirection(targetRoom, command);
+		const toDirection = findDirection(targetRoom, command.sourceId);
+
+		// Refactor
+
+		let emitDoorOpenEvent = false;
+
+		switch (toDirection) {
+			case 'E':
+				if (currentRoom.doors.E.open !== true) {
+					currentRoom.doors.E.open = true;
+					emitDoorOpenEvent = true;
+				}
+				break;
+			case 'W':
+				if (currentRoom.doors.W.open !== true) {
+					currentRoom.doors.W.open = true;
+					emitDoorOpenEvent = true;
+				}
+				break;
+			case 'N':
+				if (currentRoom.doors.N.open !== true) {
+					currentRoom.doors.N.open = true;
+					emitDoorOpenEvent = true;
+				}
+				break;
+			case 'S':
+				if (currentRoom.doors.S.open !== true) {
+					currentRoom.doors.S.open = true;
+					emitDoorOpenEvent = true;
+				}
+				break;
+			default:
+				break;
+		}
+
+		console.log('emit door opened ', emitDoorOpenEvent);
+
+		if(emitDoorOpenEvent){
+			// TODO: update game state with door state, so joining players will see opened doors
+			const doorOpenedEvent = new DoorOpened(currentRoom.id, targetRoom.id, playerId, currentGameId);
+			io.sockets.emit('door-opened', doorOpenedEvent)
+		}
 
 		const event = new PlayerChangedRoom();
 		event.from = { direction: fromDirection, sourceId: currentRoom.id };

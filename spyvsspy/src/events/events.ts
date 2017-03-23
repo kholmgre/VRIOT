@@ -1,6 +1,6 @@
 import { IGameRelated } from '../interfaces/interfaces';
-import { GameState } from '../gameState';
-import { Position } from '../position';
+import { GameState } from '../server/gameState';
+import { Position } from '../shared/position';
 
 export abstract class Event {
     gameId: string;

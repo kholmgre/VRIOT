@@ -1,7 +1,7 @@
-import { Room } from './rooms';
-import { Player } from './player';
-import { Utilities } from './utilities';
-import { Position } from './position';
+import { Room } from '../shared/rooms';
+import { Player } from '../shared/player';
+import { Utilities } from '../shared/utilities';
+import { Position } from '../shared/position';
 
 export interface IGameState { players: Array<Player>, rooms: Array<Room>, timeRemaining: number };
 

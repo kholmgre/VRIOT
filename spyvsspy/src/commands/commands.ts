@@ -1,5 +1,5 @@
 import { IGameRelated } from "../Interfaces/interfaces";
-import { Position } from '../position';
+import { Position } from '../shared/position';
 
 export class JoinGameCommand {
     playerName: string;
@@ -9,7 +9,7 @@ export class JoinGameCommand {
     }
 }
 
-export class OpenDoorCommand implements IGameRelated {
+export class ChangeRoomCommand implements IGameRelated {
     gameId: string;
     sourceId: string;
     targetId: string;

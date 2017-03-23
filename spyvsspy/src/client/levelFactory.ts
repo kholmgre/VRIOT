@@ -1,4 +1,4 @@
-import { Room } from './rooms';
+import { Room } from '../shared/rooms';
 
 export class LevelFactory {
     static createRooms(rooms: Array<Room>): Array<HTMLElement> {

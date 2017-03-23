@@ -1,4 +1,4 @@
-import { Room, WallDescription } from '../rooms';
+import { Room, WallDescription } from '../shared/rooms';
 import { colors } from './colors';
 
 function getRandomInt(max: number, min: number) : number {
