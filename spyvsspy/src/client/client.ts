@@ -132,5 +132,9 @@ window.addEventListener("load", function () {
     socket.on('player-left', function (event: PlayerLeft) {
         currentGame.playerLeft(event);
     });
+
+    socket.on("disconnect", function(){
+        currentGame.playerDisconnected();
+    });
 });
 

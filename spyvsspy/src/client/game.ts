@@ -13,6 +13,7 @@ export class Game {
     player: HTMLElement;
     socket: any;
     gameId: string;
+    playerCamera: HTMLElement;
 
     constructor(playerName: string, sceneId: string, socket: any, gameId: string, playerId: string) {
         this.scene = document.getElementById(sceneId);
@@ -21,6 +22,7 @@ export class Game {
         this.player = document.getElementById('player');
         this.gameId = gameId;
         this.playerId = playerId;
+        this.playerCamera = document.getElementById('playerCamera');
     }
 
     joinedGame(event: YouJoined): void {
@@ -60,7 +62,7 @@ export class Game {
                 enemyAvatar.appendChild(enemyName);
                 enemyElement.appendChild(enemyAvatar);
 
-                enemyElement.setAttribute('position', new Position(pos.x, pos.y, pos.z).getPositionString());
+                enemyElement.setAttribute('position', new Position(null, null, null, p.position).getPositionString());
 
                 this.scene.appendChild(enemyElement);
             });
@@ -77,7 +79,7 @@ export class Game {
 
         let enemyAvatar = document.createElement('a-sprite');
         enemyAvatar.setAttribute('src', 'spy' + Utilities.getRandomInt(1, 3) + '.png');
-        enemyAvatar.setAttribute('position', '0 1.5 0');
+        enemyAvatar.setAttribute('position', '0 2 0');
 
         let enemyName = document.createElement('a-text');
         enemyName.setAttribute('position', '-1 0.5 0');
@@ -95,14 +97,12 @@ export class Game {
     doorOpened(event: DoorOpened): void {
         // TODO: only send to clients except sender client. 
 
-        let fromWall: any = document.getElementById(event.sourceId).querySelectorAll('[type=wallcontainer]')[0];
-        let fromDoor: any = fromWall.querySelectorAll('[type=door]')[0];
-        let fromdoorknob: any = fromWall.querySelectorAll('[type=doorknob]')[0];
+        let currentRoomWall: any = document.getElementById(event.sourceId).querySelectorAll('[type=wallcontainer],[target=' + event.targetId + ']')[0];
+        let currentRoomWallDoor: any = currentRoomWall.querySelectorAll('[type=door]')[0];
+        let currentRoomWallDoorKnob: any = currentRoomWall.querySelectorAll('[type=doorknob]')[0];
 
-        let roomTargetId = fromWall.getAttribute('target');
-
-        let targetRoom = document.getElementById(roomTargetId);
-        let toWall: any = targetRoom.querySelectorAll('[type=wallcontainer][direction=' + Utilities.getOppositeDirection(fromWall.getAttribute('direction')) + ']')[0];
+        let targetRoom = document.getElementById(event.targetId);
+        let toWall: any = targetRoom.querySelectorAll('[type=wallcontainer][direction=' + Utilities.getOppositeDirection(currentRoomWall.getAttribute('direction')) + ']')[0];
         let toDoor: any = toWall.querySelectorAll('[type=door]')[0];
         let todoorknob: any = toWall.querySelectorAll('[type=doorknob]')[0];
         toDoor.setAttribute('color', '#000000');
@@ -113,7 +113,7 @@ export class Game {
         setTimeout(() => {
             // If the user looks at the door it will get transported to correc target 
             toDoor.setAttribute('open-door', '');
-            fromDoor.setAttribute('open-door', '');
+            currentRoomWallDoor.setAttribute('open-door', '');
         }, 2000);
 
         // TODO: remove doorknob elements in connecting rooms..
@@ -143,8 +143,6 @@ export class Game {
                 moveAnimation.setAttribute('fill', 'forwards');
 
                 let targetWallInCurrentRoom: any = document.getElementById(event.from.sourceId).querySelectorAll('[direction=' + event.from.direction + ']')[0];
-                let targetDoorInCurrentRoom: any = targetWallInCurrentRoom.querySelectorAll('[type=door]')[0];
-                targetDoorInCurrentRoom.setAttribute('color', '#000000');
 
                 let doorPosition = targetWallInCurrentRoom.getAttribute('position');
 
@@ -203,5 +201,15 @@ export class Game {
         let enemyEntity: any = document.getElementById(event.playerId);
         enemyEntity.parentEl.removeChild(enemyEntity);
         console.debug(event.playerId + ' has left the building.');
+    }
+
+    playerDisconnected(){
+        const disconnectStatus = document.createElement('a-text');
+        disconnectStatus.setAttribute('value', 'disconnected');
+        disconnectStatus.setAttribute('position', '-1.4 0 -1');
+        disconnectStatus.setAttribute('scale', '2');
+        disconnectStatus.setAttribute('color', 'red');
+
+        this.playerCamera.appendChild(disconnectStatus);
     }
 }
