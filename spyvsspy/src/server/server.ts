@@ -1,7 +1,7 @@
 import { Player } from '../shared/player';
 import { GameState, MapTemplate } from './gameState';
 import { JoinGameCommand, ChangeRoomCommand, PlayerMoveCommand } from '../commands/commands';
-import { DoorOpened, PlayerChangedRoom, YouJoined } from '../events/events';
+import { DoorOpened, PlayerChangedRoom, YouJoined, PlayerJoined } from '../events/events';
 import { Room } from '../shared/rooms';
 import { oneRoomMap, fourRoomMap } from '../maps/mapLibrary';
 
@@ -85,10 +85,15 @@ io.on('connection', function (socket: any) {
 		youJoined.gameState = gameToJoin;
 		youJoined.playerId = newPlayer.id;
 
+		const playerJoined = new PlayerJoined();
+		playerJoined.gameId = currentGameId;
+		playerJoined.gameState = gameToJoin;
+		playerJoined.playerId = playerId;
+
 		console.log('player ' + data.playerName + ' joined game ' + gameToJoin.id);
 
 		socket.emit('you-joined', youJoined);
-		socket.broadcast.emit('player-joined', newPlayer);
+		socket.broadcast.emit('player-joined', playerJoined);
 	});
 
 	socket.on('player-move', function (input: PlayerMoveCommand) {

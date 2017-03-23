@@ -135,8 +135,6 @@ export class Game {
                 let targetRoom = document.getElementById(event.to.targetId);
                 let targetRoomPos: any = targetRoom.getAttribute('position');
 
-                let playerNewPos: any = { x: targetRoomPos.x, y: targetRoomPos.y, z: targetRoomPos.z };
-
                 let moveAnimation = document.createElement('a-animation');
                 moveAnimation.setAttribute('attribute', 'position');
                 // NOTE!!!! If this duration is higher, the player will not be moved to the next room. It must be lower than the milliseconds intervall for the nested setTimeout that actually changes the 
@@ -147,6 +145,26 @@ export class Game {
                 let targetWallInCurrentRoom: any = document.getElementById(event.from.sourceId).querySelectorAll('[direction=' + event.from.direction + ']')[0];
 
                 let doorPosition = targetWallInCurrentRoom.getAttribute('position');
+
+                let playerNewPos: any = { x: targetRoomPos.x, y: targetRoomPos.y, z: targetRoomPos.z };
+
+                // Adjust player position when entering new room, not totally correct
+                switch (event.to.direction) {
+                    case 'N':
+                        playerNewPos.x = playerNewPos.x - 2.8;
+                        break;
+                    case 'S':
+                        playerNewPos.x = playerNewPos.x + 2.8;
+                        break;
+                    case 'W':
+                        playerNewPos.z = playerNewPos.z + 2.8;
+                        break;
+                    case 'E':
+                        playerNewPos.z = playerNewPos.z - 2.8;
+                        break;
+                    default:
+                        break;
+                }
 
                 if (doorPosition.x > 0)
                     doorPosition.x = doorPosition.x - 0.20;
@@ -205,7 +223,7 @@ export class Game {
         console.debug(event.playerId + ' has left the building.');
     }
 
-    playerDisconnected(){
+    playerDisconnected() {
         const disconnectStatus = document.createElement('a-text');
         disconnectStatus.setAttribute('value', 'disconnected');
         disconnectStatus.setAttribute('position', '-1.4 0 -1');

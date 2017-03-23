@@ -31,7 +31,10 @@ export class GameState implements IGameState {
     }
 
     private getPositionForNewPlayer(player: Player): Position {
-        return new Position(0, 0, 0);
+
+        const room = Utilities.getRandomInt(0, this.rooms.length - 1);
+
+        return new Position(Utilities.getRandomInt(0, 1), room * 5, Utilities.getRandomInt(0, 1));
     }
 
     addPlayer(player: Player): void {
