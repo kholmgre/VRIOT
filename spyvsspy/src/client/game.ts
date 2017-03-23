@@ -97,9 +97,11 @@ export class Game {
     doorOpened(event: DoorOpened): void {
         // TODO: only send to clients except sender client. 
 
-        let currentRoomWall: any = document.getElementById(event.sourceId).querySelectorAll('[type=wallcontainer],[target=' + event.targetId + ']')[0];
+        // There could be more than one door?
+        let currentRoomWall: any = document.getElementById(event.sourceId).querySelectorAll('[type=wallcontainer][target="' + event.targetId + '"]')[0];
         let currentRoomWallDoor: any = currentRoomWall.querySelectorAll('[type=door]')[0];
         let currentRoomWallDoorKnob: any = currentRoomWall.querySelectorAll('[type=doorknob]')[0];
+        currentRoomWallDoor.setAttribute('color', '#000000');
 
         let targetRoom = document.getElementById(event.targetId);
         let toWall: any = targetRoom.querySelectorAll('[type=wallcontainer][direction=' + Utilities.getOppositeDirection(currentRoomWall.getAttribute('direction')) + ']')[0];
@@ -114,7 +116,7 @@ export class Game {
             // If the user looks at the door it will get transported to correc target 
             toDoor.setAttribute('open-door', '');
             currentRoomWallDoor.setAttribute('open-door', '');
-        }, 2000);
+        }, 3500);
 
         // TODO: remove doorknob elements in connecting rooms..
     }
