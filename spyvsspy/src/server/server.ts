@@ -106,9 +106,6 @@ io.on('connection', function (socket: any) {
 
 	socket.on('player-change-room-command', function (command: ChangeRoomCommand) {
 
-		console.log('change room');
-		console.log('template: \n' + JSON.stringify(fourRoomMap));
-
 		const currentGame = currentGames.find((g: GameState) => { return g.id === currentGameId });
 
 		const currentRoom = currentGame.rooms.find((r: Room) => { return r.id === command.sourceId });
@@ -117,6 +114,9 @@ io.on('connection', function (socket: any) {
 		const fromDirection = findDirection(currentRoom, command.targetId);
 
 		const toDirection = findDirection(targetRoom, command.sourceId);
+
+		if(toDirection === '')
+			console.log(JSON.stringify(command));
 
 		// Refactor
 
