@@ -2,7 +2,7 @@ import { Room, WallDescription } from '../shared/rooms';
 import { colors } from './colors';
 
 function getRandomInt(max: number, min: number): number {
-    return Math.floor(Math.random() * max) + min;
+    return Math.floor(Math.random()*(max-min+1)+min);
 }
 
 const map1Layout = '1AB\n2 6\n3457\n9  8\n';
