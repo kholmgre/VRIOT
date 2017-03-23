@@ -9,8 +9,9 @@
             "request": "launch",
             "name": "Launch game server",
             "program": "${workspaceRoot}/spyvsspy/dist/server.js",
-            "sourceMaps": false,
-            "cwd": "${workspaceRoot}"
+            "sourceMaps": true,
+            "cwd": "${workspaceRoot}",
+            "restart": true
         },
         {
             "type": "node",

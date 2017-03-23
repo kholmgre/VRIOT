@@ -1,13 +1,11 @@
 import { IGameRelated } from "../Interfaces/interfaces";
 import { Position } from '../position';
 
-export class JoinGameCommand implements IGameRelated {
-    gameId: string;
+export class JoinGameCommand {
     playerName: string;
 
-    constructor(gameId: string, playerName: string) {
+    constructor(playerName: string) {
         this.playerName = playerName;
-        this.gameId = gameId;
     }
 }
 

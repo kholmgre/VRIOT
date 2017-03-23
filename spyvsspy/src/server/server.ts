@@ -31,8 +31,6 @@ io.on('connection', function (socket: any) {
 
 	socket.on('join', function (data: JoinGameCommand) {
 
-		console.log('player joining game ' + JSON.stringify(data));
-
 		let gameToJoin: GameState = null;
 
 		if (currentGames.length === 0) {
@@ -55,6 +53,8 @@ io.on('connection', function (socket: any) {
 		youJoined.gameState = gameToJoin;
 		youJoined.playerId = newPlayer.id;
 
+		console.log('player ' + data.playerName + ' joined game ' + gameToJoin.id);
+
 		socket.emit('you-joined', youJoined);
 		socket.broadcast.emit('player-joined', newPlayer);
 	});
@@ -76,17 +76,22 @@ io.on('connection', function (socket: any) {
 				room.doors["E"].open = true;
 				direction = "E";
 			}
-		} else if (room.doors["N"] !== null && room.doors["N"] !== undefined) {
+		} 
+		
+		if (room.doors["N"] !== null && room.doors["N"] !== undefined) {
 			if (room.doors["N"].targetRoom === command.targetId) {
 				room.doors["N"].open = true;
 				direction = "N";
 			}
-		} else if (room.doors["S"] !== null && room.doors["S"] !== undefined) {
+		} 
+		if (room.doors["S"] !== null && room.doors["S"] !== undefined) {
 			if (room.doors["S"].targetRoom === command.targetId) {
 				room.doors["S"].open = true;
 				direction = "S";
 			}
-		} else if (room.doors["W"] !== null && room.doors["W"] !== undefined) {
+		} 
+		
+		if (room.doors["W"] !== null && room.doors["W"] !== undefined) {
 			if (room.doors["W"].targetRoom === command.targetId) {
 				room.doors["W"].open = true;
 				direction = "W";
@@ -128,7 +133,7 @@ io.on('connection', function (socket: any) {
 		const currentGame = currentGames.find((g: GameState) => { return g.id === currentGameId });
 
 		if (currentGame === undefined)
-			throw 'Non existing game';
+			console.log('Player exited non-existing game.');
 
 		const pl = connectedPlayers.find((p: { socket: any, playerId: string }) => { return p.socket === socket });
 

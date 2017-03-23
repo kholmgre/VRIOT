@@ -5,7 +5,7 @@ function getRandomInt(max: number, min: number) : number {
     return Math.floor(Math.random() * max) + min;  
 }
 
-const map1Layout = '1\n2 6\n3457\n9  8\n';
+const map1Layout = '1AB\n2 6\n3457\n9  8\n';
 
 let mapArr: any = [];
 let currentRow = [];

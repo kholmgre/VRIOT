@@ -176,40 +176,21 @@ export class LevelFactory {
             roomElement.appendChild(floor);
             roomElement.appendChild(roof);
 
-            let createdWalls: any = { "N": "", "S": "", "W": "", "E": "" };
-
-            // Create connecting rooms
-            if (room.doors !== null && room.doors !== undefined) {
-
-                if (room.doors.E !== null && room.doors.E !== undefined) {
-                    let wall = createConnectingWall(room.id, room.doors.E, "E", room.doors.E.color);
-                    createdWalls["E"] = wall;
+            function createW(direction: any, room: any, roomElement: HTMLElement) : void {
+                if (room.doors[direction].targetRoom !== null && room.doors[direction].targetRoom !== undefined) {
+                    let wall = createConnectingWall(room.id, room.doors[direction], direction, room.doors.E.color);
                     roomElement.appendChild(wall);
-                }
-                if (room.doors.W !== null && room.doors.W !== undefined) {
-                    let wall = createConnectingWall(room.id, room.doors.W, "W", room.doors.W.color);
-                    createdWalls["W"] = wall;
+                } else {
+                    let wall = createWall(direction, room.doors.E.color);
                     roomElement.appendChild(wall);
-                } 
-                if (room.doors.N !== null && room.doors.N !== undefined) {
-                    let wall = createConnectingWall(room.id, room.doors.N, "N", room.doors.N.color);
-                    createdWalls["N"] = wall;
-                    roomElement.appendChild(wall);
-                } 
-                if (room.doors.S !== null && room.doors.S !== undefined) {
-                    let wall = createConnectingWall(room.id, room.doors.S, "S", room.doors.S.color);
-                    createdWalls["S"] = wall;
-                    roomElement.appendChild(wall);
-                }
-
-                for (let dir in createdWalls) {
-                    if (createdWalls[dir] === "") {
-                        let wall = createWall(dir, "#000FFF");
-                        createdWalls[dir] = wall;
-                        roomElement.appendChild(wall);
-                    }
                 }
             }
+
+            // Create connecting rooms
+            createW("E", room, roomElement);
+            createW("W", room, roomElement);
+            createW("N", room, roomElement);
+            createW("S", room, roomElement);
 
             return roomElement;
         });

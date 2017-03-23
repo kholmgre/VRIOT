@@ -120,56 +120,50 @@ export class Game {
     playerChangedRoom(event: PlayerChangedRoom): void {
         // Separate this logic?
         if (event.playerId === this.playerId) {
-            // let entity: any = document.querySelector('[sound]');
+            let entity: any = document.querySelector('[sound]');
 
-            // entity.components.sound.playSound();
+            entity.components.sound.playSound();
 
             let playerElement: any = document.getElementById('player');
             playerElement.setAttribute('currentroom', event.to.targetId);
 
-            let targetRoom = document.getElementById(event.to.targetId);
+            setTimeout(() => {
+                let targetRoom = document.getElementById(event.to.targetId);
                 let targetRoomPos: any = targetRoom.getAttribute('position');
 
                 let playerNewPos: any = { x: targetRoomPos.x, y: targetRoomPos.y, z: targetRoomPos.z };
-                playerElement.setAttribute('position', playerNewPos);
 
-            // setTimeout(() => {
-            //     let targetRoom = document.getElementById(event.to.targetId);
-            //     let targetRoomPos: any = targetRoom.getAttribute('position');
+                let moveAnimation = document.createElement('a-animation');
+                moveAnimation.setAttribute('attribute', 'position');
+                // NOTE!!!! If this duration is higher, the player will not be moved to the next room. It must be lower than the milliseconds intervall for the nested setTimeout that actually changes the 
+                // players position
+                moveAnimation.setAttribute('dur', '2400');
+                moveAnimation.setAttribute('fill', 'forwards');
 
-            //     let playerNewPos: any = { x: targetRoomPos.x, y: targetRoomPos.y, z: targetRoomPos.z };
+                let targetWallInCurrentRoom: any = document.getElementById(event.from.sourceId).querySelectorAll('[direction=' + event.from.direction + ']')[0];
+                let targetDoorInCurrentRoom: any = targetWallInCurrentRoom.querySelectorAll('[type=door]')[0];
+                targetDoorInCurrentRoom.setAttribute('color', '#000000');
 
-            //     let moveAnimation = document.createElement('a-animation');
-            //     moveAnimation.setAttribute('attribute', 'position');
-            //     // NOTE!!!! If this duration is higher, the player will not be moved to the next room. It must be lower than the milliseconds intervall for the nested setTimeout that actually changes the 
-            //     // players position
-            //     moveAnimation.setAttribute('dur', '2400');
-            //     moveAnimation.setAttribute('fill', 'forwards');
+                let doorPosition = targetWallInCurrentRoom.getAttribute('position');
 
-            //     let targetWallInCurrentRoom: any = document.getElementById(event.from.sourceId).querySelectorAll('[direction=' + event.from.direction + ']')[0];
-            //     let targetDoorInCurrentRoom: any = targetWallInCurrentRoom.querySelectorAll('[type=door]')[0];
-            //     targetDoorInCurrentRoom.setAttribute('color', '#000000');
+                if (doorPosition.x > 0)
+                    doorPosition.x = doorPosition.x - 0.20;
 
-            //     let doorPosition = targetWallInCurrentRoom.getAttribute('position');
+                if (doorPosition.z > 0)
+                    doorPosition.z = doorPosition.z - 0.20;
 
-            //     if (doorPosition.x > 0)
-            //         doorPosition.x = doorPosition.x - 0.20;
+                let animationEndPosition = doorPosition.x + ' ' + playerElement.getAttribute('position').y + ' ' + doorPosition.z;
+                moveAnimation.setAttribute('to', animationEndPosition);
 
-            //     if (doorPosition.z > 0)
-            //         doorPosition.z = doorPosition.z - 0.20;
+                playerElement.appendChild(moveAnimation);
 
-            //     let animationEndPosition = doorPosition.x + ' ' + playerElement.getAttribute('position').y + ' ' + doorPosition.z;
-            //     moveAnimation.setAttribute('to', animationEndPosition);
+                setTimeout(() => {
 
-            //     playerElement.appendChild(moveAnimation);
-
-            //     setTimeout(() => {
-
-            //         let number = Utilities.getRandomInt(0, 20);
-            //         this.socket.emit('door-opened', { moveInfo: new DoorOpened(event.from.sourceId, event.to.targetId, event.playerId, this.gameId) });
-            //         playerElement.setAttribute('position', playerNewPos);
-            //     }, 2500);
-            // }, 1200);
+                    let number = Utilities.getRandomInt(0, 20);
+                    this.socket.emit('door-opened', { moveInfo: new DoorOpened(event.from.sourceId, event.to.targetId, event.playerId, this.gameId) });
+                    playerElement.setAttribute('position', playerNewPos);
+                }, 2500);
+            }, 1200);
         } else {
             let enemyElement = document.getElementById(event.playerId);
             let roomElement = document.getElementById(event.to.targetId);

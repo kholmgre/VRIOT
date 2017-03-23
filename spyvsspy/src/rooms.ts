@@ -1,9 +1,9 @@
 export class WallDescription {
-    targetRoom: string;
-    open: boolean;
+    targetRoom?: string;
+    open?: boolean;
     color: string;
 
-    constructor(targetRoom: string, color?: string){
+    constructor(targetRoom?: string, color?: string){
         this.targetRoom = targetRoom;
         this.open = false;
         if(color === null || color === undefined)
@@ -13,11 +13,11 @@ export class WallDescription {
 
 export class Room {
     id: string;
-    doors?: {
-        E?: WallDescription,
-        S?: WallDescription,
-        W?: WallDescription,
-        N?: WallDescription
+    doors: {
+        E: WallDescription,
+        S: WallDescription,
+        W: WallDescription,
+        N: WallDescription
     }
     floor: {
         color: string
@@ -47,7 +47,7 @@ export class Room {
         } else {
             throw 'No id for room!';
         }
-        this.doors = {};
+        this.doors = { E: { color: ''}, W: { color: '' }, S: { color: '' }, N: { color: '' }};
         this.floor = { color: '' };
         this.roof = { color: '' };
     }
