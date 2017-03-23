@@ -5,13 +5,15 @@ import { Position } from './position';
 
 export interface IGameState { players: Array<Player>, rooms: Array<Room>, timeRemaining: number };
 
-export interface IMapTemplate { rooms: Array<Room> };
+export interface IMapTemplate { rooms: Array<Room>, name: string };
 
 export class MapTemplate implements IMapTemplate {
     rooms: Room[];
+    name: string;
 
-    constructor(rooms: Array<Room>) {
+    constructor(rooms: Array<Room>, name: string) {
         this.rooms = rooms;
+        this.name = name;
     }
 }
 

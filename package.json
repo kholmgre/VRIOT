@@ -4,8 +4,8 @@
   "description": "internal webvr project",
   "main": "index.js",
   "scripts": {
-    "bserver": "webpack -w --config spyvsspy/webpack.server.config.js --display-modules",
-    "bclient": "webpack -w --config spyvsspy/webpack.client.config.js --display-modules",
+    "bserver": "webpack -w --config spyvsspy/webpack.server.config.js",
+    "bclient": "webpack -w --config spyvsspy/webpack.client.config.js",
     "gserver": "node spyvsspy/dist/server.js",
     "cserver": "node spyvsspy/Content-Server.js"
   },

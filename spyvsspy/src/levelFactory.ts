@@ -77,7 +77,7 @@ export class LevelFactory {
 
             let wall = document.createElement('a-entity');
             wall.setAttribute('position', getPosition(direction));
-            wall.setAttribute('target', door.TargetRoom);
+            wall.setAttribute('target', door.targetRoom);
             wall.setAttribute('direction', direction);
             wall.setAttribute('id', door.TargetRoom + currentRoomId);
             wall.setAttribute('type', 'wallcontainer');
@@ -89,6 +89,13 @@ export class LevelFactory {
             doorEl.setAttribute('height', '4');
             doorEl.setAttribute('width', '2');
             doorEl.setAttribute('side', 'double');
+
+            let doorTargetSign = document.createElement('a-text');
+            doorTargetSign.setAttribute('side', 'double');
+            doorTargetSign.setAttribute('color', 'green');
+            doorTargetSign.setAttribute('value', door.targetRoom);
+            doorTargetSign.setAttribute('position', getdoorknobPosition(direction));
+            doorEl.appendChild(doorTargetSign);
 
             if (door.Open === true) {
                 doorEl.setAttribute('color', '#000000');
@@ -178,15 +185,18 @@ export class LevelFactory {
                     let wall = createConnectingWall(room.id, room.doors.E, "E", room.doors.E.color);
                     createdWalls["E"] = wall;
                     roomElement.appendChild(wall);
-                } else if (room.doors.W !== null && room.doors.W !== undefined) {
+                }
+                if (room.doors.W !== null && room.doors.W !== undefined) {
                     let wall = createConnectingWall(room.id, room.doors.W, "W", room.doors.W.color);
                     createdWalls["W"] = wall;
                     roomElement.appendChild(wall);
-                } else if (room.doors.N !== null && room.doors.N !== undefined) {
+                } 
+                if (room.doors.N !== null && room.doors.N !== undefined) {
                     let wall = createConnectingWall(room.id, room.doors.N, "N", room.doors.N.color);
                     createdWalls["N"] = wall;
                     roomElement.appendChild(wall);
-                } else if (room.doors.S !== null && room.doors.S !== undefined) {
+                } 
+                if (room.doors.S !== null && room.doors.S !== undefined) {
                     let wall = createConnectingWall(room.id, room.doors.S, "S", room.doors.S.color);
                     createdWalls["S"] = wall;
                     roomElement.appendChild(wall);

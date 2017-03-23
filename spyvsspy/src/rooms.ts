@@ -2,6 +2,13 @@ export class WallDescription {
     targetRoom: string;
     open: boolean;
     color: string;
+
+    constructor(targetRoom: string, color?: string){
+        this.targetRoom = targetRoom;
+        this.open = false;
+        if(color === null || color === undefined)
+            color = '#FFF000';
+    }
 }
 
 export class Room {
@@ -30,7 +37,7 @@ export class Room {
         } else if (this.doors.N !== null && this.doors.N !== undefined) {
             this.doors.N.color = color;
         } else if (this.doors.S !== null && this.doors.S !== undefined) {
-            this.doors.N.color = color;
+            this.doors.S.color = color;
         }
     }
 
@@ -40,5 +47,8 @@ export class Room {
         } else {
             throw 'No id for room!';
         }
+        this.doors = {};
+        this.floor = { color: '' };
+        this.roof = { color: '' };
     }
 }

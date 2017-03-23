@@ -31,7 +31,7 @@ AFRAME.registerComponent('open-door', {
             }
 
             // Are we keeping track of current room still?
-            socket.emit('player-change-room', new DoorOpened(playerElement.getAttribute('currentroom'), target, currentGame.playerId, currentGame.gameId));
+            socket.emit('player-change-room-command', new DoorOpened(playerElement.getAttribute('currentroom'), target, currentGame.playerId, currentGame.gameId));
         });
     }
 });
