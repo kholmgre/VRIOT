@@ -3,8 +3,8 @@ import { Utilities } from './utilities';
 
 export class Player {
     name: string;
-    position: Position;
     id: string;
+    position: Position;
 
     constructor(name: string){
         this.name = name;

@@ -1,10 +1,10 @@
-import { Room } from './rooms';
-import { Player } from './player';
+import { Room } from '../shared/rooms';
+import { Player } from '../shared/player';
 import { LevelFactory } from './levelFactory';
-import { GameState } from './gameState';
-import { DoorOpened, PlayerChangedRoom, PlayerMoved, PlayerLeft, YouJoined } from './events/events';
-import { Utilities } from './utilities';
-import { Position } from './position';
+import { GameState } from '../server/gameState';
+import { DoorOpened, PlayerChangedRoom, PlayerMoved, PlayerLeft, YouJoined } from '../events/events';
+import { Utilities } from '../shared/utilities';
+import { Position } from '../shared/position';
 
 export class Game {
     scene: HTMLElement;
@@ -13,6 +13,7 @@ export class Game {
     player: HTMLElement;
     socket: any;
     gameId: string;
+    playerCamera: HTMLElement;
 
     constructor(playerName: string, sceneId: string, socket: any, gameId: string, playerId: string) {
         this.scene = document.getElementById(sceneId);
@@ -21,6 +22,7 @@ export class Game {
         this.player = document.getElementById('player');
         this.gameId = gameId;
         this.playerId = playerId;
+        this.playerCamera = document.getElementById('playerCamera');
     }
 
     joinedGame(event: YouJoined): void {
@@ -36,6 +38,7 @@ export class Game {
         const pos = event.gameState.players.find((p: Player) => { return p.id === this.playerId }).position;
 
         this.player.setAttribute('position', new Position(pos.x, pos.y, pos.z).getPositionString());
+
 
         // Hack because the dom had to update with the changes in the room forEach above.. Use mutation observers? Something native to a-frame?
         setTimeout(() => {
@@ -59,7 +62,7 @@ export class Game {
                 enemyAvatar.appendChild(enemyName);
                 enemyElement.appendChild(enemyAvatar);
 
-                enemyElement.setAttribute('position', new Position(pos.x, pos.y, pos.z).getPositionString());
+                enemyElement.setAttribute('position', new Position(null, null, null, p.position).getPositionString());
 
                 this.scene.appendChild(enemyElement);
             });
@@ -67,14 +70,16 @@ export class Game {
     }
 
     playerJoined(event: Player): void {
-        // Create new enemy obj
+        // conversion to get access to getPositionString member function
+        const pos = new Position(null, null, null, event.position);
+
         let enemyElement = document.createElement('a-entity');
         enemyElement.setAttribute('id', event.id);
-        enemyElement.setAttribute('position', event.position.getPositionString());
+        enemyElement.setAttribute('position', pos.getPositionString());
 
         let enemyAvatar = document.createElement('a-sprite');
         enemyAvatar.setAttribute('src', 'spy' + Utilities.getRandomInt(1, 3) + '.png');
-        enemyAvatar.setAttribute('position', '0 1.5 0');
+        enemyAvatar.setAttribute('position', '0 2 0');
 
         let enemyName = document.createElement('a-text');
         enemyName.setAttribute('position', '-1 0.5 0');
@@ -92,14 +97,14 @@ export class Game {
     doorOpened(event: DoorOpened): void {
         // TODO: only send to clients except sender client. 
 
-        let fromWall: any = document.getElementById(event.sourceId).querySelectorAll('[type=wallcontainer]')[0];
-        let fromDoor: any = fromWall.querySelectorAll('[type=door]')[0];
-        let fromdoorknob: any = fromWall.querySelectorAll('[type=doorknob]')[0];
+        // There could be more than one door?
+        let currentRoomWall: any = document.getElementById(event.sourceId).querySelectorAll('[type=wallcontainer][target-room-id="' + event.targetId + '"]')[0];
+        let currentRoomWallDoor: any = currentRoomWall.querySelectorAll('[type=door]')[0];
+        let currentRoomWallDoorKnob: any = currentRoomWall.querySelectorAll('[type=doorknob]')[0];
+        currentRoomWallDoor.setAttribute('color', '#000000');
 
-        let roomTargetId = fromWall.getAttribute('target');
-
-        let targetRoom = document.getElementById(roomTargetId);
-        let toWall: any = targetRoom.querySelectorAll('[type=wallcontainer][direction=' + Utilities.getOppositeDirection(fromWall.getAttribute('direction')) + ']')[0];
+        let targetRoom = document.getElementById(event.targetId);
+        let toWall: any = targetRoom.querySelectorAll('[type=wallcontainer][direction=' + Utilities.getOppositeDirection(currentRoomWall.getAttribute('direction')) + ']')[0];
         let toDoor: any = toWall.querySelectorAll('[type=door]')[0];
         let todoorknob: any = toWall.querySelectorAll('[type=doorknob]')[0];
         toDoor.setAttribute('color', '#000000');
@@ -110,27 +115,29 @@ export class Game {
         setTimeout(() => {
             // If the user looks at the door it will get transported to correc target 
             toDoor.setAttribute('open-door', '');
-            fromDoor.setAttribute('open-door', '');
-        }, 2000);
+            currentRoomWallDoor.setAttribute('open-door', '');
+        }, 3500);
 
         // TODO: remove doorknob elements in connecting rooms..
     }
 
-    playerChangedRoom(event: PlayerChangedRoom): void {
-        // Separate this logic?
+    playerMoved(event: PlayerMoved): void {
+        let elemToMove: any = null;
+
         if (event.playerId === this.playerId) {
+            elemToMove = document.getElementById('player');
+        } else {
+            elemToMove = document.getElementById(event.playerId);
+        }
+
+        if (event.throughDoor === true) {
+            // Attach entities to each player and play the one that matches playerId
             let entity: any = document.querySelector('[sound]');
 
             entity.components.sound.playSound();
 
-            let playerElement: any = document.getElementById('player');
-            playerElement.setAttribute('currentroom', event.to.targetId);
-
             setTimeout(() => {
-                let targetRoom = document.getElementById(event.to.targetId);
-                let targetRoomPos: any = targetRoom.getAttribute('position');
-
-                let playerNewPos: any = { x: targetRoomPos.x, y: targetRoomPos.y, z: targetRoomPos.z };
+                const newPos = new Position(event.desiredPosition.x, event.desiredPosition.y, event.desiredPosition.z);
 
                 let moveAnimation = document.createElement('a-animation');
                 moveAnimation.setAttribute('attribute', 'position');
@@ -139,9 +146,7 @@ export class Game {
                 moveAnimation.setAttribute('dur', '2400');
                 moveAnimation.setAttribute('fill', 'forwards');
 
-                let targetWallInCurrentRoom: any = document.getElementById(event.from.sourceId).querySelectorAll('[direction=' + event.from.direction + ']')[0];
-                let targetDoorInCurrentRoom: any = targetWallInCurrentRoom.querySelectorAll('[type=door]')[0];
-                targetDoorInCurrentRoom.setAttribute('color', '#000000');
+                let targetWallInCurrentRoom: any = document.getElementById(event.room).querySelectorAll('[direction=' + event.direction + ']')[0];
 
                 let doorPosition = targetWallInCurrentRoom.getAttribute('position');
 
@@ -151,57 +156,42 @@ export class Game {
                 if (doorPosition.z > 0)
                     doorPosition.z = doorPosition.z - 0.20;
 
-                let animationEndPosition = doorPosition.x + ' ' + playerElement.getAttribute('position').y + ' ' + doorPosition.z;
+                let animationEndPosition = doorPosition.x + ' ' + elemToMove.getAttribute('position').y + ' ' + doorPosition.z;
                 moveAnimation.setAttribute('to', animationEndPosition);
 
-                playerElement.appendChild(moveAnimation);
+                elemToMove.appendChild(moveAnimation);
 
                 setTimeout(() => {
-
-                    let number = Utilities.getRandomInt(0, 20);
-                    this.socket.emit('door-opened', { moveInfo: new DoorOpened(event.from.sourceId, event.to.targetId, event.playerId, this.gameId) });
-                    playerElement.setAttribute('position', playerNewPos);
+                    elemToMove.setAttribute('position', newPos.getPositionString());
                 }, 2500);
             }, 1200);
-        } else {
-            let enemyElement = document.getElementById(event.playerId);
-            let roomElement = document.getElementById(event.to.targetId);
-            let roomPos: any = roomElement.getAttribute('position');
-            roomPos.y = roomPos.y + 2;
-            roomPos.z = roomPos.z + 2;
-
-            enemyElement.setAttribute('position', roomPos);
-        }
-    }
-
-    playerMoved(event: PlayerMoved): void {
-        let elemToMove = null;
-        let posY = 0;
-
-        if (event.playerId === this.playerId) {
-            elemToMove = document.getElementById('player');
-        } else {
-            elemToMove = document.getElementById(event.playerId);
         }
 
-        let pos: any = elemToMove.getAttribute('position');
-        posY = pos.y;
+        // let animation = document.createElement('a-animation');
+        // animation.setAttribute('attribute', 'position');
+        // animation.setAttribute('dur', '1000');
+        // animation.setAttribute('fill', 'forwards');
 
-        let animation = document.createElement('a-animation');
-        animation.setAttribute('attribute', 'position');
-        animation.setAttribute('dur', '1000');
-        animation.setAttribute('fill', 'forwards');
+        // const newPos = new Position(event.desiredPosition.x, event.desiredPosition.y, event.desiredPosition.z);
 
-        const newPos = new Position(event.desiredPosition.x, event.desiredPosition.y, event.desiredPosition.z);
+        // animation.setAttribute('to', newPos.getPositionString());
 
-        animation.setAttribute('to', newPos.getPositionString());
-
-        elemToMove.appendChild(animation);
+        // elemToMove.appendChild(animation);
     }
 
     playerLeft(event: PlayerLeft): void {
         let enemyEntity: any = document.getElementById(event.playerId);
         enemyEntity.parentEl.removeChild(enemyEntity);
         console.debug(event.playerId + ' has left the building.');
+    }
+
+    playerDisconnected() {
+        const disconnectStatus = document.createElement('a-text');
+        disconnectStatus.setAttribute('value', 'disconnected');
+        disconnectStatus.setAttribute('position', '-1.4 0 -1');
+        disconnectStatus.setAttribute('scale', '2');
+        disconnectStatus.setAttribute('color', 'red');
+
+        this.playerCamera.appendChild(disconnectStatus);
     }
 }

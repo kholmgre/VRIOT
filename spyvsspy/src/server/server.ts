@@ -1,8 +1,9 @@
-import { Player } from '../player';
-import { GameState, MapTemplate } from '../gameState';
+import { Player } from '../shared/player';
+import { GameState, MapTemplate } from './gameState';
 import { JoinGameCommand, OpenDoorCommand, PlayerMoveCommand } from '../commands/commands';
-import { DoorOpened, PlayerChangedRoom, YouJoined } from '../events/events';
-import { Room } from '../rooms';
+import { DoorOpened, PlayerChangedRoom, YouJoined, PlayerJoined, PlayerMoved } from '../events/events';
+import { Room } from '../shared/rooms';
+import { fourRoomMap } from '../maps/mapLibrary';
 
 const express = require('express');
 const app = express();
@@ -11,43 +12,28 @@ const server = app.listen('3000');
 const io = require('socket.io').listen(server);
 io.set('origins', '*:*');
 
-let room = new Room("1");
-room.id = "1";
-room.floor = { color: '#F5EBCD' };
-room.roof = { color: '#F5EBCD' };
-room.setWallColors('#FFD79F');
-
-
-const template = new MapTemplate([room]);
+console.log(JSON.stringify(fourRoomMap));
 
 const currentGames: Array<GameState> = [];
 
 const connectedPlayers: Array<{ socket: any, playerId: string }> = [];
 
-// {
-// 	options: {
-// 		time: '180'
-// 	},
-// 	rooms: [
-// 		// { "Id": "1", "Directions": { "N": "2", "S": "3", "E": "4", "W": "5" }, "Colors": { "Floor": "#F5EBCD", "Wall": "#FFD79F" } }
-// 		{ 
-// 			// "Id": "1", "Doors": { "N": { "TargetRoom": "2", "Open": false } }, "Colors": { "Floor": "#F5EBCD", "Wall": "#FFD79F" } 
-// 			"Id": "1", "Doors": {  }, "Colors": { "Floor": "#F5EBCD", "Wall": "#FFD79F" } 
-// 		}
-// 		// ,
-// 		// {
-// 		// 	"Id": "2", "Doors": { "S": { "TargetRoom": "1", "Open": false } }, "Colors": { "Floor": "#BCC9E5", "Wall": "#A0B8FF" }
-// 		// }
-// 		// 	,
-// 		// 	{ "Id": "3", "Directions": { "N": "1", "W": "8", "E": "9" }, "Colors": { "Floor": "#DC9BBD", "Wall": "#FA74B3" } },
-// 		// 	{ "Id": "4", "Directions": { "N": "7", "E": "1", "S": "9" }, "Colors": { "Floor": "#DB9FC0", "Wall": "#F973B2" } },
-// 		// 	{ "Id": "5", "Directions": { "S": "8", "N": "6", "E": "1" }, "Colors": { "Floor": "#F2FBD0", "Wall": "#E4FCA4" } },
-// 		// 	{ "Id": "6", "Directions": { "S": "5", "E": "2" }, "Colors": { "Floor": "#F2FBD0", "Wall": "#E4FCA4" } },
-// 		// 	{ "Id": "7", "Directions": { "S": "4", "W": "2" }, "Colors": { "Floor": "#F2FBD0", "Wall": "#E4FCA4" } },
-// 		// 	{ "Id": "8", "Directions": { "N": "5", "E": "3" }, "Colors": { "Floor": "#F2FBD0", "Wall": "#E4FCA4" } },
-// 		// 	{ "Id": "9", "Directions": { "N": "4", "W": "3" }, "Colors": { "Floor": "#F2FBD0", "Wall": "#E4FCA4" } }
-// 	]
-// };
+function findDirection(room: Room, target: string): string {
+	let direction = '';
+
+	const directions = ['E', 'S', 'W', 'N'];
+
+	directions.forEach((d: string) => {
+		if (room.doors[d] !== null && room.doors[d] !== undefined) {
+			if (room.doors[d].targetRoom === target) {
+				room.doors[d].open = true;
+				direction = d;
+			}
+		}
+	});
+
+	return direction;
+}
 
 io.on('connection', function (socket: any) {
 
@@ -60,12 +46,11 @@ io.on('connection', function (socket: any) {
 
 	socket.on('join', function (data: JoinGameCommand) {
 
-		console.log('player joining game ' + JSON.stringify(data));
-
 		let gameToJoin: GameState = null;
 
 		if (currentGames.length === 0) {
-			gameToJoin = new GameState(template);
+			const copyOfRooms = JSON.parse(JSON.stringify(fourRoomMap));
+			gameToJoin = new GameState(new MapTemplate(copyOfRooms, "Testing generated"));
 			currentGames.push(gameToJoin);
 		} else {
 			gameToJoin = currentGames.find((g: GameState) => { return g.players.length > 0 });
@@ -84,57 +69,113 @@ io.on('connection', function (socket: any) {
 		youJoined.gameState = gameToJoin;
 		youJoined.playerId = newPlayer.id;
 
+		const playerJoined = new PlayerJoined();
+		playerJoined.gameId = currentGameId;
+		playerJoined.gameState = gameToJoin;
+		playerJoined.playerId = playerId;
+
+		console.log('player ' + data.playerName + ' joined game ' + gameToJoin.id);
+
 		socket.emit('you-joined', youJoined);
-		socket.broadcast.emit('player-joined', newPlayer);
+		socket.broadcast.emit('player-joined', playerJoined);
 	});
 
-	socket.on('door-opened', function (data: DoorOpened) {
-		io.sockets.emit('door-opened', data);
-	});
+	socket.on('player-move-command', function (input: PlayerMoveCommand) {
 
-	socket.on('player-move', function (input: PlayerMoveCommand) {
-		console.log(JSON.stringify(input));
-		io.sockets.emit('player-move', input);
-	});
+		// Todo verify legal
+		// Player moved between rooms
+		if (input.currentPosition.y !== input.desiredPosition.y) {
 
-	function findDirection(room: Room, command: DoorOpened): string {
-		let direction = '';
-		if (room.doors["E"].targetRoom === command.targetId) {
-			room.doors["E"].open = true;
-			direction = "E";
-		} else if (room.doors["N"].targetRoom === command.targetId) {
-			room.doors["N"].open = true;
-			direction = "N";
-		} else if (room.doors["S"].targetRoom === command.targetId) {
-			room.doors["S"].open = true;
-			direction = "S";
-		} else if (room.doors["W"].targetRoom === command.targetId) {
-			room.doors["W"].open = true;
-			direction = "W";
+		} else {
+			io.sockets.emit('player-move', input);
 		}
+	});
 
-		return direction;
-	}
-
-	socket.on('player-change-room-command', function (command: OpenDoorCommand) {
+	socket.on('open-door-command', function (command: OpenDoorCommand) {
 
 		const currentGame = currentGames.find((g: GameState) => { return g.id === currentGameId });
 
-		if (currentGame === undefined)
-			throw 'Non existing game';
+		const currentRoom = currentGame.rooms.find((r: Room) => { return r.id === command.sourceRoom });
+		const targetRoom = currentGame.rooms.find((r: Room) => { return r.id === command.targetRoom });
 
-		const currentRoom = currentGame.rooms.find((r: Room) => { return r.id === command.sourceId });
-		const targetRoom = currentGame.rooms.find((r: Room) => { return r.id === command.targetId });
+		const fromDirection = findDirection(currentRoom, command.targetRoom);
 
-		const fromDirection = findDirection(currentRoom, command);
+		const toDirection = findDirection(targetRoom, command.sourceRoom);
 
-		const toDirection = findDirection(targetRoom, command);
+		if (toDirection === '') {
+			console.log('toDirection was null\n' + JSON.stringify(command));
+		}
 
-		const event = new PlayerChangedRoom();
-		event.from = { direction: fromDirection, sourceId: currentRoom.id };
-		event.to = { direction: toDirection, targetId: targetRoom.id };
+		// Refactor
 
-		io.sockets.emit('player-changed-room-event', event);
+		let emitDoorOpenEvent: [boolean, string];
+
+		switch (toDirection) {
+			case 'E':
+				if (currentRoom.doors.E.open !== true) {
+					currentRoom.doors.E.open = true;
+					emitDoorOpenEvent = [true, 'E'];
+				} else emitDoorOpenEvent = [false, ''];
+				break;
+			case 'W':
+				if (currentRoom.doors.W.open !== true) {
+					currentRoom.doors.W.open = true;
+					emitDoorOpenEvent = [true, 'W'];
+				} else emitDoorOpenEvent = [false, ''];
+				break;
+			case 'N':
+				if (currentRoom.doors.N.open !== true) {
+					currentRoom.doors.N.open = true;
+					emitDoorOpenEvent = [true, 'N'];
+				} else emitDoorOpenEvent = [false, ''];
+				break;
+			case 'S':
+				if (currentRoom.doors.S.open !== true) {
+					currentRoom.doors.S.open = true;
+					emitDoorOpenEvent = [true, 'S'];
+				} else emitDoorOpenEvent = [false, ''];
+				break;
+			default:
+				emitDoorOpenEvent = [false, ''];
+				break;
+		}
+
+		if (emitDoorOpenEvent[0] === true) {
+			switch (emitDoorOpenEvent[1]) {
+				case 'N':
+					targetRoom.doors['S'].open = true;
+					break;
+				case 'S':
+					targetRoom.doors['N'].open = true;
+					break;
+				case 'W':
+					targetRoom.doors['E'].open = true;
+					break;
+				case 'E':
+					targetRoom.doors['W'].open = true;
+					break;
+				default:
+					break;
+			}
+
+			console.log('emitting door opened event');
+			// TODO: update game state with door state, so joining players will see opened doors
+			const doorOpenedEvent = new DoorOpened(currentRoom.id, targetRoom.id, playerId, currentGameId);
+			io.sockets.emit('door-opened', doorOpenedEvent)
+		}
+
+		const event = new PlayerMoved();
+		event.desiredPosition = currentRoom.doors[fromDirection].targetPosition;
+		event.playerId = playerId;
+		event.throughDoor = true;
+
+		if(event.throughDoor === true){
+			event.targetRoom = command.targetRoom;
+			event.room = command.sourceRoom;
+			event.direction = fromDirection;
+		}
+
+		io.sockets.emit('player-move', event);
 	});
 
 	socket.on('disconnect', function () {
@@ -142,7 +183,7 @@ io.on('connection', function (socket: any) {
 		const currentGame = currentGames.find((g: GameState) => { return g.id === currentGameId });
 
 		if (currentGame === undefined)
-			throw 'Non existing game';
+			console.log('Player exited non-existing game.');
 
 		const pl = connectedPlayers.find((p: { socket: any, playerId: string }) => { return p.socket === socket });
 
@@ -152,9 +193,9 @@ io.on('connection', function (socket: any) {
 
 		if (currentGame.players.length === 0) {
 			console.log('No more players in game ' + currentGame.id + ' deleting it');
-			const index = currentGames.findIndex((g: GameState) => { return g.id === currentGame.id});
+			const index = currentGames.findIndex((g: GameState) => { return g.id === currentGame.id });
 
-			if(index !== -1){
+			if (index !== -1) {
 				currentGames.splice(index, 1);
 			}
 		} else {

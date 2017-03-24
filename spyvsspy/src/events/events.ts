@@ -1,14 +1,6 @@
 import { IGameRelated } from '../interfaces/interfaces';
-import { GameState } from '../gameState';
-import { Position } from '../position';
-
-export abstract class Event {
-    gameId: string;
-
-    constructor(gameId: string){
-        this.gameId = gameId;
-    }
-}
+import { GameState } from '../server/gameState';
+import { Position } from '../shared/position';
 
 export class DoorOpened implements IGameRelated {
     gameId: string;
@@ -36,6 +28,10 @@ export class PlayerMoved implements IGameRelated {
     playerId: string;
     currentPosition: Position;
     desiredPosition: Position;
+    throughDoor: boolean;
+    room: string;
+    targetRoom: string;
+    direction: string;
 }
 
 export class PlayerLeft implements IGameRelated {
@@ -44,6 +40,12 @@ export class PlayerLeft implements IGameRelated {
 }
 
 export class YouJoined implements IGameRelated {
+    gameId: string;
+    playerId: string;
+    gameState: GameState;
+}
+
+export class PlayerJoined implements IGameRelated {
     gameId: string;
     playerId: string;
     gameState: GameState;

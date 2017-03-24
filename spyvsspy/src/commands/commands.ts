@@ -1,25 +1,23 @@
 import { IGameRelated } from "../Interfaces/interfaces";
-import { Position } from '../position';
+import { Position } from '../shared/position';
 
-export class JoinGameCommand implements IGameRelated {
-    gameId: string;
+export class JoinGameCommand {
     playerName: string;
 
-    constructor(gameId: string, playerName: string) {
+    constructor(playerName: string) {
         this.playerName = playerName;
-        this.gameId = gameId;
     }
 }
 
 export class OpenDoorCommand implements IGameRelated {
     gameId: string;
-    sourceId: string;
-    targetId: string;
+    sourceRoom: string;
+    targetRoom: string;
     playerId: string;
 
     constructor(sourceId: string, targetId: string, player: string, gameId: string) {
-        this.sourceId = sourceId;
-        this.targetId = targetId;
+        this.sourceRoom = sourceId;
+        this.targetRoom = targetId;
         this.playerId = player;
         this.gameId = gameId;
     }

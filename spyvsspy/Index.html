@@ -20,7 +20,7 @@
         <a-sky color="gray"></a-sky>
         <a-entity motion-tracker id="player" player-pos>
             <a-plane id="movetoggle" position="0 1.6 0" changemovestate rotation="-90 0 0" material="color: black"></a-plane>
-            <a-camera look-controls wasd-controls position="0 1.83 0">
+            <a-camera id="playerCamera" look-controls wasd-controls position="0 1.83 0">
                 <a-entity id="opendoor" sound="src: #door" position="0 0 -0.5"></a-entity>
                 <a-entity cursor="fuse: true; fuseTimeout: 500" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
                     material="color: black; shader: flat">

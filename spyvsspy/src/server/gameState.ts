@@ -1,17 +1,19 @@
-import { Room } from './rooms';
-import { Player } from './player';
-import { Utilities } from './utilities';
-import { Position } from './position';
+import { Room } from '../shared/rooms';
+import { Player } from '../shared/player';
+import { Utilities } from '../shared/utilities';
+import { Position } from '../shared/position';
 
 export interface IGameState { players: Array<Player>, rooms: Array<Room>, timeRemaining: number };
 
-export interface IMapTemplate { rooms: Array<Room> };
+export interface IMapTemplate { rooms: Array<Room>, name: string };
 
 export class MapTemplate implements IMapTemplate {
     rooms: Room[];
+    name: string;
 
-    constructor(rooms: Array<Room>) {
+    constructor(rooms: Array<Room>, name: string) {
         this.rooms = rooms;
+        this.name = name;
     }
 }
 
@@ -29,7 +31,9 @@ export class GameState implements IGameState {
     }
 
     private getPositionForNewPlayer(player: Player): Position {
-        return new Position(0, 0, 0);
+        const room = Utilities.getRandomInt(0, this.rooms.length - 1);
+
+        return new Position(Utilities.getRandomInt(0, 1), -3, Utilities.getRandomInt(0, 1));
     }
 
     addPlayer(player: Player): void {

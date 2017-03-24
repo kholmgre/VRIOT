@@ -6,7 +6,7 @@ var fs = require('fs');
 
 const client = {
     entry: {
-        client: "./spyvsspy/src/client.ts"
+        client: "./spyvsspy/src/client/client.ts"
     },
     output: {
         filename: "[name].js",

@@ -1,23 +1,25 @@
-import { Room } from './rooms';
+import { Room, WallDescription } from '../shared/rooms';
+import { ItemDescription } from '../shared/itemDescription';
+import { Position } from '../shared/position';
 
 export class LevelFactory {
     static createRooms(rooms: Array<Room>): Array<HTMLElement> {
         function getPosition(direction: string) {
 
-            let position = { x: '0', y: '3.5', z: '0' }
+            let position = { x: '0', y: '0', z: '0' }
 
             switch (direction) {
                 case 'N':
-                    position.x = "5";
+                    position.z = "5";
                     break;
                 case 'S':
-                    position.x = "-5";
+                    position.z = "-5";
                     break;
                 case 'E':
-                    position.z = '-5';
+                    position.x = '-5';
                     break;
                 case 'W':
-                    position.z = '5';
+                    position.x = '5';
                     break;
             }
 
@@ -49,10 +51,10 @@ export class LevelFactory {
             let rotation = { x: '0', y: '0', z: '0' }
 
             switch (direction) {
-                case 'N':
+                case 'W':
                     rotation.y = "90";
                     break;
-                case 'S':
+                case 'E':
                     rotation.y = "90";
                     break;
             }
@@ -73,13 +75,15 @@ export class LevelFactory {
             return wall;
         }
 
-        function createConnectingWall(currentRoomId: string, door: any, direction: string, color: string) {
+        function createConnectingWall(currentRoomId: string, wallPosition: WallDescription, direction: string, color: string) {
+
+            const position = new Position(null, null, null, wallPosition.targetPosition);
 
             let wall = document.createElement('a-entity');
             wall.setAttribute('position', getPosition(direction));
-            wall.setAttribute('target', door.TargetRoom);
+            wall.setAttribute('target', position.getPositionString());
+            wall.setAttribute('target-room-id', wallPosition.targetRoom);
             wall.setAttribute('direction', direction);
-            wall.setAttribute('id', door.TargetRoom + currentRoomId);
             wall.setAttribute('type', 'wallcontainer');
 
             let doorEl = document.createElement('a-plane');
@@ -90,7 +94,14 @@ export class LevelFactory {
             doorEl.setAttribute('width', '2');
             doorEl.setAttribute('side', 'double');
 
-            if (door.Open === true) {
+            let doorTargetSign = document.createElement('a-text');
+            doorTargetSign.setAttribute('side', 'double');
+            doorTargetSign.setAttribute('color', 'green');
+            doorTargetSign.setAttribute('value', wallPosition.targetRoom);
+            doorTargetSign.setAttribute('position', getdoorknobPosition(direction));
+            doorEl.appendChild(doorTargetSign);
+
+            if (wallPosition.open === true) {
                 doorEl.setAttribute('color', '#000000');
                 doorEl.setAttribute('open-door', '');
             } else {
@@ -114,23 +125,25 @@ export class LevelFactory {
             // TODO: refactor
 
             if (direction === 'N' || direction === 'S')
-                wall1.setAttribute('position', '0 0 3');
+                wall1.setAttribute('position', '-3 0 0');
 
             if (direction === 'W' || direction === 'E')
-                wall1.setAttribute('position', '3 0 0');
+                wall1.setAttribute('position', '0 0 -3');
 
             wall1.setAttribute('rotation', getRotation(direction));
             wall1.setAttribute('height', '4');
+            wall1.setAttribute('id', 'wall1');
             wall1.setAttribute('width', '4');
             wall1.setAttribute('side', 'double');
 
             let wall2 = document.createElement('a-plane');
+            wall2.setAttribute('id', 'wall2');
             wall2.setAttribute('color', color);
             if (direction === 'N' || direction === 'S')
-                wall2.setAttribute('position', '0 0 -3');
+                wall2.setAttribute('position', '3 0 0');
 
             if (direction === 'W' || direction === 'E')
-                wall2.setAttribute('position', '-3 0 0');
+                wall2.setAttribute('position', '0 0 3');
 
             wall2.setAttribute('rotation', getRotation(direction));
             wall2.setAttribute('height', '4');
@@ -144,7 +157,7 @@ export class LevelFactory {
             return wall;
         }
 
-        const mappedRooms = rooms.map((room: Room) => {
+        const mappedRooms = rooms.map((room: Room, index: number) => {
 
             let roomElement = document.createElement('a-entity');
             roomElement.setAttribute('id', room.id);
@@ -153,7 +166,7 @@ export class LevelFactory {
             floor.setAttribute('color', room.floor.color);
             floor.setAttribute('width', '10');
             floor.setAttribute('height', '10');
-            floor.setAttribute('position', '0 1.5 0');
+            floor.setAttribute('position', '0 -2 0');
             floor.setAttribute('rotation', '-90 0 90');
             floor.setAttribute('side', 'double');
             floor.setAttribute('movearea', '');
@@ -162,51 +175,47 @@ export class LevelFactory {
             roof.setAttribute('color', room.floor.color);
             roof.setAttribute('width', '10');
             roof.setAttribute('height', '10');
-            roof.setAttribute('position', '0 5.5 0');
+            roof.setAttribute('position', '0 2 0');
             roof.setAttribute('rotation', '-90 0 90');
             roof.setAttribute('side', 'double');
 
             roomElement.appendChild(floor);
             roomElement.appendChild(roof);
 
-            let createdWalls: any = { "N": "", "S": "", "W": "", "E": "" };
-
-            // Create connecting rooms
-            if (room.doors !== null && room.doors !== undefined) {
-
-                if (room.doors.E !== null && room.doors.E !== undefined) {
-                    let wall = createConnectingWall(room.id, room.doors.E, "E", room.doors.E.color);
-                    createdWalls["E"] = wall;
+            function createW(direction: any, room: any, roomElement: HTMLElement): void {
+                // Room definition makes this code hard. Disabled it by using any typing
+                if (room.doors[direction].targetPosition !== null && room.doors[direction].targetPosition !== undefined) {
+                    let wall = createConnectingWall(room.id, room.doors[direction], direction, room.doors.E.color);
                     roomElement.appendChild(wall);
-                } else if (room.doors.W !== null && room.doors.W !== undefined) {
-                    let wall = createConnectingWall(room.id, room.doors.W, "W", room.doors.W.color);
-                    createdWalls["W"] = wall;
+                } else {
+                    let wall = createWall(direction, room.doors.E.color);
                     roomElement.appendChild(wall);
-                } else if (room.doors.N !== null && room.doors.N !== undefined) {
-                    let wall = createConnectingWall(room.id, room.doors.N, "N", room.doors.N.color);
-                    createdWalls["N"] = wall;
-                    roomElement.appendChild(wall);
-                } else if (room.doors.S !== null && room.doors.S !== undefined) {
-                    let wall = createConnectingWall(room.id, room.doors.S, "S", room.doors.S.color);
-                    createdWalls["S"] = wall;
-                    roomElement.appendChild(wall);
-                }
-
-                for (let dir in createdWalls) {
-                    if (createdWalls[dir] === "") {
-                        let wall = createWall(dir, "#000FFF");
-                        createdWalls[dir] = wall;
-                        roomElement.appendChild(wall);
-                    }
                 }
             }
 
-            return roomElement;
-        });
+            // Create connecting rooms
+            createW("E", room, roomElement);
+            createW("W", room, roomElement);
+            createW("N", room, roomElement);
+            createW("S", room, roomElement);
 
-        mappedRooms.forEach((room: any, index: number, array: Array<any>) => {
-            let pos = '0 ' + index * 5 + ' 0';
-            room.setAttribute('position', pos);
+            const position = new Position(null, null, null, room.position);
+
+            roomElement.setAttribute('position', position.getPositionString());
+
+            room.items.forEach((i: ItemDescription) => {
+                const itemElement = document.createElement(i.elementType);
+
+                for (var key in i.elementValues) {
+                    if (i.elementValues.hasOwnProperty(key)) {
+                        itemElement.setAttribute(key, i.elementValues[key])
+                    }
+                }
+
+                roomElement.appendChild(itemElement);
+            });
+
+            return roomElement;
         });
 
         return mappedRooms;
