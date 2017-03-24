@@ -1,11 +1,13 @@
 import { Room, WallDescription } from '../shared/rooms';
 import { colors } from './colors';
 import { Utilities } from '../shared/utilities';
+import { ItemDescription } from '../shared/itemDescription';
+import { Position } from '../shared/position';
 
 const map1Layout = '1AB\n2 6\n3457\n9  8\n';
 const map2Layout = '12\n34\n';
 
-const createRoomsFromTemplate = (layout: string) => {
+const createRoomsFromTemplate = (layout: string, metadata: any[] = []) => {
     let mapArr: any = [];
     let currentRow = [];
     let rooms: Array<Room> = [];
@@ -26,6 +28,11 @@ const createRoomsFromTemplate = (layout: string) => {
             if (r !== ' ') {
                 // check metadata for room details
                 const room = new Room(r);
+
+                const itemsInRoom = metadata.filter((i: ItemDescription) => i.roomId === r);
+
+                if(itemsInRoom.length > 0)
+                    room.items = itemsInRoom;
 
                 // check if there was a room before on this row
                 if (rowIndex !== 0 && c[rowIndex - 1] !== ' ' && c[rowIndex - 1] !== undefined && c[rowIndex - 1] !== null) {
@@ -62,6 +69,8 @@ const createRoomsFromTemplate = (layout: string) => {
     return rooms;
 };
 
-export const oneRoomMap: Array<Room> = createRoomsFromTemplate(map1Layout);
+const itemExample = [new ItemDescription(new Position(1, 0, 0), "a-text", { "value" : "X", "color" : "red" }, "1")];
+
+export const oneRoomMap: Array<Room> = createRoomsFromTemplate(map1Layout, itemExample);
 export const fourRoomMap: Array<Room> = createRoomsFromTemplate(map2Layout);
 

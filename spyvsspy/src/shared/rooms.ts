@@ -25,6 +25,7 @@ export class Room {
     roof: {
         color: string
     }
+    items: any[] = []
     setWallColors(color: string) : void {
 
         if (this.doors === null || this.doors === undefined)
