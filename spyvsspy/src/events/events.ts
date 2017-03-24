@@ -28,6 +28,10 @@ export class PlayerMoved implements IGameRelated {
     playerId: string;
     currentPosition: Position;
     desiredPosition: Position;
+    throughDoor: boolean;
+    room: string;
+    targetRoom: string;
+    direction: string;
 }
 
 export class PlayerLeft implements IGameRelated {

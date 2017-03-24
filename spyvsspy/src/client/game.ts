@@ -38,7 +38,7 @@ export class Game {
         const pos = event.gameState.players.find((p: Player) => { return p.id === this.playerId }).position;
 
         this.player.setAttribute('position', new Position(pos.x, pos.y, pos.z).getPositionString());
-        
+
 
         // Hack because the dom had to update with the changes in the room forEach above.. Use mutation observers? Something native to a-frame?
         setTimeout(() => {
@@ -98,7 +98,7 @@ export class Game {
         // TODO: only send to clients except sender client. 
 
         // There could be more than one door?
-        let currentRoomWall: any = document.getElementById(event.sourceId).querySelectorAll('[type=wallcontainer][target="' + event.targetId + '"]')[0];
+        let currentRoomWall: any = document.getElementById(event.sourceId).querySelectorAll('[type=wallcontainer][target-room-id="' + event.targetId + '"]')[0];
         let currentRoomWallDoor: any = currentRoomWall.querySelectorAll('[type=door]')[0];
         let currentRoomWallDoorKnob: any = currentRoomWall.querySelectorAll('[type=doorknob]')[0];
         currentRoomWallDoor.setAttribute('color', '#000000');
@@ -121,18 +121,23 @@ export class Game {
         // TODO: remove doorknob elements in connecting rooms..
     }
 
-    playerChangedRoom(event: PlayerChangedRoom): void {
-        // Separate this logic?
+    playerMoved(event: PlayerMoved): void {
+        let elemToMove: any = null;
+
         if (event.playerId === this.playerId) {
+            elemToMove = document.getElementById('player');
+        } else {
+            elemToMove = document.getElementById(event.playerId);
+        }
+
+        if (event.throughDoor === true) {
+            // Attach entities to each player and play the one that matches playerId
             let entity: any = document.querySelector('[sound]');
 
             entity.components.sound.playSound();
 
-            let playerElement: any = document.getElementById('player');
-
             setTimeout(() => {
-                let targetRoom = document.getElementById(event.to.targetId);
-                let targetRoomPos: any = targetRoom.getAttribute('position');
+                const newPos = new Position(event.desiredPosition.x, event.desiredPosition.y, event.desiredPosition.z);
 
                 let moveAnimation = document.createElement('a-animation');
                 moveAnimation.setAttribute('attribute', 'position');
@@ -141,29 +146,9 @@ export class Game {
                 moveAnimation.setAttribute('dur', '2400');
                 moveAnimation.setAttribute('fill', 'forwards');
 
-                let targetWallInCurrentRoom: any = document.getElementById(event.from.sourceId).querySelectorAll('[direction=' + event.from.direction + ']')[0];
+                let targetWallInCurrentRoom: any = document.getElementById(event.room).querySelectorAll('[direction=' + event.direction + ']')[0];
 
                 let doorPosition = targetWallInCurrentRoom.getAttribute('position');
-
-                let playerNewPos: any = { x: targetRoomPos.x, y: targetRoomPos.y, z: targetRoomPos.z };
-
-                // Adjust player position when entering new room, not totally correct
-                switch (event.to.direction) {
-                    case 'N':
-                        playerNewPos.x = playerNewPos.x - 2.8;
-                        break;
-                    case 'S':
-                        playerNewPos.x = playerNewPos.x + 2.8;
-                        break;
-                    case 'W':
-                        playerNewPos.z = playerNewPos.z + 2.8;
-                        break;
-                    case 'E':
-                        playerNewPos.z = playerNewPos.z - 2.8;
-                        break;
-                    default:
-                        break;
-                }
 
                 if (doorPosition.x > 0)
                     doorPosition.x = doorPosition.x - 0.20;
@@ -171,45 +156,27 @@ export class Game {
                 if (doorPosition.z > 0)
                     doorPosition.z = doorPosition.z - 0.20;
 
-                let animationEndPosition = doorPosition.x + ' ' + playerElement.getAttribute('position').y + ' ' + doorPosition.z;
+                let animationEndPosition = doorPosition.x + ' ' + elemToMove.getAttribute('position').y + ' ' + doorPosition.z;
                 moveAnimation.setAttribute('to', animationEndPosition);
 
-                playerElement.appendChild(moveAnimation);
+                elemToMove.appendChild(moveAnimation);
 
                 setTimeout(() => {
-                    playerElement.setAttribute('position', playerNewPos);
+                    elemToMove.setAttribute('position', newPos.getPositionString());
                 }, 2500);
             }, 1200);
-        } else {
-            let enemyElement = document.getElementById(event.playerId);
-            let roomElement = document.getElementById(event.to.targetId);
-            let roomPos: any = roomElement.getAttribute('position');
-            roomPos.y = roomPos.y + 2;
-            roomPos.z = roomPos.z + 2;
-
-            enemyElement.setAttribute('position', roomPos);
-        }
-    }
-
-    playerMoved(event: PlayerMoved): void {
-        let elemToMove = null;
-
-        if (event.playerId === this.playerId) {
-            elemToMove = document.getElementById('player');
-        } else {
-            elemToMove = document.getElementById(event.playerId);
         }
 
-        let animation = document.createElement('a-animation');
-        animation.setAttribute('attribute', 'position');
-        animation.setAttribute('dur', '1000');
-        animation.setAttribute('fill', 'forwards');
+        // let animation = document.createElement('a-animation');
+        // animation.setAttribute('attribute', 'position');
+        // animation.setAttribute('dur', '1000');
+        // animation.setAttribute('fill', 'forwards');
 
-        const newPos = new Position(event.desiredPosition.x, event.desiredPosition.y, event.desiredPosition.z);
+        // const newPos = new Position(event.desiredPosition.x, event.desiredPosition.y, event.desiredPosition.z);
 
-        animation.setAttribute('to', newPos.getPositionString());
+        // animation.setAttribute('to', newPos.getPositionString());
 
-        elemToMove.appendChild(animation);
+        // elemToMove.appendChild(animation);
     }
 
     playerLeft(event: PlayerLeft): void {

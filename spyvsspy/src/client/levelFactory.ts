@@ -82,6 +82,7 @@ export class LevelFactory {
             let wall = document.createElement('a-entity');
             wall.setAttribute('position', getPosition(direction));
             wall.setAttribute('target', position.getPositionString());
+            wall.setAttribute('target-room-id', wallPosition.targetRoom);
             wall.setAttribute('direction', direction);
             wall.setAttribute('type', 'wallcontainer');
 

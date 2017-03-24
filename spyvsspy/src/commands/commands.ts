@@ -9,15 +9,15 @@ export class JoinGameCommand {
     }
 }
 
-export class ChangeRoomCommand implements IGameRelated {
+export class OpenDoorCommand implements IGameRelated {
     gameId: string;
-    sourceId: string;
-    targetId: string;
+    sourceRoom: string;
+    targetRoom: string;
     playerId: string;
 
     constructor(sourceId: string, targetId: string, player: string, gameId: string) {
-        this.sourceId = sourceId;
-        this.targetId = targetId;
+        this.sourceRoom = sourceId;
+        this.targetRoom = targetId;
         this.playerId = player;
         this.gameId = gameId;
     }

@@ -3,7 +3,7 @@ import { LevelFactory } from './levelFactory';
 import { Game } from './game';
 import { GameState } from '../server/gameState';
 import { DoorOpened, PlayerChangedRoom, PlayerMoved, PlayerLeft, YouJoined } from '../events/events';
-import { PlayerMoveCommand, ChangeRoomCommand } from '../commands/commands';
+import { PlayerMoveCommand, OpenDoorCommand } from '../commands/commands';
 import { Player } from '../shared/player';
 import { Position } from '../shared/position';
 
@@ -21,22 +21,30 @@ AFRAME.registerComponent('open-door', {
     init: function () {
         this.el.addEventListener('click', function (evt: any) {
 
-            let target = '';
+            let positionInTargetRoom = '';
+            let currentRoomId = '';
+            let targetRoomId = '';
 
             let playerElement = document.getElementById('player');
 
             if (this.getAttribute('type') === 'door') {
-                target = this.parentEl.getAttribute('target');
+                positionInTargetRoom = this.parentEl.getAttribute('target');
+                currentRoomId = this.parentEl.getAttribute('id');
+                targetRoomId = this.parentEl.getAttribute('target-room-id');
             } else {
-                target = this.parentEl.parentEl.getAttribute('target');
+                positionInTargetRoom = this.parentEl.parentEl.getAttribute('target');
+                currentRoomId = this.parentEl.parentEl.parentEl.getAttribute('id');
+                targetRoomId = this.parentEl.parentEl.getAttribute('target-room-id');
             }
 
             const currentPos: any = playerElement.getAttribute('position');
-            const newPos = target.split(' ');
+            const newPos = positionInTargetRoom.split(' ');
 
-            const playerMoveCommand = new PlayerMoveCommand(currentGame.gameId, currentGame.playerId, currentPos, new Position(Number(newPos[0]), Number(newPos[1]), Number(newPos[2])));
+            const openDoorCommand = new OpenDoorCommand(currentRoomId, targetRoomId, currentGame.playerId, currentGame.gameId);
 
-            socket.emit('player-move-command', playerMoveCommand);
+            // const playerMoveCommand = new PlayerMoveCommand(currentGame.gameId, currentGame.playerId, currentPos, new Position(Number(newPos[0]), Number(newPos[1]), Number(newPos[2])));
+
+            socket.emit('open-door-command', openDoorCommand);
         });
     }
 });
@@ -122,10 +130,6 @@ window.addEventListener("load", function () {
 
     socket.on('door-opened', function (event: DoorOpened) {
         currentGame.doorOpened(event);
-    });
-
-    socket.on('player-changed-room-event', function (event: PlayerChangedRoom) {
-        currentGame.playerChangedRoom(event);
     });
 
     socket.on('player-move', function (event: PlayerMoved) {

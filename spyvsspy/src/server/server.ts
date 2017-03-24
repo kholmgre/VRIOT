@@ -1,7 +1,7 @@
 import { Player } from '../shared/player';
 import { GameState, MapTemplate } from './gameState';
-import { JoinGameCommand, ChangeRoomCommand, PlayerMoveCommand } from '../commands/commands';
-import { DoorOpened, PlayerChangedRoom, YouJoined, PlayerJoined } from '../events/events';
+import { JoinGameCommand, OpenDoorCommand, PlayerMoveCommand } from '../commands/commands';
+import { DoorOpened, PlayerChangedRoom, YouJoined, PlayerJoined, PlayerMoved } from '../events/events';
 import { Room } from '../shared/rooms';
 import { fourRoomMap } from '../maps/mapLibrary';
 
@@ -20,12 +20,17 @@ const connectedPlayers: Array<{ socket: any, playerId: string }> = [];
 
 function findDirection(room: Room, target: string): string {
 	let direction = '';
-	if (room.doors[target] !== null && room.doors[target] !== undefined) {
-		if (room.doors[target].targetRoom === target) {
-			room.doors[target].open = true;
-			direction = target;
+
+	const directions = ['E', 'S', 'W', 'N'];
+
+	directions.forEach((d: string) => {
+		if (room.doors[d] !== null && room.doors[d] !== undefined) {
+			if (room.doors[d].targetRoom === target) {
+				room.doors[d].open = true;
+				direction = d;
+			}
 		}
-	}
+	});
 
 	return direction;
 }
@@ -75,30 +80,30 @@ io.on('connection', function (socket: any) {
 		socket.broadcast.emit('player-joined', playerJoined);
 	});
 
-	socket.on('player-move', function (input: PlayerMoveCommand) {
+	socket.on('player-move-command', function (input: PlayerMoveCommand) {
 
 		// Todo verify legal
 		// Player moved between rooms
-		if(input.currentPosition.y !== input.desiredPosition.y){
+		if (input.currentPosition.y !== input.desiredPosition.y) {
 
 		} else {
 			io.sockets.emit('player-move', input);
 		}
 	});
 
-	socket.on('player-change-room-command', function (command: ChangeRoomCommand) {
+	socket.on('open-door-command', function (command: OpenDoorCommand) {
 
 		const currentGame = currentGames.find((g: GameState) => { return g.id === currentGameId });
 
-		const currentRoom = currentGame.rooms.find((r: Room) => { return r.id === command.sourceId });
-		const targetRoom = currentGame.rooms.find((r: Room) => { return r.id === command.targetId });
+		const currentRoom = currentGame.rooms.find((r: Room) => { return r.id === command.sourceRoom });
+		const targetRoom = currentGame.rooms.find((r: Room) => { return r.id === command.targetRoom });
 
-		const fromDirection = findDirection(currentRoom, command.targetId);
+		const fromDirection = findDirection(currentRoom, command.targetRoom);
 
-		const toDirection = findDirection(targetRoom, command.sourceId);
+		const toDirection = findDirection(targetRoom, command.sourceRoom);
 
-		if(toDirection === '') {
-			console.log('toDirecition was null\n' + JSON.stringify(command));
+		if (toDirection === '') {
+			console.log('toDirection was null\n' + JSON.stringify(command));
 		}
 
 		// Refactor
@@ -159,7 +164,18 @@ io.on('connection', function (socket: any) {
 			io.sockets.emit('door-opened', doorOpenedEvent)
 		}
 
-		io.sockets.emit('player-changed-room-event', event);
+		const event = new PlayerMoved();
+		event.desiredPosition = currentRoom.doors[fromDirection].targetPosition;
+		event.playerId = playerId;
+		event.throughDoor = true;
+
+		if(event.throughDoor === true){
+			event.targetRoom = command.targetRoom;
+			event.room = command.sourceRoom;
+			event.direction = fromDirection;
+		}
+
+		io.sockets.emit('player-move', event);
 	});
 
 	socket.on('disconnect', function () {

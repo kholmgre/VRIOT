@@ -5,10 +5,10 @@ import { ItemDescription } from '../shared/itemDescription';
 import { Position } from '../shared/position';
 
 const map1Layout = '1AB\n2 6\n3457\n9  8\n';
-const map2Layout = '12\n34\n';
+const map2Layout = '12\n34\n5\n6\n';
 
 const createRoomsFromTemplate = (layout: string, metadata: any[] = []) => {
-    let mapArr: any = [];
+    let mapArray: any = [];
     let currentRow = [];
     let rooms: Array<Room> = [];
 
@@ -18,55 +18,57 @@ const createRoomsFromTemplate = (layout: string, metadata: any[] = []) => {
         if (element !== '\n') {
             currentRow.push(element);
         } else {
-            mapArr.push(currentRow);
+            mapArray.push(currentRow);
             currentRow = [];
         }
     }
 
-    // Keeping track of room index. It is used when generating y position for room
-    let roomOrder = 0;
 
-    // key === roomId, value === order of room
-    const roomMap: any = {};
+    mapArray.forEach((row: any[], rowIndex: number) => {
+        row.forEach((roomId: string, roomIndex: number) => {
+            // ' '-means an empy space between rooms
+            if (roomId !== ' ') {
+                const room = new Room(roomId);
 
-    mapArr.forEach((c: any[], rowsIndex: number) => {
-        c.forEach((r: string, rowIndex: number) => {
-            if (r !== ' ') {
-                // check metadata for room details
-                const room = new Room(r);
+                const roomPositionOnXAxis = roomIndex * -15; // this is to make each room in the array be placed 15 meters east/negative x-axis from eachother
+                const roomPositionOnZAxis = roomIndex * -15; // this is to make each room in the array be placed 15 meters south/negative z-axis from eachother
+                const roomPositionOnYAxis = 0; // all rooms are on the same y-axis
 
-                room.position = new Position(rowIndex * -15, 0, rowsIndex * -15);
-                roomMap[r] = roomOrder;
+                room.position = new Position(roomPositionOnXAxis, roomPositionOnYAxis, roomPositionOnZAxis);
 
-                const itemsInRoom = metadata.filter((i: ItemDescription) => i.roomId === r);
+                // Check if any items should be added to the room
+                const itemsInRoom = metadata.filter((i: ItemDescription) => i.roomId === roomId);
 
                 if (itemsInRoom.length > 0)
                     room.items = itemsInRoom;
 
-                // check if there was a room before on this row
-                if (rowIndex !== 0 && c[rowIndex - 1] !== ' ' && c[rowIndex - 1] !== undefined && c[rowIndex - 1] !== null) {
-                    room.doors.W = new WallDescription(c[rowIndex - 1]);
-                    room.doors.W.targetPosition = new Position((rowIndex - 1) * -15, 0, rowsIndex * 15);
+                // check if there was a room before the x-axis
+                if (roomIndex !== 0 && row[roomIndex - 1] !== ' ' && row[roomIndex - 1] !== undefined && row[roomIndex - 1] !== null) {
+                    room.doors.W = new WallDescription(row[roomIndex - 1]);
+                    room.doors.W.targetPosition = new Position((roomIndex - 1) * 12, -2.5, roomIndex * 12);
                 }
 
-                // check if there was a room after on this row
-                if (rowIndex !== c.length && c[rowIndex + 1] !== ' ' && c[rowIndex + 1] !== undefined && c[rowIndex + 1] !== null) {
-                    room.doors.E = new WallDescription(c[rowIndex + 1]);
-                    room.doors.E.targetPosition = new Position((rowIndex + 1) * -15, 0, rowsIndex * 15);
+                // check if there comes a room after current room on the x-axis
+                if (roomIndex !== row.length && row[roomIndex + 1] !== ' ' && row[roomIndex + 1] !== undefined && row[roomIndex + 1] !== null) {
+                    room.doors.E = new WallDescription(row[roomIndex + 1]);
+                    room.doors.E.targetPosition = new Position((roomIndex + 1) * -12, -2.5, roomIndex * 12);
                 }
 
-                // now check if there was a row before or if there is a row after and if there is a room with the same index
-                if (mapArr[rowsIndex - 1] !== null && mapArr[rowsIndex - 1] !== undefined) {
-                    if (mapArr[rowsIndex - 1][rowIndex] !== ' ' && mapArr[rowsIndex - 1][rowIndex] !== undefined && mapArr[rowsIndex - 1][rowIndex] !== null) {
-                        room.doors.N = new WallDescription(mapArr[rowsIndex - 1][rowIndex]);
-                        room.doors.N.targetPosition = new Position(rowIndex * 15, 0, (rowsIndex - 1) * 15);
+                // check if there is a room with the same x-index/position on the x axis but with different value on z-axis (north)
+                if (mapArray[roomIndex - 1] !== null && mapArray[roomIndex - 1] !== undefined) {
+                    // we have an array before current array if we are here
+                    if (mapArray[roomIndex - 1][roomIndex] !== ' ' && mapArray[roomIndex - 1][roomIndex] !== undefined && mapArray[roomIndex - 1][roomIndex] !== null) {
+                        room.doors.N = new WallDescription(mapArray[roomIndex - 1][roomIndex]);
+                        room.doors.N.targetPosition = new Position(roomIndex * 12, -2.5, (rowIndex - 1) * 12);
                     }
                 }
 
-                if (mapArr[rowsIndex + 1] !== null && mapArr[rowsIndex + 1] !== undefined) {
-                    if (mapArr[rowsIndex + 1][rowIndex] !== ' ' && mapArr[rowsIndex + 1][rowIndex] !== undefined && mapArr[rowsIndex + 1][rowIndex] !== null) {
-                        room.doors.S = new WallDescription(mapArr[rowsIndex + 1][rowIndex]);
-                        room.doors.S.targetPosition = new Position(rowIndex * 15, 0, (rowsIndex + 1) * -15);
+                // check if there is a room with the same x-index/position on the x axis but with different value on z-axis (south)
+                if (mapArray[roomIndex + 1] !== null && mapArray[roomIndex + 1] !== undefined) {
+                    // we have an array after current array if we are here
+                    if (mapArray[roomIndex + 1][roomIndex] !== ' ' && mapArray[roomIndex + 1][roomIndex] !== undefined && mapArray[roomIndex + 1][roomIndex] !== null) {
+                        room.doors.S = new WallDescription(mapArray[roomIndex + 1][roomIndex]);
+                        room.doors.S.targetPosition = new Position(roomIndex * 12, -2.5, (rowIndex + 1) * -12);
                     }
                 }
 
@@ -76,7 +78,6 @@ const createRoomsFromTemplate = (layout: string, metadata: any[] = []) => {
                 room.roof.color = roofAndFloorColor;
 
                 rooms.push(room);
-                roomOrder++;
             }
         });
     });
@@ -95,19 +96,32 @@ function assertRoomPosition(room: Room, x: number, y: number, z: number): void {
         throw 'Room ' + room.id + ' position not correct!';
 }
 
+function assertTargetPosition(wall: WallDescription, x: number, y: number, z: number) : void {
+    if(wall.targetPosition.x !== x || wall.targetPosition.y !== y || wall.targetPosition.z !== z)
+        throw 'TARGET POSITION ERROR!!!';
+}
+
 rooms.forEach((r: Room, index: number) => {
     switch (index.toString()) {
         case "0":
             assertRoomPosition(r, 0, 0, 0);
+            assertTargetPosition(r.doors["E"], -12, -2.5, 0);
+            assertTargetPosition(r.doors["S"], 0, -2.5, -12);
             break;
         case "1":
             assertRoomPosition(r, -15, 0, 0);
+            assertTargetPosition(r.doors["W"], 0, -2.5, 0);
+            assertTargetPosition(r.doors["S"], -12, -2.5, -12);
             break;
         case "2":
             assertRoomPosition(r, 0, 0, -15);
+            assertTargetPosition(r.doors["E"], -12, -2.5, -12);
+            assertTargetPosition(r.doors["N"], 12, -2.5, 0);
             break;
         case "3":
             assertRoomPosition(r, -15, 0, -15);
+            assertTargetPosition(r.doors["W"], 0, -2.5, -12);
+            assertTargetPosition(r.doors["N"], -12, -2.5, 0);
             break;
         default:
             break;
