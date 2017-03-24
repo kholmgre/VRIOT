@@ -1,4 +1,5 @@
 import { Room } from '../shared/rooms';
+import { ItemDescription } from '../shared/itemDescription';
 
 export class LevelFactory {
     static createRooms(rooms: Array<Room>): Array<HTMLElement> {
@@ -151,7 +152,7 @@ export class LevelFactory {
             return wall;
         }
 
-        const mappedRooms = rooms.map((room: Room) => {
+        const mappedRooms = rooms.map((room: Room, index: number) => {
 
             let roomElement = document.createElement('a-entity');
             roomElement.setAttribute('id', room.id);
@@ -176,7 +177,7 @@ export class LevelFactory {
             roomElement.appendChild(floor);
             roomElement.appendChild(roof);
 
-            function createW(direction: any, room: any, roomElement: HTMLElement) : void {
+            function createW(direction: any, room: any, roomElement: HTMLElement): void {
                 if (room.doors[direction].targetRoom !== null && room.doors[direction].targetRoom !== undefined) {
                     let wall = createConnectingWall(room.id, room.doors[direction], direction, room.doors.E.color);
                     roomElement.appendChild(wall);
@@ -192,12 +193,22 @@ export class LevelFactory {
             createW("N", room, roomElement);
             createW("S", room, roomElement);
 
-            return roomElement;
-        });
-
-        mappedRooms.forEach((room: any, index: number, array: Array<any>) => {
             let pos = '0 ' + index * 5 + ' 0';
-            room.setAttribute('position', pos);
+            roomElement.setAttribute('position', pos);
+
+            room.items.forEach((i: ItemDescription) => {
+                const itemElement = document.createElement(i.elementType);
+
+                for (var key in i.elementValues) {
+                    if (i.elementValues.hasOwnProperty(key)) {
+                        itemElement.setAttribute(key, i.elementValues[key])
+                    }
+                }
+
+                roomElement.appendChild(itemElement);
+            });
+
+            return roomElement;
         });
 
         return mappedRooms;

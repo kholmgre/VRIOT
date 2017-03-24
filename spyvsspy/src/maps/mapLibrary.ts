@@ -69,8 +69,11 @@ const createRoomsFromTemplate = (layout: string, metadata: any[] = []) => {
     return rooms;
 };
 
-const itemExample = [new ItemDescription(new Position(1, 0, 0), "a-text", { "value" : "X", "color" : "red" }, "1")];
+const items = [new ItemDescription(new Position(1, 0, 0), "a-text", { "value" : "X", "color" : "red", "rotation" : "-90 0 0", "position" : "-4 1.5 0" }, "1"), 
+new ItemDescription(new Position(1, 0, 0), "a-text", { "value" : "Z", "color" : "red", "rotation" : "-90 0 0", "position" : "0 1.5 -4" }, "1")];
 
-export const oneRoomMap: Array<Room> = createRoomsFromTemplate(map1Layout, itemExample);
-export const fourRoomMap: Array<Room> = createRoomsFromTemplate(map2Layout);
+const itemExample = items;
+
+export const oneRoomMap: Array<Room> = createRoomsFromTemplate(map1Layout);
+export const fourRoomMap: Array<Room> = createRoomsFromTemplate(map2Layout, itemExample);
 
