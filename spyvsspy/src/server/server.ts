@@ -100,7 +100,6 @@ io.on('connection', function (socket: any) {
 
 		// Todo verify legal
 
-		console.log(JSON.stringify(input));
 		io.sockets.emit('player-move', input);
 	});
 
@@ -115,8 +114,9 @@ io.on('connection', function (socket: any) {
 
 		const toDirection = findDirection(targetRoom, command.sourceId);
 
-		if(toDirection === '')
-			console.log(JSON.stringify(command));
+		if(toDirection === '') {
+			console.log('toDirecition was null\n' + JSON.stringify(command));
+		}
 
 		// Refactor
 
