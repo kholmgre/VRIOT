@@ -1,9 +1,6 @@
 import { Room, WallDescription } from '../shared/rooms';
 import { colors } from './colors';
-
-function getRandomInt(max: number, min: number): number {
-    return Math.floor(Math.random()*(max-min+1)+min);
-}
+import { Utilities } from '../shared/utilities';
 
 const map1Layout = '1AB\n2 6\n3457\n9  8\n';
 const map2Layout = '12\n34\n';
@@ -52,9 +49,9 @@ const createRoomsFromTemplate = (layout: string) => {
                     }
                 }
 
-                room.setWallColors(colors[getRandomInt(0, colors.length - 1)]);
-                room.floor.color = colors[getRandomInt(0, colors.length - 1)];
-                room.roof.color = colors[getRandomInt(0, colors.length - 1)];
+                room.setWallColors(colors[Utilities.getRandomInt(0, colors.length - 1)]);
+                room.floor.color = colors[Utilities.getRandomInt(0, colors.length - 1)];
+                room.roof.color = colors[Utilities.getRandomInt(0, colors.length - 1)];
 
                 rooms.push(room);
             }

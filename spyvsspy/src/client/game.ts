@@ -38,7 +38,7 @@ export class Game {
         const pos = event.gameState.players.find((p: Player) => { return p.id === this.playerId }).position;
 
         this.player.setAttribute('position', new Position(pos.x, pos.y, pos.z).getPositionString());
-        this.player.setAttribute('currentroom', '1');
+        
 
         // Hack because the dom had to update with the changes in the room forEach above.. Use mutation observers? Something native to a-frame?
         setTimeout(() => {
@@ -129,7 +129,6 @@ export class Game {
             entity.components.sound.playSound();
 
             let playerElement: any = document.getElementById('player');
-            playerElement.setAttribute('currentroom', event.to.targetId);
 
             setTimeout(() => {
                 let targetRoom = document.getElementById(event.to.targetId);
