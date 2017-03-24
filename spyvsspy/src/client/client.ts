@@ -5,6 +5,7 @@ import { GameState } from '../server/gameState';
 import { DoorOpened, PlayerChangedRoom, PlayerMoved, PlayerLeft, YouJoined } from '../events/events';
 import { PlayerMoveCommand, ChangeRoomCommand } from '../commands/commands';
 import { Player } from '../shared/player';
+import { Position } from '../shared/position';
 
 declare var io: any;
 declare var AFRAME: any;
@@ -30,10 +31,12 @@ AFRAME.registerComponent('open-door', {
                 target = this.parentEl.parentEl.getAttribute('target');
             }
 
-            const command = new ChangeRoomCommand(playerElement.getAttribute('currentroom'), target, currentGame.playerId, currentGame.gameId);
+            const currentPos: any = playerElement.getAttribute('position');
+            const newPos = target.split(' ');
 
-            // Are we keeping track of current room still?
-            socket.emit('player-change-room-command', command);
+            const playerMoveCommand = new PlayerMoveCommand(currentGame.gameId, currentGame.playerId, currentPos, new Position(Number(newPos[0]), Number(newPos[1]), Number(newPos[2])));
+
+            socket.emit('player-move-command', playerMoveCommand);
         });
     }
 });
@@ -65,7 +68,7 @@ AFRAME.registerComponent('movearea', {
 
             const playerMoveCommand = new PlayerMoveCommand(currentGame.gameId, currentGame.playerId, playerElement.getAttribute('position'), newPos);
 
-            socket.emit('player-move', playerMoveCommand);
+            socket.emit('player-move-command', playerMoveCommand);
         });
     }
 });

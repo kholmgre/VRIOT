@@ -193,16 +193,12 @@ export class Game {
 
     playerMoved(event: PlayerMoved): void {
         let elemToMove = null;
-        let posY = 0;
 
         if (event.playerId === this.playerId) {
             elemToMove = document.getElementById('player');
         } else {
             elemToMove = document.getElementById(event.playerId);
         }
-
-        let pos: any = elemToMove.getAttribute('position');
-        posY = pos.y;
 
         let animation = document.createElement('a-animation');
         animation.setAttribute('attribute', 'position');

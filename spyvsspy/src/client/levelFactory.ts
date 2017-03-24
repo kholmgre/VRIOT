@@ -1,5 +1,6 @@
-import { Room } from '../shared/rooms';
+import { Room, WallDescription } from '../shared/rooms';
 import { ItemDescription } from '../shared/itemDescription';
+import { Position } from '../shared/position';
 
 export class LevelFactory {
     static createRooms(rooms: Array<Room>): Array<HTMLElement> {
@@ -74,13 +75,14 @@ export class LevelFactory {
             return wall;
         }
 
-        function createConnectingWall(currentRoomId: string, door: any, direction: string, color: string) {
+        function createConnectingWall(currentRoomId: string, wallPosition: WallDescription, direction: string, color: string) {
+
+            const position = new Position(null, null, null, wallPosition.targetPosition);
 
             let wall = document.createElement('a-entity');
             wall.setAttribute('position', getPosition(direction));
-            wall.setAttribute('target', door.targetRoom);
+            wall.setAttribute('target', position.getPositionString());
             wall.setAttribute('direction', direction);
-            wall.setAttribute('id', door.TargetRoom + currentRoomId);
             wall.setAttribute('type', 'wallcontainer');
 
             let doorEl = document.createElement('a-plane');
@@ -94,11 +96,11 @@ export class LevelFactory {
             let doorTargetSign = document.createElement('a-text');
             doorTargetSign.setAttribute('side', 'double');
             doorTargetSign.setAttribute('color', 'green');
-            doorTargetSign.setAttribute('value', door.targetRoom);
+            doorTargetSign.setAttribute('value', wallPosition.targetRoom);
             doorTargetSign.setAttribute('position', getdoorknobPosition(direction));
             doorEl.appendChild(doorTargetSign);
 
-            if (door.Open === true) {
+            if (wallPosition.open === true) {
                 doorEl.setAttribute('color', '#000000');
                 doorEl.setAttribute('open-door', '');
             } else {
@@ -178,7 +180,8 @@ export class LevelFactory {
             roomElement.appendChild(roof);
 
             function createW(direction: any, room: any, roomElement: HTMLElement): void {
-                if (room.doors[direction].targetRoom !== null && room.doors[direction].targetRoom !== undefined) {
+                // Room definition makes this code hard. Disabled it by using any typing
+                if (room.doors[direction].targetPosition !== null && room.doors[direction].targetPosition !== undefined) {
                     let wall = createConnectingWall(room.id, room.doors[direction], direction, room.doors.E.color);
                     roomElement.appendChild(wall);
                 } else {
@@ -193,8 +196,9 @@ export class LevelFactory {
             createW("N", room, roomElement);
             createW("S", room, roomElement);
 
-            let pos = '0 ' + index * 5 + ' 0';
-            roomElement.setAttribute('position', pos);
+            const position = new Position(null, null, null, room.position);
+
+            roomElement.setAttribute('position', position.getPositionString());
 
             room.items.forEach((i: ItemDescription) => {
                 const itemElement = document.createElement(i.elementType);

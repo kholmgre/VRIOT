@@ -23,15 +23,23 @@ const createRoomsFromTemplate = (layout: string, metadata: any[] = []) => {
         }
     }
 
+    // Keeping track of room index. It is used when generating y position for room
+    let roomOrder = 0;
+
+    // key === roomId, value === order of room
+    const roomMap: any = {};
+
     mapArr.forEach((c: any[], rowsIndex: number) => {
         c.forEach((r: string, rowIndex: number) => {
             if (r !== ' ') {
                 // check metadata for room details
                 const room = new Room(r);
+                room.position = new Position(0, roomOrder * 5, 0);
+                roomMap[r] = roomOrder;
 
                 const itemsInRoom = metadata.filter((i: ItemDescription) => i.roomId === r);
 
-                if(itemsInRoom.length > 0)
+                if (itemsInRoom.length > 0)
                     room.items = itemsInRoom;
 
                 // check if there was a room before on this row
@@ -62,18 +70,35 @@ const createRoomsFromTemplate = (layout: string, metadata: any[] = []) => {
                 room.roof.color = roofAndFloorColor;
 
                 rooms.push(room);
+                roomOrder++;
             }
         });
+    });
+
+    rooms.forEach((r: Room) => {
+        if(r.doors.E.targetRoom !== null && r.doors.E.targetRoom !== undefined){
+            // we are going east so we are entering from west according to the target room origin axis
+            r.doors.E.targetPosition = new Position(0, roomMap[r.doors.E.targetRoom], 2.5);
+        }
+        if(r.doors.W.targetRoom !== null && r.doors.W.targetRoom !== undefined){
+            r.doors.W.targetPosition = new Position(0, roomMap[r.doors.W.targetRoom], -2.5);
+        }
+        if(r.doors.S.targetRoom !== null && r.doors.S.targetRoom !== undefined){
+            r.doors.S.targetPosition = new Position(2.5, roomMap[r.doors.S.targetRoom], 0);
+        }
+        if(r.doors.N.targetRoom !== null && r.doors.N.targetRoom !== undefined){
+            r.doors.N.targetPosition = new Position(-2.5, roomMap[r.doors.N.targetRoom], 0);
+        }
     });
 
     return rooms;
 };
 
-const items = [new ItemDescription(new Position(1, 0, 0), "a-text", { "value" : "X", "color" : "red", "rotation" : "-90 0 0", "position" : "-4 1.5 0" }, "1"), 
-new ItemDescription(new Position(1, 0, 0), "a-text", { "value" : "Z", "color" : "red", "rotation" : "-90 0 0", "position" : "0 1.5 -4" }, "1")];
+const items = [new ItemDescription(new Position(1, 0, 0), "a-text", { "value": "X", "color": "red", "rotation": "-90 0 0", "position": "-4 1.5 0" }, "1"),
+new ItemDescription(new Position(1, 0, 0), "a-text", { "value": "Z", "color": "red", "rotation": "-90 0 0", "position": "0 1.5 -4" }, "1")];
 
 const itemExample = items;
 
-export const oneRoomMap: Array<Room> = createRoomsFromTemplate(map1Layout);
+// export const oneRoomMap: Array<Room> = createRoomsFromTemplate(map1Layout);
 export const fourRoomMap: Array<Room> = createRoomsFromTemplate(map2Layout, itemExample);
 

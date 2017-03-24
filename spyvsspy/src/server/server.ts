@@ -3,7 +3,7 @@ import { GameState, MapTemplate } from './gameState';
 import { JoinGameCommand, ChangeRoomCommand, PlayerMoveCommand } from '../commands/commands';
 import { DoorOpened, PlayerChangedRoom, YouJoined, PlayerJoined } from '../events/events';
 import { Room } from '../shared/rooms';
-import { oneRoomMap, fourRoomMap } from '../maps/mapLibrary';
+import { fourRoomMap } from '../maps/mapLibrary';
 
 const express = require('express');
 const app = express();
@@ -21,30 +21,10 @@ const connectedPlayers: Array<{ socket: any, playerId: string }> = [];
 // Warning, code smell..
 function findDirection(room: Room, target: string): string {
 	let direction = '';
-	if (room.doors.E !== null && room.doors.E !== undefined) {
-		if (room.doors["E"].targetRoom === target) {
-			room.doors["E"].open = true;
-			direction = "E";
-		}
-	}
-
-	if (room.doors["N"] !== null && room.doors["N"] !== undefined) {
-		if (room.doors["N"].targetRoom === target) {
-			room.doors["N"].open = true;
-			direction = "N";
-		}
-	}
-	if (room.doors["S"] !== null && room.doors["S"] !== undefined) {
-		if (room.doors["S"].targetRoom === target) {
-			room.doors["S"].open = true;
-			direction = "S";
-		}
-	}
-
-	if (room.doors["W"] !== null && room.doors["W"] !== undefined) {
-		if (room.doors["W"].targetRoom === target) {
-			room.doors["W"].open = true;
-			direction = "W";
+	if (room.doors[target] !== null && room.doors[target] !== undefined) {
+		if (room.doors[target].targetRoom === target) {
+			room.doors[target].open = true;
+			direction = target;
 		}
 	}
 
@@ -99,8 +79,11 @@ io.on('connection', function (socket: any) {
 	socket.on('player-move', function (input: PlayerMoveCommand) {
 
 		// Todo verify legal
+		if(input.currentPosition.y !== input.desiredPosition.y){
 
-		io.sockets.emit('player-move', input);
+		} else {
+			io.sockets.emit('player-move', input);
+		}
 	});
 
 	socket.on('player-change-room-command', function (command: ChangeRoomCommand) {
