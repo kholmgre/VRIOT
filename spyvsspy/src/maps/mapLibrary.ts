@@ -50,8 +50,9 @@ const createRoomsFromTemplate = (layout: string) => {
                 }
 
                 room.setWallColors(colors[Utilities.getRandomInt(0, colors.length - 1)]);
-                room.floor.color = colors[Utilities.getRandomInt(0, colors.length - 1)];
-                room.roof.color = colors[Utilities.getRandomInt(0, colors.length - 1)];
+                const roofAndFloorColor = colors[Utilities.getRandomInt(0, colors.length - 1)];
+                room.floor.color = roofAndFloorColor;
+                room.roof.color = roofAndFloorColor;
 
                 rooms.push(room);
             }
