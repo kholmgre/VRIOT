@@ -18,7 +18,6 @@ const currentGames: Array<GameState> = [];
 
 const connectedPlayers: Array<{ socket: any, playerId: string }> = [];
 
-// Warning, code smell..
 function findDirection(room: Room, target: string): string {
 	let direction = '';
 	if (room.doors[target] !== null && room.doors[target] !== undefined) {
@@ -79,6 +78,7 @@ io.on('connection', function (socket: any) {
 	socket.on('player-move', function (input: PlayerMoveCommand) {
 
 		// Todo verify legal
+		// Player moved between rooms
 		if(input.currentPosition.y !== input.desiredPosition.y){
 
 		} else {
@@ -158,12 +158,6 @@ io.on('connection', function (socket: any) {
 			const doorOpenedEvent = new DoorOpened(currentRoom.id, targetRoom.id, playerId, currentGameId);
 			io.sockets.emit('door-opened', doorOpenedEvent)
 		}
-
-		const event = new PlayerChangedRoom();
-		event.from = { direction: fromDirection, sourceId: currentRoom.id };
-		event.to = { direction: toDirection, targetId: targetRoom.id };
-		event.playerId = playerId;
-		event.gameId = currentGameId;
 
 		io.sockets.emit('player-changed-room-event', event);
 	});

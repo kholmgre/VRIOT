@@ -6,20 +6,20 @@ export class LevelFactory {
     static createRooms(rooms: Array<Room>): Array<HTMLElement> {
         function getPosition(direction: string) {
 
-            let position = { x: '0', y: '3.5', z: '0' }
+            let position = { x: '0', y: '0', z: '0' }
 
             switch (direction) {
                 case 'N':
-                    position.x = "5";
+                    position.z = "5";
                     break;
                 case 'S':
-                    position.x = "-5";
+                    position.z = "-5";
                     break;
                 case 'E':
-                    position.z = '-5';
+                    position.x = '-5';
                     break;
                 case 'W':
-                    position.z = '5';
+                    position.x = '5';
                     break;
             }
 
@@ -51,10 +51,10 @@ export class LevelFactory {
             let rotation = { x: '0', y: '0', z: '0' }
 
             switch (direction) {
-                case 'N':
+                case 'W':
                     rotation.y = "90";
                     break;
-                case 'S':
+                case 'E':
                     rotation.y = "90";
                     break;
             }
@@ -124,23 +124,25 @@ export class LevelFactory {
             // TODO: refactor
 
             if (direction === 'N' || direction === 'S')
-                wall1.setAttribute('position', '0 0 3');
+                wall1.setAttribute('position', '-3 0 0');
 
             if (direction === 'W' || direction === 'E')
-                wall1.setAttribute('position', '3 0 0');
+                wall1.setAttribute('position', '0 0 -3');
 
             wall1.setAttribute('rotation', getRotation(direction));
             wall1.setAttribute('height', '4');
+            wall1.setAttribute('id', 'wall1');
             wall1.setAttribute('width', '4');
             wall1.setAttribute('side', 'double');
 
             let wall2 = document.createElement('a-plane');
+            wall2.setAttribute('id', 'wall2');
             wall2.setAttribute('color', color);
             if (direction === 'N' || direction === 'S')
-                wall2.setAttribute('position', '0 0 -3');
+                wall2.setAttribute('position', '3 0 0');
 
             if (direction === 'W' || direction === 'E')
-                wall2.setAttribute('position', '-3 0 0');
+                wall2.setAttribute('position', '0 0 3');
 
             wall2.setAttribute('rotation', getRotation(direction));
             wall2.setAttribute('height', '4');
@@ -163,7 +165,7 @@ export class LevelFactory {
             floor.setAttribute('color', room.floor.color);
             floor.setAttribute('width', '10');
             floor.setAttribute('height', '10');
-            floor.setAttribute('position', '0 1.5 0');
+            floor.setAttribute('position', '0 -2 0');
             floor.setAttribute('rotation', '-90 0 90');
             floor.setAttribute('side', 'double');
             floor.setAttribute('movearea', '');
@@ -172,7 +174,7 @@ export class LevelFactory {
             roof.setAttribute('color', room.floor.color);
             roof.setAttribute('width', '10');
             roof.setAttribute('height', '10');
-            roof.setAttribute('position', '0 5.5 0');
+            roof.setAttribute('position', '0 2 0');
             roof.setAttribute('rotation', '-90 0 90');
             roof.setAttribute('side', 'double');
 
