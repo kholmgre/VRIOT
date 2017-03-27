@@ -4,11 +4,64 @@ import { Utilities } from '../shared/utilities';
 import { ItemDescription } from '../shared/itemDescription';
 import { Position } from '../shared/position';
 
-const map1Layout = '1AB\n2 6\n3457\n9  8\n';
-const map2Layout = '12\n34\n5\n6\n';
+// const map1Layout = '1AB\n2 6\n3457\n9  8\n';
+const map2Layout = '12\n34\n';
+
+function checkIfConnectedOnSameXAxis(mapRow: Array<any>, xPos: number): [boolean, string[]] {
+
+    const returnValue: [boolean, string[]] = [false, []];
+
+    if (mapRow[xPos - 1] !== null && mapRow[xPos - 1] !== undefined && mapRow[xPos - 1] !== ' ') {
+        returnValue[0] = true;
+        returnValue[1].push('W');
+    }
+
+    if (mapRow[xPos + 1] !== null && mapRow[xPos + 1] !== undefined && mapRow[xPos + 1] !== ' ') {
+        returnValue[0] = true;
+        returnValue[1].push('E');
+    }
+
+    return returnValue;
+}
+
+function checkIfConnectedOnZAxis(mapContainer: Array<any>, mapRow: Array<any>, xPos: number, zPos: number): [boolean, string[]] {
+
+    const returnValue: [boolean, string[]] = [false, []];
+
+    if (mapContainer[zPos - 1] !== null && mapContainer[zPos - 1] !== undefined) {
+        if (mapContainer[zPos - 1][xPos] !== null && mapContainer[zPos - 1][xPos] !== undefined && mapContainer[zPos - 1][xPos] !== ' ') {
+            returnValue[0] = true;
+            returnValue[1].push('N');
+        }
+    }
+
+    if (mapContainer[zPos + 1] !== null && mapContainer[zPos + 1] !== undefined) {
+        if (mapContainer[zPos + 1][xPos] !== null && mapContainer[zPos + 1][xPos] !== undefined && mapContainer[zPos + 1][xPos] !== ' ') {
+            returnValue[0] = true;
+            returnValue[1].push('S');
+        }
+    }
+
+    return returnValue;
+}
+
+function getPosByDirection(direction: string): number {
+    switch (direction) {
+        case 'W':
+            return -1;
+        case 'E':
+            return 1;
+        case 'N':
+            return -1;
+        case 'S':
+            return 1;
+        default:
+            return 0;
+    }
+}
 
 const createRoomsFromTemplate = (layout: string, metadata: any[] = []) => {
-    let mapArray: any = [];
+    let mapRows: any = [];
     let currentRow = [];
     let rooms: Array<Room> = [];
 
@@ -18,20 +71,20 @@ const createRoomsFromTemplate = (layout: string, metadata: any[] = []) => {
         if (element !== '\n') {
             currentRow.push(element);
         } else {
-            mapArray.push(currentRow);
+            mapRows.push(currentRow);
             currentRow = [];
         }
     }
 
 
-    mapArray.forEach((row: any[], rowIndex: number) => {
-        row.forEach((roomId: string, roomIndex: number) => {
+    mapRows.forEach((mapRow: any[], zPos: number) => {
+        mapRow.forEach((roomId: string, xPos: number) => {
             // ' '-means an empy space between rooms
             if (roomId !== ' ') {
                 const room = new Room(roomId);
 
-                const roomPositionOnXAxis = roomIndex * -15; // this is to make each room in the array be placed 15 meters east/negative x-axis from eachother
-                const roomPositionOnZAxis = roomIndex * -15; // this is to make each room in the array be placed 15 meters south/negative z-axis from eachother
+                const roomPositionOnXAxis = xPos * -15; // this is to make each room in the array be placed 15 meters east/negative x-axis from eachother
+                const roomPositionOnZAxis = zPos * -15; // this is to make each room in the array be placed 15 meters south/negative z-axis from eachother
                 const roomPositionOnYAxis = 0; // all rooms are on the same y-axis
 
                 room.position = new Position(roomPositionOnXAxis, roomPositionOnYAxis, roomPositionOnZAxis);
@@ -42,40 +95,29 @@ const createRoomsFromTemplate = (layout: string, metadata: any[] = []) => {
                 if (itemsInRoom.length > 0)
                     room.items = itemsInRoom;
 
-                // check if there was a room before the x-axis
-                if (roomIndex !== 0 && row[roomIndex - 1] !== ' ' && row[roomIndex - 1] !== undefined && row[roomIndex - 1] !== null) {
-                    room.doors.W = new WallDescription(row[roomIndex - 1]);
-                    room.doors.W.targetPosition = new Position((roomIndex - 1) * 12, -2.5, roomIndex * 12);
+                const doorOnXAxisResult = checkIfConnectedOnSameXAxis(mapRow, xPos);
+
+                if (doorOnXAxisResult[0] === true) {
+                    doorOnXAxisResult[1].forEach((direction: string) => {
+                        const door = room.doors[direction] = new WallDescription(mapRow[xPos + getPosByDirection(direction)]);
+                        // door.targetPosition = new Position((getPosByDirection(direction)) * -15, 0, zPos * -15);
+                    });
                 }
 
-                // check if there comes a room after current room on the x-axis
-                if (roomIndex !== row.length && row[roomIndex + 1] !== ' ' && row[roomIndex + 1] !== undefined && row[roomIndex + 1] !== null) {
-                    room.doors.E = new WallDescription(row[roomIndex + 1]);
-                    room.doors.E.targetPosition = new Position((roomIndex + 1) * -12, -2.5, roomIndex * 12);
-                }
+                const doorOnZAxisResult = checkIfConnectedOnZAxis(mapRows, mapRow, xPos, zPos);
 
-                // check if there is a room with the same x-index/position on the x axis but with different value on z-axis (north)
-                if (mapArray[roomIndex - 1] !== null && mapArray[roomIndex - 1] !== undefined) {
-                    // we have an array before current array if we are here
-                    if (mapArray[roomIndex - 1][roomIndex] !== ' ' && mapArray[roomIndex - 1][roomIndex] !== undefined && mapArray[roomIndex - 1][roomIndex] !== null) {
-                        room.doors.N = new WallDescription(mapArray[roomIndex - 1][roomIndex]);
-                        room.doors.N.targetPosition = new Position(roomIndex * 12, -2.5, (rowIndex - 1) * 12);
-                    }
-                }
-
-                // check if there is a room with the same x-index/position on the x axis but with different value on z-axis (south)
-                if (mapArray[roomIndex + 1] !== null && mapArray[roomIndex + 1] !== undefined) {
-                    // we have an array after current array if we are here
-                    if (mapArray[roomIndex + 1][roomIndex] !== ' ' && mapArray[roomIndex + 1][roomIndex] !== undefined && mapArray[roomIndex + 1][roomIndex] !== null) {
-                        room.doors.S = new WallDescription(mapArray[roomIndex + 1][roomIndex]);
-                        room.doors.S.targetPosition = new Position(roomIndex * 12, -2.5, (rowIndex + 1) * -12);
-                    }
+                if (doorOnZAxisResult[0] === true) {
+                    doorOnZAxisResult[1].forEach((direction: string) => {
+                        const door = room.doors[direction] = new WallDescription(mapRows[zPos + getPosByDirection(direction)][xPos]);
+                        // door.targetPosition = new Position(xPos * -15, 0, getPosByDirection(direction) * -15);
+                    });
                 }
 
                 room.setWallColors(colors[Utilities.getRandomInt(0, colors.length - 1)]);
                 const roofAndFloorColor = colors[Utilities.getRandomInt(0, colors.length - 1)];
                 room.floor.color = roofAndFloorColor;
                 room.roof.color = roofAndFloorColor;
+                room.setDoorTargetPositions();
 
                 rooms.push(room);
             }
@@ -96,8 +138,8 @@ function assertRoomPosition(room: Room, x: number, y: number, z: number): void {
         throw 'Room ' + room.id + ' position not correct!';
 }
 
-function assertTargetPosition(wall: WallDescription, x: number, y: number, z: number) : void {
-    if(wall.targetPosition.x !== x || wall.targetPosition.y !== y || wall.targetPosition.z !== z)
+function assertTargetPosition(wall: WallDescription, x: number, y: number, z: number): void {
+    if (wall.targetPosition.x !== x || wall.targetPosition.y !== y || wall.targetPosition.z !== z)
         throw 'TARGET POSITION ERROR!!!';
 }
 
@@ -105,29 +147,28 @@ rooms.forEach((r: Room, index: number) => {
     switch (index.toString()) {
         case "0":
             assertRoomPosition(r, 0, 0, 0);
-            assertTargetPosition(r.doors["E"], -12, -2.5, 0);
-            assertTargetPosition(r.doors["S"], 0, -2.5, -12);
+            assertTargetPosition(r.doors["E"], -12, 0, 0);
+            assertTargetPosition(r.doors["S"], 0, 0, -12);
             break;
         case "1":
             assertRoomPosition(r, -15, 0, 0);
-            assertTargetPosition(r.doors["W"], 0, -2.5, 0);
-            assertTargetPosition(r.doors["S"], -12, -2.5, -12);
+            assertTargetPosition(r.doors["W"], -3, 0, 0);
+            assertTargetPosition(r.doors["S"], -15, 0, -12);
             break;
         case "2":
             assertRoomPosition(r, 0, 0, -15);
-            assertTargetPosition(r.doors["E"], -12, -2.5, -12);
-            assertTargetPosition(r.doors["N"], 12, -2.5, 0);
+            assertTargetPosition(r.doors["E"], -12, 0, -15);
+            assertTargetPosition(r.doors["N"], 0, 0, -3);
             break;
         case "3":
             assertRoomPosition(r, -15, 0, -15);
-            assertTargetPosition(r.doors["W"], 0, -2.5, -12);
-            assertTargetPosition(r.doors["N"], -12, -2.5, 0);
+            assertTargetPosition(r.doors["W"], -3, 0, -15);
+            assertTargetPosition(r.doors["N"], -15, 0, -3);
             break;
         default:
             break;
     }
 });
 
-// export const oneRoomMap: Array<Room> = createRoomsFromTemplate(map1Layout);
 export const fourRoomMap: Array<Room> = rooms;
 

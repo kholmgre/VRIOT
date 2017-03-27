@@ -137,7 +137,7 @@ export class Game {
             entity.components.sound.playSound();
 
             setTimeout(() => {
-                const newPos = new Position(event.desiredPosition.x, event.desiredPosition.y, event.desiredPosition.z);
+                const newPos = new Position(event.desiredPosition.x, event.desiredPosition.y - 3, event.desiredPosition.z);
 
                 let moveAnimation = document.createElement('a-animation');
                 moveAnimation.setAttribute('attribute', 'position');

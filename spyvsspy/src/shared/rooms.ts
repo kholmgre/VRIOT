@@ -36,6 +36,38 @@ export class Room {
             this.doors.S.color = color;
         }
     };
+    // This will work as long as we always want to place rooms with the same distance
+    setDoorTargetPositions(): void {
+        for (var door in this.doors) {
+
+            if(this.doors[door].targetRoom === null || this.doors[door].targetRoom === undefined)
+                continue;
+
+            let x = this.position.x;
+            let y = this.position.y;
+            let z = this.position.z;
+
+            let distance = 12;
+
+            if (door === 'W') {
+                x = this.position.x + distance;
+            }
+
+            if (door === 'E') {
+                x = this.position.x - distance;
+            }
+
+            if (door === 'S') {
+                z = this.position.z - distance;
+            }
+
+            if (door === 'N') {
+                z = this.position.z + distance;
+            }
+
+            this.doors[door].targetPosition = new Position(x, y, z);
+        }
+    }
 
     constructor(id?: string) {
         if (id !== null && id !== undefined) {
