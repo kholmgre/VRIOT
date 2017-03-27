@@ -41,7 +41,7 @@ export class Game {
 
         this.player.addState('no-move');
 
-        setTimeout(() => { this.player.removeState('no-move')}, 5000);
+        setTimeout(() => { this.player.removeState('no-move') }, 5000);
 
         // Hack because the dom had to update with the changes in the room forEach above.. Use mutation observers? Something native to a-frame?
         setTimeout(() => {
@@ -50,24 +50,24 @@ export class Game {
                 if (p.id === this.playerId)
                     return;
 
+                const pos = new Position(null, null, null, p.position);
+
                 let enemyElement = document.createElement('a-entity');
                 enemyElement.setAttribute('id', p.id);
+                enemyElement.setAttribute('position', pos.getPositionString());
 
                 let enemyAvatar = document.createElement('a-image');
                 enemyAvatar.setAttribute('src', 'spy' + Utilities.getRandomInt(1, 3) + '.png');
+                enemyAvatar.setAttribute('position', '0 2 0');
 
                 let enemyName = document.createElement('a-text');
                 enemyName.setAttribute('position', '-1 0.5 0');
                 enemyName.setAttribute('side', 'double');
-                enemyName.setAttribute('value', p.name);
+                enemyName.setAttribute('value', p.id);
                 enemyName.setAttribute('color', 'red');
 
                 enemyAvatar.appendChild(enemyName);
                 enemyElement.appendChild(enemyAvatar);
-
-                const enemyPos = new Position(null, null, null, p.position);
-
-                enemyElement.setAttribute('position', enemyPos.getPositionString());
 
                 this.scene.appendChild(enemyElement);
             });
@@ -100,9 +100,6 @@ export class Game {
     }
 
     doorOpened(event: DoorOpened): void {
-        
-        if(this.player.is('no-move'))
-            return;
 
         let currentRoomWall: any = document.getElementById(event.sourceId).querySelectorAll('[type=wallcontainer][target-room-id="' + event.targetId + '"]')[0];
         let currentRoomWallDoor: any = currentRoomWall.querySelectorAll('[type=door]')[0];

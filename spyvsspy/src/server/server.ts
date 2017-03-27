@@ -76,6 +76,8 @@ io.on('connection', function (socket: any) {
 
 		console.log('player ' + data.playerName + ' joined game ' + gameToJoin.id);
 
+		console.log('\n' + JSON.stringify(playerJoined.gameState));
+
 		socket.emit('you-joined', youJoined);
 		socket.broadcast.emit('player-joined', playerJoined);
 	});
@@ -90,6 +92,8 @@ io.on('connection', function (socket: any) {
 		const player = currentGame.players.find((p: Player) => p.id === input.playerId);
 
 		player.position = input.desiredPosition;
+
+		console.log(JSON.stringify(currentGame));
 
 		io.sockets.emit('player-move', input);
 	});
