@@ -3,9 +3,16 @@ import { colors } from './colors';
 import { Utilities } from '../shared/utilities';
 import { ItemDescription } from '../shared/itemDescription';
 import { Position } from '../shared/position';
+import { AdditionalInfo } from './additionalInfo';
+import { allDirections } from './directionDebug';
 
 // const map1Layout = '1AB\n2 6\n3457\n9  8\n';
 const map2Layout = '12\n34\n';
+// Above should be fetched from a db
+
+const debugDirections = true;
+
+let rooms: any[] = [];
 
 function checkIfConnectedOnSameXAxis(mapRow: Array<any>, xPos: number): [boolean, string[]] {
 
@@ -60,7 +67,7 @@ function getPosByDirection(direction: string): number {
     }
 }
 
-const createRoomsFromTemplate = (layout: string, metadata: any[] = []) => {
+const createRoomsFromTemplate = (layout: string, additionalInfo: AdditionalInfo = null) => {
     let mapRows: any = [];
     let currentRow = [];
     let rooms: Array<Room> = [];
@@ -76,6 +83,7 @@ const createRoomsFromTemplate = (layout: string, metadata: any[] = []) => {
         }
     }
 
+    const defaultItems = additionalInfo.items.filter((i: ItemDescription) => i.roomId === null );
 
     mapRows.forEach((mapRow: any[], zPos: number) => {
         mapRow.forEach((roomId: string, xPos: number) => {
@@ -90,7 +98,7 @@ const createRoomsFromTemplate = (layout: string, metadata: any[] = []) => {
                 room.position = new Position(roomPositionOnXAxis, roomPositionOnYAxis, roomPositionOnZAxis);
 
                 // Check if any items should be added to the room
-                const itemsInRoom = metadata.filter((i: ItemDescription) => i.roomId === roomId);
+                const itemsInRoom = additionalInfo.items.filter((i: ItemDescription) => i.roomId === roomId).concat(defaultItems);
 
                 if (itemsInRoom.length > 0)
                     room.items = itemsInRoom;
@@ -127,10 +135,18 @@ const createRoomsFromTemplate = (layout: string, metadata: any[] = []) => {
     return rooms;
 };
 
-const items = [new ItemDescription(new Position(1, 0, 0), "a-text", { "value": "X", "color": "red", "rotation": "-90 0 0", "position": "-4 -1.8 0" }, "1"),
-new ItemDescription(new Position(1, 0, 0), "a-text", { "value": "Z", "color": "red", "rotation": "-90 0 0", "position": "0 -1.8 -4" }, "1")];
+// const items = [new ItemDescription(new Position(1, 0, 0), "a-text", { "value": "X", "color": "red", "rotation": "-90 0 0", "position": "-4 -1.8 0" }, "1"),
+// new ItemDescription(new Position(1, 0, 0), "a-text", { "value": "Z", "color": "red", "rotation": "-90 0 0", "position": "0 -1.8 -4" }, "1")];
 
-const rooms = createRoomsFromTemplate(map2Layout, items);
+if (debugDirections === true) {
+
+    const additionalInfo = new AdditionalInfo();
+    additionalInfo.items = allDirections;
+
+    rooms = createRoomsFromTemplate(map2Layout, additionalInfo);
+} else {
+    rooms = createRoomsFromTemplate(map2Layout);
+}
 
 // This is a manual test, should be tested via unit-testing
 function assertRoomPosition(room: Room, x: number, y: number, z: number): void {

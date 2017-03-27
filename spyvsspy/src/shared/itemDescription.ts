@@ -6,10 +6,14 @@ export class ItemDescription {
     readonly elementValues: any;
     readonly roomId: string;
 
-    constructor(position: Position, elementType: string, elementValues: any, roomId: string){
+    constructor(elementType: string, elementValues: any, position: Position = null, roomId: string = null){
         this.position = position;
         this.elementType = elementType;
         this.elementValues = elementValues;
         this.roomId = roomId;
+
+        if(position !== null){
+            this.elementValues.position = position.getPositionString();
+        }
     }
 }

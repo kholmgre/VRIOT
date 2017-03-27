@@ -29,7 +29,7 @@ AFRAME.registerComponent('open-door', {
 
             if (this.getAttribute('type') === 'door') {
                 positionInTargetRoom = this.parentEl.getAttribute('target');
-                currentRoomId = this.parentEl.getAttribute('id');
+                currentRoomId = this.parentEl.parentEl.getAttribute('id');
                 targetRoomId = this.parentEl.getAttribute('target-room-id');
             } else {
                 positionInTargetRoom = this.parentEl.parentEl.getAttribute('target');
@@ -41,8 +41,6 @@ AFRAME.registerComponent('open-door', {
             const newPos = positionInTargetRoom.split(' ');
 
             const openDoorCommand = new OpenDoorCommand(currentRoomId, targetRoomId, currentGame.playerId, currentGame.gameId);
-
-            // const playerMoveCommand = new PlayerMoveCommand(currentGame.gameId, currentGame.playerId, currentPos, new Position(Number(newPos[0]), Number(newPos[1]), Number(newPos[2])));
 
             socket.emit('open-door-command', openDoorCommand);
         });
