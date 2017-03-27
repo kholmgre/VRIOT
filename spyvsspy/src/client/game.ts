@@ -148,16 +148,13 @@ export class Game {
 
                 let targetWallInCurrentRoom: any = document.getElementById(event.room).querySelectorAll('[direction=' + event.direction + ']')[0];
 
-                let doorPosition = targetWallInCurrentRoom.getAttribute('position');
+                const roomEntityPosition: any = targetWallInCurrentRoom.parentEl.getAttribute('position');
 
-                if (doorPosition.x > 0)
-                    doorPosition.x = doorPosition.x - 0.20;
+                const doorRelativePosition: any = targetWallInCurrentRoom.getAttribute('position');
 
-                if (doorPosition.z > 0)
-                    doorPosition.z = doorPosition.z - 0.20;
-
-                let animationEndPosition = doorPosition.x + ' ' + elemToMove.getAttribute('position').y + ' ' + doorPosition.z;
-                moveAnimation.setAttribute('to', animationEndPosition);
+                const newPostition = new Position(roomEntityPosition.x + doorRelativePosition.x, (roomEntityPosition.y + doorRelativePosition.y) - 2.5, roomEntityPosition.z + doorRelativePosition.z);
+                
+                moveAnimation.setAttribute('to', newPostition.getPositionString());
 
                 elemToMove.appendChild(moveAnimation);
 
