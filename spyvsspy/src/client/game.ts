@@ -153,7 +153,7 @@ export class Game {
                 const doorRelativePosition: any = targetWallInCurrentRoom.getAttribute('position');
 
                 const newPostition = new Position(roomEntityPosition.x + doorRelativePosition.x, (roomEntityPosition.y + doorRelativePosition.y) - 2.5, roomEntityPosition.z + doorRelativePosition.z);
-                
+
                 moveAnimation.setAttribute('to', newPostition.getPositionString());
 
                 elemToMove.appendChild(moveAnimation);
@@ -162,18 +162,18 @@ export class Game {
                     elemToMove.setAttribute('position', newPos.getPositionString());
                 }, 2500);
             }, 1200);
+        } else {
+            let animation = document.createElement('a-animation');
+            animation.setAttribute('attribute', 'position');
+            animation.setAttribute('dur', '1000');
+            animation.setAttribute('fill', 'forwards');
+
+            const newPos = new Position(event.desiredPosition.x, event.desiredPosition.y, event.desiredPosition.z);
+
+            animation.setAttribute('to', newPos.getPositionString());
+
+            elemToMove.appendChild(animation);
         }
-
-        // let animation = document.createElement('a-animation');
-        // animation.setAttribute('attribute', 'position');
-        // animation.setAttribute('dur', '1000');
-        // animation.setAttribute('fill', 'forwards');
-
-        // const newPos = new Position(event.desiredPosition.x, event.desiredPosition.y, event.desiredPosition.z);
-
-        // animation.setAttribute('to', newPos.getPositionString());
-
-        // elemToMove.appendChild(animation);
     }
 
     playerLeft(event: PlayerLeft): void {
