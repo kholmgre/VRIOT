@@ -1,7 +1,7 @@
 import { Player } from '../shared/player';
 import { GameState, MapTemplate } from './gameState';
 import { JoinGameCommand, OpenDoorCommand, PlayerMoveCommand } from '../commands/commands';
-import { DoorOpened, PlayerChangedRoom, YouJoined, PlayerJoined, PlayerMoved } from '../events/events';
+import { DoorOpened, PlayerChangedRoom, YouJoined, PlayerJoined, PlayerMoved, PlayerLeft } from '../events/events';
 import { Room } from '../shared/rooms';
 import { fourRoomMap } from '../maps/mapLibrary';
 
@@ -84,11 +84,14 @@ io.on('connection', function (socket: any) {
 
 		// Todo verify legal
 		// Player moved between rooms
-		if (input.currentPosition.y !== input.desiredPosition.y) {
 
-		} else {
-			io.sockets.emit('player-move', input);
-		}
+		const currentGame = currentGames.find((g: GameState) => g.id === currentGameId);
+
+		const player = currentGame.players.find((p: Player) => p.id === input.playerId);
+
+		player.position = input.desiredPosition;
+
+		io.sockets.emit('player-move', input);
 	});
 
 	socket.on('open-door-command', function (command: OpenDoorCommand) {
@@ -200,7 +203,7 @@ io.on('connection', function (socket: any) {
 			}
 		} else {
 			console.log(playerId + ' left game ' + currentGame.id);
-			socket.broadcast.emit('player-left', userName);
+			socket.broadcast.emit('player-left', new PlayerLeft(currentGame.id, playerId));
 		}
 	});
 });

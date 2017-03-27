@@ -2,7 +2,7 @@ import { Room } from '../shared/rooms';
 import { Player } from '../shared/player';
 import { LevelFactory } from './levelFactory';
 import { GameState } from '../server/gameState';
-import { DoorOpened, PlayerChangedRoom, PlayerMoved, PlayerLeft, YouJoined } from '../events/events';
+import { DoorOpened, PlayerChangedRoom, PlayerMoved, PlayerLeft, YouJoined, PlayerJoined } from '../events/events';
 import { Utilities } from '../shared/utilities';
 import { Position } from '../shared/position';
 
@@ -10,7 +10,7 @@ export class Game {
     scene: HTMLElement;
     playerName: string;
     playerId: string;
-    player: HTMLElement;
+    player: any;
     socket: any;
     gameId: string;
     playerCamera: HTMLElement;
@@ -39,6 +39,9 @@ export class Game {
 
         this.player.setAttribute('position', new Position(pos.x, pos.y, pos.z).getPositionString());
 
+        this.player.addState('no-move');
+
+        setTimeout(() => { this.player.removeState('no-move')}, 5000);
 
         // Hack because the dom had to update with the changes in the room forEach above.. Use mutation observers? Something native to a-frame?
         setTimeout(() => {
@@ -50,7 +53,7 @@ export class Game {
                 let enemyElement = document.createElement('a-entity');
                 enemyElement.setAttribute('id', p.id);
 
-                let enemyAvatar = document.createElement('a-sprite');
+                let enemyAvatar = document.createElement('a-image');
                 enemyAvatar.setAttribute('src', 'spy' + Utilities.getRandomInt(1, 3) + '.png');
 
                 let enemyName = document.createElement('a-text');
@@ -62,29 +65,31 @@ export class Game {
                 enemyAvatar.appendChild(enemyName);
                 enemyElement.appendChild(enemyAvatar);
 
-                enemyElement.setAttribute('position', new Position(null, null, null, p.position).getPositionString());
+                const enemyPos = new Position(null, null, null, p.position);
+
+                enemyElement.setAttribute('position', enemyPos.getPositionString());
 
                 this.scene.appendChild(enemyElement);
             });
         }, 1);
     }
 
-    playerJoined(event: Player): void {
+    playerJoined(event: PlayerJoined): void {
         // conversion to get access to getPositionString member function
-        const pos = new Position(null, null, null, event.position);
+        const pos = new Position(null, null, null, event.gameState.players.find((p: Player) => p.id === event.playerId).position);
 
         let enemyElement = document.createElement('a-entity');
-        enemyElement.setAttribute('id', event.id);
+        enemyElement.setAttribute('id', event.playerId);
         enemyElement.setAttribute('position', pos.getPositionString());
 
-        let enemyAvatar = document.createElement('a-sprite');
+        let enemyAvatar = document.createElement('a-image');
         enemyAvatar.setAttribute('src', 'spy' + Utilities.getRandomInt(1, 3) + '.png');
         enemyAvatar.setAttribute('position', '0 2 0');
 
         let enemyName = document.createElement('a-text');
         enemyName.setAttribute('position', '-1 0.5 0');
         enemyName.setAttribute('side', 'double');
-        enemyName.setAttribute('value', event.name);
+        enemyName.setAttribute('value', event.playerId);
         enemyName.setAttribute('color', 'red');
 
         enemyAvatar.appendChild(enemyName);
@@ -95,9 +100,10 @@ export class Game {
     }
 
     doorOpened(event: DoorOpened): void {
-        // TODO: only send to clients except sender client. 
+        
+        if(this.player.is('no-move'))
+            return;
 
-        // There could be more than one door?
         let currentRoomWall: any = document.getElementById(event.sourceId).querySelectorAll('[type=wallcontainer][target-room-id="' + event.targetId + '"]')[0];
         let currentRoomWallDoor: any = currentRoomWall.querySelectorAll('[type=door]')[0];
         let currentRoomWallDoorKnob: any = currentRoomWall.querySelectorAll('[type=doorknob]')[0];

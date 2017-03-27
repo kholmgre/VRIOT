@@ -2,9 +2,9 @@ import { Utilities } from '../shared/utilities';
 import { LevelFactory } from './levelFactory';
 import { Game } from './game';
 import { GameState } from '../server/gameState';
-import { DoorOpened, PlayerChangedRoom, PlayerMoved, PlayerLeft, YouJoined } from '../events/events';
+import { DoorOpened, PlayerChangedRoom, PlayerMoved, PlayerLeft, YouJoined, PlayerJoined } from '../events/events';
 import { PlayerMoveCommand, OpenDoorCommand } from '../commands/commands';
-import { Player } from '../shared/player';
+
 import { Position } from '../shared/position';
 
 declare var io: any;
@@ -25,7 +25,10 @@ AFRAME.registerComponent('open-door', {
             let currentRoomId = '';
             let targetRoomId = '';
 
-            let playerElement = document.getElementById('player');
+            let playerElement: any = document.getElementById('player');
+
+            if (playerElement.is('no-move'))
+                return;
 
             if (this.getAttribute('type') === 'door') {
                 positionInTargetRoom = this.parentEl.getAttribute('target');
@@ -122,8 +125,8 @@ window.addEventListener("load", function () {
         currentGame.joinedGame(event);
     });
 
-    socket.on('player-joined', function (event: Player) {
-        currentGame.playerJoined(event);        
+    socket.on('player-joined', function (event: PlayerJoined) {
+        currentGame.playerJoined(event);
     });
 
     socket.on('door-opened', function (event: DoorOpened) {
@@ -138,7 +141,7 @@ window.addEventListener("load", function () {
         currentGame.playerLeft(event);
     });
 
-    socket.on("disconnect", function(){
+    socket.on("disconnect", function () {
         currentGame.playerDisconnected();
     });
 });

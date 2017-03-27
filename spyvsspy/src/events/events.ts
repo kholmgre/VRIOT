@@ -37,6 +37,11 @@ export class PlayerMoved implements IGameRelated {
 export class PlayerLeft implements IGameRelated {
     gameId: string;
     playerId: string;
+
+    constructor(gameId: string, playerId: string){
+        this.gameId = gameId; 
+        this.playerId = playerId;
+    }
 }
 
 export class YouJoined implements IGameRelated {
