@@ -6,13 +6,23 @@ import { Position } from '../shared/position';
 import { AdditionalInfo } from './additionalInfo';
 import { allDirections } from './directionDebug';
 
-const map1Layout = '1AB\n2 6\n3457\n9  8\n';
-// const map2Layout = '12\n34\n';
+export class MapTemplate {
+    rooms: Room[];
+    name: string;
+
+    constructor(rooms: Array<Room>, name: string) {
+        this.rooms = rooms;
+        this.name = name;
+    }
+}
+
+const map1Layout = { name: "test", template: '1AB\n2 6\n3457\n9  8\n' };
+const map2Layout = { name: "test2", template: '12\n34\n' };
 // Above should be fetched from a db
 
-const debugDirections = true;
+const maps = [map1Layout, map2Layout];
 
-let rooms: any[] = [];
+const debugDirections = true;
 
 function checkIfConnectedOnSameXAxis(mapRow: Array<any>, xPos: number): [boolean, string[]] {
 
@@ -83,7 +93,9 @@ const createRoomsFromTemplate = (layout: string, additionalInfo: AdditionalInfo 
         }
     }
 
-    const defaultItems = additionalInfo.items.filter((i: ItemDescription) => i.roomId === null );
+    const defaultItems = additionalInfo.items.filter((i: ItemDescription) => i.roomId === 'all');
+
+    // const elevator = new ItemDescription('a-plane', [{"color" : "grey"}]);
 
     mapRows.forEach((mapRow: any[], zPos: number) => {
         mapRow.forEach((roomId: string, xPos: number) => {
@@ -135,53 +147,21 @@ const createRoomsFromTemplate = (layout: string, additionalInfo: AdditionalInfo 
     return rooms;
 };
 
+const mapTemplates: MapTemplate[] = [];
+
 if (debugDirections === true) {
 
     const additionalInfo = new AdditionalInfo();
     additionalInfo.items = allDirections;
 
-    rooms = createRoomsFromTemplate(map1Layout, additionalInfo);
+    maps.forEach((mt: { name: string, template: string}) => {
+        mapTemplates.push(new MapTemplate(createRoomsFromTemplate(mt.template, additionalInfo), mt.name));
+    });
 } else {
-    rooms = createRoomsFromTemplate(map1Layout);
+    maps.forEach((mt: { name: string, template: string}) => {
+        mapTemplates.push(new MapTemplate(createRoomsFromTemplate(mt.template), mt.name));
+    });
 }
 
-// This is a manual test, should be tested via unit-testing
-function assertRoomPosition(room: Room, x: number, y: number, z: number): void {
-    if (room.position.x !== x || room.position.y !== y || room.position.z !== z)
-        throw 'Room ' + room.id + ' position not correct!';
-}
-
-function assertTargetPosition(wall: WallDescription, x: number, y: number, z: number): void {
-    if (wall.targetPosition.x !== x || wall.targetPosition.y !== y || wall.targetPosition.z !== z)
-        throw 'TARGET POSITION ERROR!!!';
-}
-
-// rooms.forEach((r: Room, index: number) => {
-//     switch (index.toString()) {
-//         case "0":
-//             assertRoomPosition(r, 0, 0, 0);
-//             assertTargetPosition(r.doors["E"], -12, 0, 0);
-//             assertTargetPosition(r.doors["S"], 0, 0, -12);
-//             break;
-//         case "1":
-//             assertRoomPosition(r, -15, 0, 0);
-//             assertTargetPosition(r.doors["W"], -3, 0, 0);
-//             assertTargetPosition(r.doors["S"], -15, 0, -12);
-//             break;
-//         case "2":
-//             assertRoomPosition(r, 0, 0, -15);
-//             assertTargetPosition(r.doors["E"], -12, 0, -15);
-//             assertTargetPosition(r.doors["N"], 0, 0, -3);
-//             break;
-//         case "3":
-//             assertRoomPosition(r, -15, 0, -15);
-//             assertTargetPosition(r.doors["W"], -3, 0, -15);
-//             assertTargetPosition(r.doors["N"], -15, 0, -3);
-//             break;
-//         default:
-//             break;
-//     }
-// });
-
-export const fourRoomMap: Array<Room> = rooms;
+export const MapLibrary: Array<MapTemplate> = mapTemplates;
 

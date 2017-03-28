@@ -5,6 +5,7 @@ export class ItemDescription {
     readonly elementType: string;
     readonly elementValues: any;
     readonly roomId: string;
+    readonly type: string;
 
     constructor(elementType: string, elementValues: any, position: Position = null, roomId: string = null){
         this.position = position;

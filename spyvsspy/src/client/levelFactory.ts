@@ -2,8 +2,8 @@ import { Room, WallDescription } from '../shared/rooms';
 import { ItemDescription } from '../shared/itemDescription';
 import { Position } from '../shared/position';
 
-export class LevelFactory {
-    static createRooms(rooms: Array<Room>): Array<HTMLElement> {
+export module LevelFactory {
+    export function createRooms(rooms: Array<Room>): Array<HTMLElement> {
         function getPosition(direction: string) {
 
             let position = { x: '0', y: '0', z: '0' }
@@ -71,6 +71,7 @@ export class LevelFactory {
             wall.setAttribute('height', '4');
             wall.setAttribute('width', '10');
             wall.setAttribute('side', 'double');
+            wall.setAttribute('direction', direction);
 
             return wall;
         }

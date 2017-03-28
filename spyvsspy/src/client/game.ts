@@ -29,7 +29,7 @@ export class Game {
 
         this.playerId = event.playerId;
 
-        let rooms = LevelFactory.createRooms(event.gameState.rooms);
+        let rooms = LevelFactory.createRooms(event.gameState.map.rooms);
 
         rooms.forEach((room: HTMLElement) => {
             this.scene.appendChild(room);

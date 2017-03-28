@@ -3,9 +3,10 @@ import { LevelFactory } from './levelFactory';
 import { Game } from './game';
 import { GameState } from '../server/gameState';
 import { DoorOpened, PlayerChangedRoom, PlayerMoved, PlayerLeft, YouJoined, PlayerJoined } from '../events/events';
-import { PlayerMoveCommand, OpenDoorCommand } from '../commands/commands';
-
+import { PlayerMoveCommand, OpenDoorCommand, CreateGameCommand, JoinGameCommand } from '../commands/commands';
+import { Connected } from '../shared/connected';
 import { Position } from '../shared/position';
+import { Lobby } from '../client/lobby';
 
 declare var io: any;
 declare var AFRAME: any;
@@ -46,6 +47,28 @@ AFRAME.registerComponent('open-door', {
             const openDoorCommand = new OpenDoorCommand(currentRoomId, targetRoomId, currentGame.playerId, currentGame.gameId);
 
             socket.emit('open-door-command', openDoorCommand);
+        });
+    }
+});
+
+AFRAME.registerComponent('choosemap', {
+    init: function () {
+        this.el.addEventListener('click', function (evt: any) {
+
+            const createGameCommand = new CreateGameCommand(playerId, this.getAttribute('map'));
+
+            socket.emit('create-game', createGameCommand);
+        });
+    }
+});
+
+AFRAME.registerComponent('choosegame', {
+    init: function () {
+        this.el.addEventListener('click', function (evt: any) {
+
+            const joinGameCommand = new JoinGameCommand(playerId, this.getAttribute('gameid'));
+
+            socket.emit('join-game', joinGameCommand);
         });
     }
 });
@@ -118,7 +141,21 @@ AFRAME.registerComponent('close-inventory-listener', {
 
 window.addEventListener("load", function () {
 
-    socket.emit('join', playerName);
+    const playerElement = document.getElementById('player');
+
+    socket.on('connected-to-server', function(event: Connected){
+        
+        playerId = event.playerId;
+
+        Lobby.CreateLobby(document.getElementById('scene'), event.currentGames, event.mapNames);
+        playerElement.setAttribute('position', '0 6 0');
+    });
+
+    // socket.emit('join', playerName);
+
+    socket.on('current-games', function(data: any){
+        console.log(JSON.stringify(data));
+    });
 
     socket.on('you-joined', function (event: YouJoined) {
         currentGame = new Game(playerName, 'scene', socket, event.gameState.id, event.playerId);

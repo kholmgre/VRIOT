@@ -1,9 +1,11 @@
 import { Player } from '../shared/player';
-import { GameState, MapTemplate } from './gameState';
-import { JoinGameCommand, OpenDoorCommand, PlayerMoveCommand } from '../commands/commands';
+import { GameState } from './gameState';
+import { JoinGameCommand, OpenDoorCommand, PlayerMoveCommand, CreateGameCommand, ChangeName } from '../commands/commands';
 import { DoorOpened, PlayerChangedRoom, YouJoined, PlayerJoined, PlayerMoved, PlayerLeft } from '../events/events';
 import { Room } from '../shared/rooms';
-import { fourRoomMap } from '../maps/mapLibrary';
+import { MapLibrary, MapTemplate } from '../maps/mapLibrary';
+import { Connected } from '../shared/connected';
+import { JoinableGame } from '../shared/joinableGame';
 
 const express = require('express');
 const app = express();
@@ -13,8 +15,6 @@ const io = require('socket.io').listen(server);
 io.set('origins', '*:*');
 
 const currentGames: Array<GameState> = [];
-
-const connectedPlayers: Array<{ socket: any, playerId: string }> = [];
 
 function findDirection(room: Room, target: string): string {
 	let direction = '';
@@ -32,31 +32,59 @@ function findDirection(room: Room, target: string): string {
 	return direction;
 }
 
+function getCurrentGames() : Array<JoinableGame> {
+	return currentGames.map((g: GameState) => { return new JoinableGame(g.id, g.map.name, g.players.length)});
+}
+
 io.on('connection', function (socket: any) {
 
 	// Mutable "session" data
-	const userName = '';
-	let playerId = '';
+	const playerId = socket.id;
+	let playername = 'player' + io.sockets.clients().length;
 	let currentGameId = '';
 
-	console.log('player joined!');
+	console.log('player joined! ' + playerId);
 
-	socket.on('join', function (data: JoinGameCommand) {
+	socket.emit('connected-to-server', new Connected(MapLibrary.map((m: MapTemplate) => m.name), getCurrentGames(), playername, playerId));
 
-		let gameToJoin: GameState = null;
+	socket.on('get-current-games', function () {
+		socket.emit('current-games', { games: currentGames.map((g: GameState) => { return { id: g.id } }) });
+	});
 
-		if (currentGames.length === 0) {
-			const copyOfRooms = JSON.parse(JSON.stringify(fourRoomMap));
-			gameToJoin = new GameState(new MapTemplate(copyOfRooms, "Testing generated"));
-			currentGames.push(gameToJoin);
-		} else {
-			gameToJoin = currentGames.find((g: GameState) => { return g.players.length > 0 });
-		}
+	socket.on('change-name', function (command: ChangeName) {
+		playername = command.name;
+	});
 
-		const newPlayer = new Player(data.playerName);
-		playerId = newPlayer.id;
+	socket.on('create-game', function (command: CreateGameCommand) {
 
-		connectedPlayers.push({ playerId: newPlayer.id, socket: socket });
+		const mapTemplate = MapLibrary.find((m: MapTemplate) => m.name === command.mapName);
+
+		if(mapTemplate === undefined)
+			return;
+
+		const newGame = new GameState(JSON.parse(JSON.stringify(mapTemplate)));
+
+		currentGames.push(newGame);
+
+		const newPlayer = new Player(playerId);
+
+		newGame.addPlayer(newPlayer);
+
+		const youJoined = new YouJoined();
+		youJoined.gameState = newGame;
+		youJoined.playerId = newPlayer.id;
+
+		socket.emit('you-joined', youJoined);
+	});
+
+	socket.on('join-game', function (command: JoinGameCommand) {
+
+		const gameToJoin = currentGames.find((g: GameState) => g.id === command.gameId);
+
+		if(gameToJoin === undefined)
+			return;
+
+		const newPlayer = new Player(command.playerId);
 
 		gameToJoin.addPlayer(newPlayer);
 
@@ -71,9 +99,7 @@ io.on('connection', function (socket: any) {
 		playerJoined.gameState = gameToJoin;
 		playerJoined.playerId = playerId;
 
-		console.log('player ' + data.playerName + ' joined game ' + gameToJoin.id);
-
-		console.log('\n' + JSON.stringify(playerJoined.gameState));
+		console.log('player ' + playerId + ' joined game ' + gameToJoin.id);
 
 		socket.emit('you-joined', youJoined);
 		socket.broadcast.emit('player-joined', playerJoined);
@@ -101,8 +127,8 @@ io.on('connection', function (socket: any) {
 
 		const currentGame = currentGames.find((g: GameState) => { return g.id === currentGameId });
 
-		const currentRoom = currentGame.rooms.find((r: Room) => { return r.id === command.sourceRoom });
-		const targetRoom = currentGame.rooms.find((r: Room) => { return r.id === command.targetRoom });
+		const currentRoom = currentGame.map.rooms.find((r: Room) => { return r.id === command.sourceRoom });
+		const targetRoom = currentGame.map.rooms.find((r: Room) => { return r.id === command.targetRoom });
 
 		const fromDirection = findDirection(currentRoom, command.targetRoom);
 
@@ -129,7 +155,7 @@ io.on('connection', function (socket: any) {
 					currentRoom.doors.W.open = true;
 					targetRoom.doors.E.open = true;
 					emitDoorOpenEvent = true;
-				} 
+				}
 				break;
 			case 'N':
 				if (currentRoom.doors.N.open !== true) {
@@ -143,7 +169,7 @@ io.on('connection', function (socket: any) {
 					currentRoom.doors.S.open = true;
 					targetRoom.doors.N.open = true;
 					emitDoorOpenEvent = true;
-				} 
+				}
 				break;
 			default:
 				break;
@@ -161,7 +187,7 @@ io.on('connection', function (socket: any) {
 		event.playerId = playerId;
 		event.throughDoor = true;
 
-		if(event.throughDoor === true){
+		if (event.throughDoor === true) {
 			event.targetRoom = command.targetRoom;
 			event.room = command.sourceRoom;
 			event.direction = fromDirection;
@@ -172,27 +198,27 @@ io.on('connection', function (socket: any) {
 
 	socket.on('disconnect', function () {
 
-		const currentGame = currentGames.find((g: GameState) => { return g.id === currentGameId });
+		const gamesWithPlayer = currentGames.filter((g: GameState) => { 
+			if(g.players.find((p: Player) => p.id === socket.id))
+				return true;
+			return false;
+		});
 
-		if (currentGame === undefined)
-			console.log('Player exited non-existing game.');
+		gamesWithPlayer.forEach((g: GameState) => {
+			const playerIndex = g.players.findIndex((p: Player) => { return p.id === socket.id });
+			g.players.splice(playerIndex, 1);
 
-		const pl = connectedPlayers.find((p: { socket: any, playerId: string }) => { return p.socket === socket });
+			if (g.players.length === 0) {
+				console.log('No more players in game ' + g.id + ' deleting it');
+				const index = currentGames.findIndex((g: GameState) => { return g.id === g.id });
 
-		const playerIndex = currentGame.players.findIndex((p: Player) => { return p.id === pl.playerId });
-
-		currentGame.players.splice(playerIndex, 1);
-
-		if (currentGame.players.length === 0) {
-			console.log('No more players in game ' + currentGame.id + ' deleting it');
-			const index = currentGames.findIndex((g: GameState) => { return g.id === currentGame.id });
-
-			if (index !== -1) {
-				currentGames.splice(index, 1);
+				if (index !== -1) {
+					currentGames.splice(index, 1);
+				}
+			} else {
+				console.log(playerId + ' left game ' + g.id);
+				socket.broadcast.emit('player-left', new PlayerLeft(g.id, playerId));
 			}
-		} else {
-			console.log(playerId + ' left game ' + currentGame.id);
-			socket.broadcast.emit('player-left', new PlayerLeft(currentGame.id, playerId));
-		}
+		});
 	});
 });

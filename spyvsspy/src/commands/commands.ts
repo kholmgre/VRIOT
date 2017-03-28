@@ -2,10 +2,26 @@ import { IGameRelated } from "../Interfaces/interfaces";
 import { Position } from '../shared/position';
 
 export class JoinGameCommand {
-    playerName: string;
+    playerId: string;
+    gameId: string;
 
-    constructor(playerName: string) {
-        this.playerName = playerName;
+    constructor(playerId: string, gameId: string) {
+        this.playerId = playerId;
+        this.gameId = gameId;
+    }
+}
+
+export class ChangeName {
+    name: string;
+}
+
+export class CreateGameCommand {
+    playerId: string;
+    mapName: string;
+
+    constructor(playerId: string, mapName: string){
+        this.playerId = playerId;
+        this.mapName = mapName;
     }
 }
 
