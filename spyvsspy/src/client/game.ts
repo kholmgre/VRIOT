@@ -39,9 +39,7 @@ export class Game {
 
         this.player.setAttribute('position', new Position(pos.x, pos.y, pos.z).getPositionString());
 
-        this.player.addState('no-move');
-
-        setTimeout(() => { this.player.removeState('no-move') }, 5000);
+        this.setNoMoveState(5000);
 
         // Hack because the dom had to update with the changes in the room forEach above.. Use mutation observers? Something native to a-frame?
         setTimeout(() => {
@@ -101,6 +99,8 @@ export class Game {
 
     doorOpened(event: DoorOpened): void {
 
+        console.log(JSON.stringify(event));
+
         let currentRoomWall: any = document.getElementById(event.sourceId).querySelectorAll('[type=wallcontainer][target-room-id="' + event.targetId + '"]')[0];
         let currentRoomWallDoor: any = currentRoomWall.querySelectorAll('[type=door]')[0];
         let currentRoomWallDoorKnob: any = currentRoomWall.querySelectorAll('[type=doorknob]')[0];
@@ -137,6 +137,8 @@ export class Game {
             // Attach entities to each player and play the one that matches playerId
             let entity: any = document.querySelector('[sound]');
 
+            this.setNoMoveState(3700);
+
             entity.components.sound.playSound();
 
             setTimeout(() => {
@@ -155,13 +157,31 @@ export class Game {
 
                 const doorRelativePosition: any = targetWallInCurrentRoom.getAttribute('position');
 
-                const newPostition = new Position(roomEntityPosition.x + doorRelativePosition.x, (roomEntityPosition.y + doorRelativePosition.y) - 2.5, roomEntityPosition.z + doorRelativePosition.z);
+                const newPosition = new Position(roomEntityPosition.x + doorRelativePosition.x, (roomEntityPosition.y + doorRelativePosition.y) - 2.5, roomEntityPosition.z + doorRelativePosition.z);
 
-                moveAnimation.setAttribute('to', newPostition.getPositionString());
+                switch (event.direction) {
+                    case 'N':
+                        newPosition.z = newPosition.z - 0.25;
+                        break;
+                    case 'S':
+                        newPosition.z = newPosition.z + 0.25;
+                        break;
+                    case 'W':
+                        newPosition.x = newPosition.x - 0.25;
+                        break;
+                    case 'E':
+                        newPosition.x = newPosition.x + 0.25;
+                        break;
+                    default:
+                        break;
+                }
+
+                moveAnimation.setAttribute('to', newPosition.getPositionString());
 
                 elemToMove.appendChild(moveAnimation);
 
                 setTimeout(() => {
+                    this.setNoMoveState();
                     elemToMove.setAttribute('position', newPos.getPositionString());
                 }, 2500);
             }, 1200);
@@ -185,7 +205,7 @@ export class Game {
         console.debug(event.playerId + ' has left the building.');
     }
 
-    playerDisconnected() {
+    playerDisconnected(): void {
         const disconnectStatus = document.createElement('a-text');
         disconnectStatus.setAttribute('value', 'disconnected');
         disconnectStatus.setAttribute('position', '-1.4 0 -1');
@@ -193,5 +213,19 @@ export class Game {
         disconnectStatus.setAttribute('color', 'red');
 
         this.playerCamera.appendChild(disconnectStatus);
+    }
+
+    setNoMoveState(time?: number): void {
+        if (time === null || time === undefined)
+            time = 3000;
+
+        console.debug('setting player no-move for ' + time + ' seconds');
+
+        this.player.addState('no-move');
+
+        setTimeout(() => {
+            console.log('player can move again');
+            this.player.removeState('no-move');
+        }, time);
     }
 }

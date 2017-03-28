@@ -6,8 +6,8 @@ import { Position } from '../shared/position';
 import { AdditionalInfo } from './additionalInfo';
 import { allDirections } from './directionDebug';
 
-// const map1Layout = '1AB\n2 6\n3457\n9  8\n';
-const map2Layout = '12\n34\n';
+const map1Layout = '1AB\n2 6\n3457\n9  8\n';
+// const map2Layout = '12\n34\n';
 // Above should be fetched from a db
 
 const debugDirections = true;
@@ -135,17 +135,14 @@ const createRoomsFromTemplate = (layout: string, additionalInfo: AdditionalInfo 
     return rooms;
 };
 
-// const items = [new ItemDescription(new Position(1, 0, 0), "a-text", { "value": "X", "color": "red", "rotation": "-90 0 0", "position": "-4 -1.8 0" }, "1"),
-// new ItemDescription(new Position(1, 0, 0), "a-text", { "value": "Z", "color": "red", "rotation": "-90 0 0", "position": "0 -1.8 -4" }, "1")];
-
 if (debugDirections === true) {
 
     const additionalInfo = new AdditionalInfo();
     additionalInfo.items = allDirections;
 
-    rooms = createRoomsFromTemplate(map2Layout, additionalInfo);
+    rooms = createRoomsFromTemplate(map1Layout, additionalInfo);
 } else {
-    rooms = createRoomsFromTemplate(map2Layout);
+    rooms = createRoomsFromTemplate(map1Layout);
 }
 
 // This is a manual test, should be tested via unit-testing
@@ -159,32 +156,32 @@ function assertTargetPosition(wall: WallDescription, x: number, y: number, z: nu
         throw 'TARGET POSITION ERROR!!!';
 }
 
-rooms.forEach((r: Room, index: number) => {
-    switch (index.toString()) {
-        case "0":
-            assertRoomPosition(r, 0, 0, 0);
-            assertTargetPosition(r.doors["E"], -12, 0, 0);
-            assertTargetPosition(r.doors["S"], 0, 0, -12);
-            break;
-        case "1":
-            assertRoomPosition(r, -15, 0, 0);
-            assertTargetPosition(r.doors["W"], -3, 0, 0);
-            assertTargetPosition(r.doors["S"], -15, 0, -12);
-            break;
-        case "2":
-            assertRoomPosition(r, 0, 0, -15);
-            assertTargetPosition(r.doors["E"], -12, 0, -15);
-            assertTargetPosition(r.doors["N"], 0, 0, -3);
-            break;
-        case "3":
-            assertRoomPosition(r, -15, 0, -15);
-            assertTargetPosition(r.doors["W"], -3, 0, -15);
-            assertTargetPosition(r.doors["N"], -15, 0, -3);
-            break;
-        default:
-            break;
-    }
-});
+// rooms.forEach((r: Room, index: number) => {
+//     switch (index.toString()) {
+//         case "0":
+//             assertRoomPosition(r, 0, 0, 0);
+//             assertTargetPosition(r.doors["E"], -12, 0, 0);
+//             assertTargetPosition(r.doors["S"], 0, 0, -12);
+//             break;
+//         case "1":
+//             assertRoomPosition(r, -15, 0, 0);
+//             assertTargetPosition(r.doors["W"], -3, 0, 0);
+//             assertTargetPosition(r.doors["S"], -15, 0, -12);
+//             break;
+//         case "2":
+//             assertRoomPosition(r, 0, 0, -15);
+//             assertTargetPosition(r.doors["E"], -12, 0, -15);
+//             assertTargetPosition(r.doors["N"], 0, 0, -3);
+//             break;
+//         case "3":
+//             assertRoomPosition(r, -15, 0, -15);
+//             assertTargetPosition(r.doors["W"], -3, 0, -15);
+//             assertTargetPosition(r.doors["N"], -15, 0, -3);
+//             break;
+//         default:
+//             break;
+//     }
+// });
 
 export const fourRoomMap: Array<Room> = rooms;
 
