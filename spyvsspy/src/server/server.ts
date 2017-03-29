@@ -1,6 +1,5 @@
 import { Player } from '../shared/player';
-import { GameState } from './gameState';
-import { JoinCampaignCommand, OpenDoorCommand, PlayerMoveCommand, CreateCampaignCommand, ChangeNameCommand, PlayLevelCommand } from '../commands/commands';
+import { JoinCampaignCommand, OpenDoorCommand, PlayerMoveCommand, StartCampaignCommand, ChangeNameCommand, PlayLevelCommand } from '../commands/commands';
 import { DoorOpened, PlayerChangedRoom, JoinedCampaign, PlayerJoined, PlayerMoved, PlayerLeft, LevelFinished } from '../events/events';
 import { Room } from '../shared/rooms';
 import { campaigns } from '../campaigns/campaignLibrary';
@@ -13,8 +12,6 @@ const server = app.listen('3000');
 
 const io = require('socket.io').listen(server);
 io.set('origins', '*:*');
-
-const currentGames: Array<GameState> = [];
 
 const currentCampaigns: Campaign[] = [];
 
@@ -49,30 +46,26 @@ io.on('connection', function (socket: any) {
 
 	socket.emit('connected-to-server', new Connected(campaigns, getJoinableCampaigns(), playername, playerId));
 
-	socket.on('get-current-games', function () {
-		socket.emit('current-games', { games: currentGames.map((g: GameState) => { return { id: g.id } }) });
-	});
-
 	socket.on('change-name', function (command: ChangeNameCommand) {
 		playername = command.name;
 	});
 
-	socket.on('start-campaign', function (command: CreateCampaignCommand) {
+	socket.on('start-campaign', function (command: StartCampaignCommand) {
 
 		const campaignTemplate = campaigns.find((m: CampaignTemplate) => m.name === command.campaignName);
 
 		if (campaignTemplate === undefined)
 			return;
 
-		const newCampaignSession = new Campaign(campaignTemplate);
+		const newCampaign = new Campaign(campaignTemplate);
 
-		currentCampaigns.push(newCampaignSession);
+		currentCampaigns.push(newCampaign);
 
 		const newPlayer = new Player(playerId, playername);
 
-		newCampaignSession.addPlayer(newPlayer);
+		newCampaign.addPlayer(newPlayer);
 
-		currentCampaign = currentCampaign;
+		currentCampaign = newCampaign;
 
 		socket.emit('lobby-wait');
 	});
@@ -84,17 +77,21 @@ io.on('connection', function (socket: any) {
 		if (campaignToJoin === undefined)
 			return;
 
+		currentCampaign = campaignToJoin;
+
+		if (currentCampaign.players.find((p: Player) => p.id === playerId) !== undefined)
+			return;
+
 		const newPlayer = new Player(playerId, playername);
 
-		campaignToJoin.addPlayer(newPlayer);
-
-		currentCampaign = campaignToJoin;
+		currentCampaign.addPlayer(newPlayer);
 
 		if (currentCampaign.state === CampaignState.PlayLevel) {
 			const firstLevel = currentCampaign.start();
-			const playLevelCommand = new PlayLevelCommand(firstLevel);
+			const playLevelCommand = new PlayLevelCommand(firstLevel, currentCampaign.players);
 
 			socket.broadcast.emit('start-level', playLevelCommand);
+			socket.emit('start-level', playLevelCommand);
 		} else {
 			socket.emit('lobby-wait');
 		}
@@ -102,30 +99,34 @@ io.on('connection', function (socket: any) {
 		console.log('player ' + playerId + ' joined game ' + campaignToJoin.id + '. ' + campaignToJoin.players.length + '/' + campaignToJoin.campaign.maxPlayers + ' players');
 	});
 
-	socket.on('level-finished', function(event: LevelFinished){
+	socket.on('level-finished', function (event: LevelFinished) {
 		const result = currentCampaign.finishLevel();
 
 		socket.broadcast.emit('show-score', result);
 
-		setTimeout(function() {
+		setTimeout(function () {
 			const nextMap = currentCampaign.nextMap();
 
 			socket.broadcast.emit('start-level', nextMap);
 		}, 10000);
 	});
 
-	socket.on('player-move-command', function (input: PlayerMoveCommand) {
+	socket.on('player-move-command', function (command: PlayerMoveCommand) {
 
 		// Todo verify legal
 		// Player moved between rooms
 
-		const player = currentCampaign.players.find((p: Player) => p.id === input.playerId);
+		const player = currentCampaign.players.find((p: Player) => p.id === playerId);
 
-		player.position = input.desiredPosition;
+		player.position = command.desiredPosition;
 
-		console.log(JSON.stringify(currentCampaign));
+		const playerMovedEvent = new PlayerMoved();
 
-		io.sockets.emit('player-move', input);
+		playerMovedEvent.currentPosition = command.currentPosition;
+		playerMovedEvent.desiredPosition = command.desiredPosition;
+		playerMovedEvent.playerId = playerId;
+
+		io.sockets.emit('player-move', playerMovedEvent);
 	});
 
 	socket.on('open-door-command', function (command: OpenDoorCommand) {
@@ -203,27 +204,23 @@ io.on('connection', function (socket: any) {
 
 	socket.on('disconnect', function () {
 
-		const gamesWithPlayer = currentGames.filter((g: GameState) => {
-			if (g.players.find((p: Player) => p.id === socket.id))
-				return true;
-			return false;
-		});
+		if (currentCampaign === null)
+			return;
 
-		gamesWithPlayer.forEach((g: GameState) => {
-			const playerIndex = g.players.findIndex((p: Player) => { return p.id === socket.id });
-			g.players.splice(playerIndex, 1);
+		const playerIndex = currentCampaign.players.findIndex((p: Player) => { return p.id === socket.id });
+		currentCampaign.players.splice(playerIndex, 1);
 
-			if (g.players.length === 0) {
-				console.log('No more players in game ' + g.id + ' deleting it');
-				const index = currentGames.findIndex((g: GameState) => { return g.id === g.id });
+		if (currentCampaign.players.length === 0) {
+			console.log('No more players in game ' + currentCampaign.id + ' deleting it');
+			const index = currentCampaigns.findIndex((c: Campaign) => { return currentCampaign.id === c.id });
 
-				if (index !== -1) {
-					currentGames.splice(index, 1);
-				}
-			} else {
-				console.log(playerId + ' left game ' + g.id);
-				socket.broadcast.emit('player-left', new PlayerLeft(g.id, playerId));
+			if (index !== -1) {
+				currentCampaigns.splice(index, 1);
 			}
-		});
+		} else {
+			console.log(playerId + ' left');
+			socket.broadcast.emit('player-left', new PlayerLeft(currentCampaign.id, playerId));
+		}
+
 	});
 });

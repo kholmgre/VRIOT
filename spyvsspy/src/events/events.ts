@@ -1,5 +1,4 @@
 import { IGameRelated } from '../interfaces/interfaces';
-import { GameState } from '../server/gameState';
 import { Position } from '../shared/position';
 import { Player } from '../shared/player';
 
@@ -22,8 +21,7 @@ export class PlayerChangedRoom implements IGameRelated {
     playerId: string
 }
 
-export class PlayerMoved implements IGameRelated {
-    gameId: string;
+export class PlayerMoved  {
     playerId: string;
     currentPosition: Position;
     desiredPosition: Position;
@@ -50,7 +48,6 @@ export class JoinedCampaign {
 export class PlayerJoined implements IGameRelated {
     gameId: string;
     playerId: string;
-    gameState: GameState;
 }
 
 export class LevelFinished {

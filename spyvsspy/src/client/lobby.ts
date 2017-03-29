@@ -53,7 +53,7 @@ export module Lobby {
     function createMapOption(text: string, position: Position) {
         const planeElement = document.createElement('a-plane');
         planeElement.setAttribute('position', position.getPositionString());
-        planeElement.setAttribute('choosemap', '');
+        planeElement.setAttribute('startcampaign', '');
         planeElement.setAttribute('map', text);
         planeElement.setAttribute('color', 'black');
         planeElement.setAttribute('heigth', '0.5');
@@ -70,11 +70,11 @@ export module Lobby {
 
         return planeElement;
     }
-    function createGameOption(map: string, players: string, position: Position, gameId: string) {
+    function createGameOption(map: string, players: string, position: Position, campaignId: string) {
         const planeElement = document.createElement('a-plane');
         planeElement.setAttribute('position', position.getPositionString());
         planeElement.setAttribute('choosegame', '');
-        planeElement.setAttribute('gameid', gameId);
+        planeElement.setAttribute('campaignid', campaignId);
 
         const element = document.createElement('a-text');
         element.setAttribute('position', position.getPositionString());

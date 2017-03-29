@@ -2,11 +2,12 @@ import { LevelTemplate } from '../levels/levelLibrary';
 import { Player } from '../shared/player';
 import { Utilities } from '../shared/utilities';
 import { LevelFinished } from '../events/events';
+import { Position } from '../shared/position';
 
 export enum CampaignState {
     Lobby,
     ShowScore,
-    PlayLevel, 
+    PlayLevel,
     Finished
 }
 
@@ -25,33 +26,42 @@ export class Campaign {
     totalScore: number = 0;
     currentMapIndex: number = 0;
 
-    constructor(campaignTemplate: CampaignTemplate){
+    constructor(campaignTemplate: CampaignTemplate) {
         this.id = Utilities.generateGuid();
         this.campaign = Object.assign({}, campaignTemplate);
     }
 
-    start() : LevelTemplate {
+    start(): LevelTemplate {
+        this.resetPlayersPositions();
+
         return this.campaign.levels[this.currentMapIndex];
     }
 
-    nextMap() : LevelTemplate {
+    private resetPlayersPositions(): void {
+        this.players.forEach((p: Player) => p.position = new Position(0, -3, 0));
+    }
+
+    nextMap(): LevelTemplate {
         this.currentMapIndex++;
         this.state = CampaignState.PlayLevel;
+
+        this.resetPlayersPositions();
+
         return this.campaign.levels[this.currentMapIndex];
     }
 
-    addPlayer(player: Player) : void {
-        if(this.state !== CampaignState.Lobby)
+    addPlayer(player: Player): void {
+        if (this.state !== CampaignState.Lobby)
             return;
 
         this.players.push(player);
 
-        if(this.players.length === this.campaign.maxPlayers){
+        if (this.players.length === this.campaign.maxPlayers) {
             this.state = CampaignState.PlayLevel;
         }
     }
 
-    finishLevel() : LevelFinished {
+    finishLevel(): LevelFinished {
         this.state = CampaignState.ShowScore;
 
         const levelFinished = new LevelFinished(this.players, this.totalScore);
@@ -59,7 +69,7 @@ export class Campaign {
         return levelFinished;
     }
 
-    end() : LevelFinished {
+    end(): LevelFinished {
         this.state = CampaignState.Finished;
         const levelFinished = new LevelFinished(this.players, this.totalScore);
 

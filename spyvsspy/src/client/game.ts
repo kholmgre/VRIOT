@@ -1,50 +1,45 @@
 import { Room } from '../shared/rooms';
 import { Player } from '../shared/player';
 import { LevelFactory } from './levelFactory';
-import { GameState } from '../server/gameState';
+import { LevelTemplate } from '../levels/levelLibrary';
 import { DoorOpened, PlayerChangedRoom, PlayerMoved, PlayerLeft, JoinedCampaign, PlayerJoined } from '../events/events';
 import { Utilities } from '../shared/utilities';
 import { Position } from '../shared/position';
 
-export class Game {
+export class LevelInstance {
     scene: HTMLElement;
     playerName: string;
     playerId: string;
-    player: any;
+    playerElement: any;
     socket: any;
-    gameId: string;
-    playerCamera: HTMLElement;
+    playerCameraElement: HTMLElement;
 
-    constructor(playerName: string, sceneId: string, socket: any, gameId: string, playerId: string) {
+    constructor(playerName: string, sceneId: string, socket: any, playerId: string) {
         this.scene = document.getElementById(sceneId);
         this.playerName = playerName;
         this.socket = socket;
-        this.player = document.getElementById('player');
-        this.gameId = gameId;
+        this.playerElement = document.getElementById('player');
         this.playerId = playerId;
-        this.playerCamera = document.getElementById('playerCamera');
+        this.playerCameraElement = document.getElementById('playerCamera');
     }
 
-    joinedGame(event: JoinedCampaign): void {
-
-        this.playerId = event.playerId;
-
-        let rooms = LevelFactory.createRooms(event.gameState.map.rooms);
+    start(levelTemplate: LevelTemplate, players: Player[]): void {
+        const rooms = LevelFactory.createRooms(levelTemplate.rooms);
 
         rooms.forEach((room: HTMLElement) => {
             this.scene.appendChild(room);
         });
 
-        const pos = event.gameState.players.find((p: Player) => { return p.id === this.playerId }).position;
+        const pos = players.find((p: Player) => { return p.id === this.playerId }).position;
 
-        this.player.setAttribute('position', new Position(pos.x, pos.y, pos.z).getPositionString());
+        this.playerElement.setAttribute('position', new Position(pos.x, pos.y, pos.z).getPositionString());
 
         this.setNoMoveState(5000);
 
         // Hack because the dom had to update with the changes in the room forEach above.. Use mutation observers? Something native to a-frame?
         setTimeout(() => {
 
-            event.gameState.players.forEach((p: Player) => {
+            players.forEach((p: Player) => {
                 if (p.id === this.playerId)
                     return;
 
@@ -70,31 +65,6 @@ export class Game {
                 this.scene.appendChild(enemyElement);
             });
         }, 1);
-    }
-
-    playerJoined(event: PlayerJoined): void {
-        // conversion to get access to getPositionString member function
-        const pos = new Position(null, null, null, event.gameState.players.find((p: Player) => p.id === event.playerId).position);
-
-        let enemyElement = document.createElement('a-entity');
-        enemyElement.setAttribute('id', event.playerId);
-        enemyElement.setAttribute('position', pos.getPositionString());
-
-        let enemyAvatar = document.createElement('a-image');
-        enemyAvatar.setAttribute('src', 'spy' + Utilities.getRandomInt(1, 3) + '.png');
-        enemyAvatar.setAttribute('position', '0 2 0');
-
-        let enemyName = document.createElement('a-text');
-        enemyName.setAttribute('position', '-1 0.5 0');
-        enemyName.setAttribute('side', 'double');
-        enemyName.setAttribute('value', event.playerId);
-        enemyName.setAttribute('color', 'red');
-
-        enemyAvatar.appendChild(enemyName);
-
-        enemyElement.appendChild(enemyAvatar);
-
-        this.scene.appendChild(enemyElement);
     }
 
     doorOpened(event: DoorOpened): void {
@@ -212,7 +182,7 @@ export class Game {
         disconnectStatus.setAttribute('scale', '2');
         disconnectStatus.setAttribute('color', 'red');
 
-        this.playerCamera.appendChild(disconnectStatus);
+        this.playerCameraElement.appendChild(disconnectStatus);
     }
 
     setNoMoveState(time?: number): void {
@@ -221,11 +191,11 @@ export class Game {
 
         console.debug('setting player no-move for ' + time + ' seconds');
 
-        this.player.addState('no-move');
+        this.playerElement.addState('no-move');
 
         setTimeout(() => {
             console.log('player can move again');
-            this.player.removeState('no-move');
+            this.playerElement.removeState('no-move');
         }, time);
     }
 }

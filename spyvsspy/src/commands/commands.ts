@@ -1,5 +1,6 @@
 import { IGameRelated } from "../Interfaces/interfaces";
 import { Position } from '../shared/position';
+import { Player } from '../shared/player';
 import { LevelTemplate } from '../levels/levelLibrary';
 
 export class JoinCampaignCommand {
@@ -20,49 +21,40 @@ export class ChangeNameCommand {
 
 export class PlayLevelCommand {
     level: LevelTemplate;
+    players: Player[];
 
-    constructor(level: LevelTemplate) {
+    constructor(level: LevelTemplate, players: Player[]) {
+        this.players = players;
         this.level = level;
     }
 }
 
-export class CreateCampaignCommand {
-    playerId: string;
+export class StartCampaignCommand {
     campaignName: string;
 
-    constructor(playerId: string, campaignName: string){
-        this.playerId = playerId;
+    constructor(campaignName: string){
         this.campaignName = campaignName;
     }
 }
 
-export class OpenDoorCommand implements IGameRelated {
-    gameId: string;
+export class OpenDoorCommand {
     sourceRoom: string;
     targetRoom: string;
     playerId: string;
 
-    constructor(sourceId: string, targetId: string, player: string, gameId: string) {
+    constructor(sourceId: string, targetId: string, player: string) {
         this.sourceRoom = sourceId;
         this.targetRoom = targetId;
         this.playerId = player;
-        this.gameId = gameId;
     }
 }
 
-export class PlayerMoveCommand implements IGameRelated {
-    gameId: string;
-    playerId: string;
+export class PlayerMoveCommand {
     currentPosition: Position;
     desiredPosition: Position;
 
-    constructor(gameId: string,
-        playerId: string,
-        currentPosition: Position,
-        desiredPosition: Position) {
-        this.gameId = gameId;
+    constructor(currentPosition: Position, desiredPosition: Position) {
         this.currentPosition = currentPosition;
-        this.playerId = playerId;
         this.desiredPosition = desiredPosition;
     }
 }

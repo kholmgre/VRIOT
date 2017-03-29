@@ -1,4 +1,3 @@
-import { JoinableGame } from './joinableGame';
 import { CampaignTemplate, Campaign } from '../campaigns/campaign';
 
 export class Connected {

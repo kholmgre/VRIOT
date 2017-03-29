@@ -1,12 +1,12 @@
 import { Utilities } from '../shared/utilities';
 import { LevelFactory } from './levelFactory';
-import { Game } from './game';
-import { GameState } from '../server/gameState';
+import { LevelInstance } from './game';
 import { DoorOpened, PlayerChangedRoom, PlayerMoved, PlayerLeft, JoinedCampaign, PlayerJoined } from '../events/events';
-import { PlayerMoveCommand, OpenDoorCommand, CreateCampaignCommand, JoinCampaignCommand, ChangeNameCommand } from '../commands/commands';
+import { PlayerMoveCommand, OpenDoorCommand, StartCampaignCommand, JoinCampaignCommand, ChangeNameCommand, PlayLevelCommand } from '../commands/commands';
 import { Connected } from '../shared/connected';
 import { Position } from '../shared/position';
 import { Lobby } from '../client/lobby';
+import * as Placeholders from '../client/placeholders';
 
 declare var io: any;
 declare var AFRAME: any;
@@ -15,7 +15,6 @@ let url: string = process.env.API_URL;
 
 let socket = io.connect('http://localhost:3000', { reconnection: false });
 let playerName = Utilities.generateGuid();
-let currentGame: Game = null;
 let playerId = '';
 const lettersSelected: string[] = [];
 
@@ -45,20 +44,20 @@ AFRAME.registerComponent('open-door', {
             const currentPos: any = playerElement.getAttribute('position');
             const newPos = positionInTargetRoom.split(' ');
 
-            const openDoorCommand = new OpenDoorCommand(currentRoomId, targetRoomId, currentGame.playerId, currentGame.gameId);
+            const openDoorCommand = new OpenDoorCommand(currentRoomId, targetRoomId, playerId);
 
             socket.emit('open-door-command', openDoorCommand);
         });
     }
 });
 
-AFRAME.registerComponent('choosemap', {
+AFRAME.registerComponent('startcampaign', {
     init: function () {
         this.el.addEventListener('click', function (evt: any) {
 
-            const createGameCommand = new CreateCampaignCommand(playerId, this.getAttribute('map'));
+            const createGameCommand = new StartCampaignCommand(this.getAttribute('map'));
 
-            socket.emit('create-game', createGameCommand);
+            socket.emit('start-campaign', createGameCommand);
         });
     }
 });
@@ -100,7 +99,7 @@ AFRAME.registerComponent('choosegame', {
     init: function () {
         this.el.addEventListener('click', function (evt: any) {
 
-            const joinGameCommand = new JoinCampaignCommand(playerId, this.getAttribute('gameid'));
+            const joinGameCommand = new JoinCampaignCommand(this.getAttribute('campaignid'));
 
             socket.emit('join-game', joinGameCommand);
         });
@@ -132,7 +131,7 @@ AFRAME.registerComponent('movearea', {
             let newPos = evt.detail.intersection.point;
             newPos.y = playerElement.getAttribute('position').y;
 
-            const playerMoveCommand = new PlayerMoveCommand(currentGame.gameId, currentGame.playerId, playerElement.getAttribute('position'), newPos);
+            const playerMoveCommand = new PlayerMoveCommand(playerElement.getAttribute('position'), newPos);
 
             socket.emit('player-move-command', playerMoveCommand);
         });
@@ -176,6 +175,8 @@ AFRAME.registerComponent('close-inventory-listener', {
 window.addEventListener("load", function () {
 
     const playerElement = document.getElementById('player');
+    const cameraElement = document.getElementById('playerCamera');
+    let currentLevel: LevelInstance = null;
 
     socket.on('connected-to-server', function(event: Connected){
         
@@ -189,29 +190,33 @@ window.addEventListener("load", function () {
         console.log(JSON.stringify(data));
     });
 
-    socket.on('you-joined', function (event: JoinedCampaign) {
-        currentGame = new Game(playerName, 'scene', socket, event.gameState.id, event.playerId);
-        currentGame.joinedGame(event);
+    socket.on('lobby-wait', function () {
+        // Placeholder for waiting for players
+        cameraElement.appendChild(Placeholders.Placeholders.LobbyWaiting());
     });
 
-    socket.on('player-joined', function (event: PlayerJoined) {
-        currentGame.playerJoined(event);
+    socket.on('start-level', function(event: PlayLevelCommand){
+        currentLevel = new LevelInstance(playerName, 'scene', socket, playerId);
+
+        currentLevel.start(event.level, event.players);
+
+        Placeholders.Placeholders.RemoveLobby();
     });
 
     socket.on('door-opened', function (event: DoorOpened) {
-        currentGame.doorOpened(event);
+        currentLevel.doorOpened(event);
     });
 
     socket.on('player-move', function (event: PlayerMoved) {
-        currentGame.playerMoved(event);
+        currentLevel.playerMoved(event);
     });
 
     socket.on('player-left', function (event: PlayerLeft) {
-        currentGame.playerLeft(event);
+        currentLevel.playerLeft(event);
     });
 
     socket.on("disconnect", function () {
-        currentGame.playerDisconnected();
+        currentLevel.playerDisconnected();
     });
 });
 
