@@ -6,8 +6,8 @@ export class Player {
     id: string;
     position: Position;
 
-    constructor(name: string){
+    constructor(id: string, name?: string){
         this.name = name;
-        this.id = Utilities.generateGuid();
+        this.id = id;
     }
 }

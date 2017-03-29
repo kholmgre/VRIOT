@@ -1,6 +1,6 @@
 import { Player } from '../shared/player';
 import { GameState } from './gameState';
-import { JoinGameCommand, OpenDoorCommand, PlayerMoveCommand, CreateGameCommand, ChangeName } from '../commands/commands';
+import { JoinGameCommand, OpenDoorCommand, PlayerMoveCommand, CreateGameCommand, ChangeNameCommand } from '../commands/commands';
 import { DoorOpened, PlayerChangedRoom, YouJoined, PlayerJoined, PlayerMoved, PlayerLeft } from '../events/events';
 import { Room } from '../shared/rooms';
 import { MapLibrary, MapTemplate } from '../maps/mapLibrary';
@@ -40,7 +40,7 @@ io.on('connection', function (socket: any) {
 
 	// Mutable "session" data
 	const playerId = socket.id;
-	let playername = 'player' + io.sockets.clients().length;
+	let playername = 'unkown';
 	let currentGameId = '';
 
 	console.log('player joined! ' + playerId);
@@ -51,7 +51,7 @@ io.on('connection', function (socket: any) {
 		socket.emit('current-games', { games: currentGames.map((g: GameState) => { return { id: g.id } }) });
 	});
 
-	socket.on('change-name', function (command: ChangeName) {
+	socket.on('change-name', function (command: ChangeNameCommand) {
 		playername = command.name;
 	});
 
@@ -66,9 +66,11 @@ io.on('connection', function (socket: any) {
 
 		currentGames.push(newGame);
 
-		const newPlayer = new Player(playerId);
+		const newPlayer = new Player(playerId, playername);
 
 		newGame.addPlayer(newPlayer);
+
+		currentGameId = newGame.id;
 
 		const youJoined = new YouJoined();
 		youJoined.gameState = newGame;
@@ -84,7 +86,7 @@ io.on('connection', function (socket: any) {
 		if(gameToJoin === undefined)
 			return;
 
-		const newPlayer = new Player(command.playerId);
+		const newPlayer = new Player(playerId, playername);
 
 		gameToJoin.addPlayer(newPlayer);
 

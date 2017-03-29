@@ -11,8 +11,12 @@ export class JoinGameCommand {
     }
 }
 
-export class ChangeName {
+export class ChangeNameCommand {
     name: string;
+
+    constructor(name: string){
+        this.name = name;
+    }
 }
 
 export class CreateGameCommand {

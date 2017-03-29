@@ -61,7 +61,7 @@ export class Game {
                 let enemyName = document.createElement('a-text');
                 enemyName.setAttribute('position', '-1 0.5 0');
                 enemyName.setAttribute('side', 'double');
-                enemyName.setAttribute('value', p.id);
+                enemyName.setAttribute('value', p.name);
                 enemyName.setAttribute('color', 'red');
 
                 enemyAvatar.appendChild(enemyName);
