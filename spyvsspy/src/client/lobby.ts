@@ -2,10 +2,10 @@ import { LevelFactory } from '../client/levelFactory';
 import { Room } from '../shared/rooms';
 import { Position } from '../shared/position';
 import { ItemDescription } from '../shared/itemDescription';
-import { JoinableGame } from '../shared/joinableGame';
+import { CampaignTemplate, Campaign } from '../campaigns/campaign';
 
 export module Lobby {
-    export function CreateLobby(scene: HTMLElement, currentGames: JoinableGame[], availableMaps: any[]) {
+    export function CreateLobby(scene: HTMLElement, currentGames: Campaign[], availableCampaigns: CampaignTemplate[]) {
         const lobbyContainer = document.createElement('a-entity');
         lobbyContainer.setAttribute('position', '0 10 0');
         lobbyContainer.setAttribute('id', 'lobby');
@@ -20,7 +20,7 @@ export module Lobby {
 
         const items: any[] = [];
 
-        const availableMapsText = createMapOption('Choose map', new Position(0, 1, 0.1));
+        const availableMapsText = createMapOption('Choose campaign', new Position(0, 1, 0.1));
         const availableGamesText = createMapOption('Available games', new Position(0, 1, -0.1));
         availableGamesText.setAttribute('rotation', '0 -180 0');
 
@@ -30,15 +30,15 @@ export module Lobby {
         eastWall.appendChild(availableMapsText);
         westWall.appendChild(availableGamesText);
 
-        currentGames.map((g: JoinableGame, index: number) => {
+        currentGames.map((c: Campaign, index: number) => {
             const pos = new Position(0, (index * 0.5) * -1, -1.1);
-            const game = createGameOption(g.map, g.players, pos, g.id);
+            const game = createGameOption(c.campaign.name, c.players.length + '/' + c.campaign.maxPlayers, pos, c.id);
             westWall.appendChild(game);
         });
 
-        availableMaps.map((m: string, index: number) => {
+        availableCampaigns.map((c: CampaignTemplate, index: number) => {
             const pos = new Position(0, (index * 0.5) * -1, 0.1);
-            const map = createMapOption(m, pos);
+            const map = createMapOption(c.name, pos);
             eastWall.appendChild(map);
         });
 
@@ -70,7 +70,7 @@ export module Lobby {
 
         return planeElement;
     }
-    function createGameOption(map: string, players: number, position: Position, gameId: string) {
+    function createGameOption(map: string, players: string, position: Position, gameId: string) {
         const planeElement = document.createElement('a-plane');
         planeElement.setAttribute('position', position.getPositionString());
         planeElement.setAttribute('choosegame', '');

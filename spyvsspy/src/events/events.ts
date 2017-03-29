@@ -1,18 +1,17 @@
 import { IGameRelated } from '../interfaces/interfaces';
 import { GameState } from '../server/gameState';
 import { Position } from '../shared/position';
+import { Player } from '../shared/player';
 
-export class DoorOpened implements IGameRelated {
-    gameId: string;
+export class DoorOpened  {
     sourceId: string;
     targetId: string;
     playerId: string;
 
-    constructor(sourceId: string, targetId: string, player: string, gameId: string) {
+    constructor(sourceId: string, targetId: string, player: string) {
         this.sourceId = sourceId;
         this.targetId = targetId;
         this.playerId = player;
-        this.gameId = gameId;
     }
 }
 
@@ -44,14 +43,22 @@ export class PlayerLeft implements IGameRelated {
     }
 }
 
-export class YouJoined implements IGameRelated {
-    gameId: string;
-    playerId: string;
-    gameState: GameState;
+export class JoinedCampaign {
+    
 }
 
 export class PlayerJoined implements IGameRelated {
     gameId: string;
     playerId: string;
     gameState: GameState;
+}
+
+export class LevelFinished {
+    players: Player[];
+    totalScore: number;
+
+    constructor(players: Player[], totalScore: number){
+        this.players = players;
+        this.totalScore = totalScore;
+    }
 }

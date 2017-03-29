@@ -2,15 +2,15 @@ import { Room } from '../shared/rooms';
 import { Player } from '../shared/player';
 import { Utilities } from '../shared/utilities';
 import { Position } from '../shared/position';
-import { MapTemplate } from '../maps/mapLibrary';
+import { LevelTemplate } from '../maps/mapLibrary';
 
 export class GameState {
     players: Player[];
-    map: MapTemplate;
+    map: LevelTemplate;
     timeRemaining: number;
     id: string;
 
-    constructor(template: MapTemplate) {
+    constructor(template: LevelTemplate) {
         this.map = template;
         this.timeRemaining = 360;
         this.id = Utilities.generateGuid();

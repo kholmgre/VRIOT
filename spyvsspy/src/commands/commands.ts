@@ -1,13 +1,12 @@
 import { IGameRelated } from "../Interfaces/interfaces";
 import { Position } from '../shared/position';
+import { LevelTemplate } from '../levels/levelLibrary';
 
-export class JoinGameCommand {
-    playerId: string;
-    gameId: string;
+export class JoinCampaignCommand {
+    campaignId: string;
 
-    constructor(playerId: string, gameId: string) {
-        this.playerId = playerId;
-        this.gameId = gameId;
+    constructor(campaignId: string) {
+        this.campaignId = campaignId;
     }
 }
 
@@ -19,13 +18,21 @@ export class ChangeNameCommand {
     }
 }
 
-export class CreateGameCommand {
-    playerId: string;
-    mapName: string;
+export class PlayLevelCommand {
+    level: LevelTemplate;
 
-    constructor(playerId: string, mapName: string){
+    constructor(level: LevelTemplate) {
+        this.level = level;
+    }
+}
+
+export class CreateCampaignCommand {
+    playerId: string;
+    campaignName: string;
+
+    constructor(playerId: string, campaignName: string){
         this.playerId = playerId;
-        this.mapName = mapName;
+        this.campaignName = campaignName;
     }
 }
 

@@ -2,8 +2,8 @@ import { Utilities } from '../shared/utilities';
 import { LevelFactory } from './levelFactory';
 import { Game } from './game';
 import { GameState } from '../server/gameState';
-import { DoorOpened, PlayerChangedRoom, PlayerMoved, PlayerLeft, YouJoined, PlayerJoined } from '../events/events';
-import { PlayerMoveCommand, OpenDoorCommand, CreateGameCommand, JoinGameCommand, ChangeNameCommand } from '../commands/commands';
+import { DoorOpened, PlayerChangedRoom, PlayerMoved, PlayerLeft, JoinedCampaign, PlayerJoined } from '../events/events';
+import { PlayerMoveCommand, OpenDoorCommand, CreateCampaignCommand, JoinCampaignCommand, ChangeNameCommand } from '../commands/commands';
 import { Connected } from '../shared/connected';
 import { Position } from '../shared/position';
 import { Lobby } from '../client/lobby';
@@ -56,7 +56,7 @@ AFRAME.registerComponent('choosemap', {
     init: function () {
         this.el.addEventListener('click', function (evt: any) {
 
-            const createGameCommand = new CreateGameCommand(playerId, this.getAttribute('map'));
+            const createGameCommand = new CreateCampaignCommand(playerId, this.getAttribute('map'));
 
             socket.emit('create-game', createGameCommand);
         });
@@ -100,7 +100,7 @@ AFRAME.registerComponent('choosegame', {
     init: function () {
         this.el.addEventListener('click', function (evt: any) {
 
-            const joinGameCommand = new JoinGameCommand(playerId, this.getAttribute('gameid'));
+            const joinGameCommand = new JoinCampaignCommand(playerId, this.getAttribute('gameid'));
 
             socket.emit('join-game', joinGameCommand);
         });
@@ -181,7 +181,7 @@ window.addEventListener("load", function () {
         
         playerId = event.playerId;
 
-        Lobby.CreateLobby(document.getElementById('scene'), event.currentGames, event.mapNames);
+        Lobby.CreateLobby(document.getElementById('scene'), event.joinableCampaigns, event.campaigns);
         playerElement.setAttribute('position', '0 6 0');
     });
 
@@ -189,7 +189,7 @@ window.addEventListener("load", function () {
         console.log(JSON.stringify(data));
     });
 
-    socket.on('you-joined', function (event: YouJoined) {
+    socket.on('you-joined', function (event: JoinedCampaign) {
         currentGame = new Game(playerName, 'scene', socket, event.gameState.id, event.playerId);
         currentGame.joinedGame(event);
     });

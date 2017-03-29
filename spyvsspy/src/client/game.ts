@@ -2,7 +2,7 @@ import { Room } from '../shared/rooms';
 import { Player } from '../shared/player';
 import { LevelFactory } from './levelFactory';
 import { GameState } from '../server/gameState';
-import { DoorOpened, PlayerChangedRoom, PlayerMoved, PlayerLeft, YouJoined, PlayerJoined } from '../events/events';
+import { DoorOpened, PlayerChangedRoom, PlayerMoved, PlayerLeft, JoinedCampaign, PlayerJoined } from '../events/events';
 import { Utilities } from '../shared/utilities';
 import { Position } from '../shared/position';
 
@@ -25,7 +25,7 @@ export class Game {
         this.playerCamera = document.getElementById('playerCamera');
     }
 
-    joinedGame(event: YouJoined): void {
+    joinedGame(event: JoinedCampaign): void {
 
         this.playerId = event.playerId;
 

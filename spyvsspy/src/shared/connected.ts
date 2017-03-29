@@ -1,15 +1,16 @@
 import { JoinableGame } from './joinableGame';
+import { CampaignTemplate, Campaign } from '../campaigns/campaign';
 
 export class Connected {
-    mapNames: Array<string> = [];
+    campaigns: CampaignTemplate[] = [];
     playerName: string;
     playerId: string;
-    currentGames: Array<JoinableGame> = [];
+    joinableCampaigns: Array<Campaign> = [];
 
-    constructor(mapNames: Array<string>, currentGames: Array<JoinableGame>, playerName: string, playerId: string){
-        this.mapNames = mapNames;
+    constructor(campaigns: CampaignTemplate[], joinableCampaign: Campaign[], playerName: string, playerId: string){
+        this.campaigns = campaigns;
         this.playerName = playerName;
-        this.currentGames = currentGames;
+        this.joinableCampaigns = joinableCampaign;
         this.playerId = playerId;
     }
 }
