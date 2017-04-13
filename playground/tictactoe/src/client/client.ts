@@ -7,7 +7,6 @@ declare var process: any;
 let url: string = process.env.API_URL;
 
 let socket = io.connect('http://localhost:3000', { reconnection: false });
-let playerId = '';
 
 window.addEventListener("load", function () {
 
@@ -23,6 +22,10 @@ window.addEventListener("load", function () {
 
     socket.on('game-update', (gameState: GameState) => {
         
+    });
+
+    socket.on('game-ended', (GameState: GameState) => {
+        socket.leave(GameState.id);
     });
 
 });
