@@ -23,6 +23,7 @@ export class GameSession {
     board: Board;
     id: string;
     status: GameStatus = GameStatus.Lobby;
+    currentTurnPlayer: Player;
 
     constructor(startedByPlayer: Player) {
         this.id = generateGuid();
@@ -36,14 +37,28 @@ export class GameSession {
         }
 
         if (this.players.length === 2) {
-            this.status = GameStatus.InProgress;
+            this.startGame();
         }
     }
 
-    public placeMarker(playerId: string, boxId: string){
+    public startGame() {
+        this.status = GameStatus.InProgress;
+        this.currentTurnPlayer = this.players[0];
+    }
+
+    public placeMarker(playerId: string, boxId: string) {
+        if (playerId !== this.currentTurnPlayer.id) {
+            console.log('Player tried to place marker when it was not that players turn..');
+            return;
+        }
+
         this.board.placeMarker(playerId, boxId);
 
-        if(this.board.finished === true)
+        if (this.board.finished === true) {
             this.status = GameStatus.Finished;
+        } else {
+            this.currentTurnPlayer = this.players.find((p: Player) => p.id !== playerId);
+        }
+
     }
 }

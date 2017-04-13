@@ -11,16 +11,18 @@ let playerId = '';
 
 window.addEventListener("load", function () {
 
-    const playerElement = document.getElementById('player');
-    const cameraElement = document.getElementById('playerCamera');
     let currentGame: GameState = null;
 
-    socket.on('list-games', function(gamesList: ListGames){
+    socket.on('list-games', function (gamesList: ListGames) {
         console.log(JSON.stringify(gamesList));
     });
 
-    socket.on('game-state', (gameState: GameState) => {
-        console.log(JSON.stringify(gameState))
+    socket.on('game-lobby', (gameState: GameState) => {
+        socket.join(gameState.id);
+    });
+
+    socket.on('game-update', (gameState: GameState) => {
+        
     });
 
 });
