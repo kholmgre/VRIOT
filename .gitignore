@@ -3,3 +3,4 @@ npm-debug.log"
 /spyvsspy/dist/**/*
 /spyvsspy/npm-debug.log
 /**/*.zip
+/playground/tictactoe/dist/**/*

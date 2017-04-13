@@ -13,6 +13,8 @@ const gameSessions: Array<GameSession> = [];
 
 io.on('connection', function (socket: any) {
 
+	console.log('connect!');
+
 	// Mutable "session" data
 	const playerId = socket.id;
 	let playername = 'unkown';
