@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Hello AR!</title>
+</head>
+<script src="https://aframe.io/releases/0.5.0/aframe.min.js"></script>
+<script src="https://rawgit.com/jeromeetienne/ar.js/master/aframe/build/aframe-ar.js"></script>
+<script>
+    THREEx.ArToolkitContext.baseURL = 'https://rawgit.com/jeromeetienne/ar.js/master/three.js/'
+    AFRAME.registerComponent('cursor-listener', {
+        init: function () {
+            var COLORS = ['red', 'green', 'blue'];
+            this.el.addEventListener('click', function (evt) {
+                var randomIndex = Math.floor(Math.random() * COLORS.length);
+                this.setAttribute('material', 'color', COLORS[randomIndex]);
+                console.log('I was clicked at: ', evt.detail.intersection.point);
+            });
+        }
+    });
+
+</script>
+
+<body style='margin : 0px; overflow: hidden;'>
+    <a-scene embedded artoolkit='sourceType: webcam;'>
+        <a-assets>
+            <a-asset-item id="monkey" src="monkey.dae"></a-asset-item>
+        </a-assets>
+        <!--<a-marker-camera preset='hiro'>
+            <a-box position='0 0.5 0' material='opacity: 0.5;' cursor-listener></a-box>
+        </a-marker-camera>-->
+        <a-marker-camera preset='kanji'>
+            <a-collada-model src="#monkey"></a-entity>
+        </a-marker-camera>
+    </a-scene>
+</body>
+</html>
