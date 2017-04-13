@@ -7,6 +7,7 @@
     "bserver": "webpack -w --config spyvsspy/webpack.server.config.js",
     "bclient": "webpack -w --config spyvsspy/webpack.client.config.js",
     "gserver": "node spyvsspy/dist/server.js",
+    "playgroundserver": "node playground/playground-server.js",
     "cserver": "node playground/tictactoe/Content-Server.js",
     "buildTicServer": "webpack -w --config playground/tictactoe/webpack.server.config.js",
     "buildTicClient": "webpack -w --config playground/tictactoe/webpack.client.config.js",
