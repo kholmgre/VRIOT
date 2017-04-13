@@ -1,0 +1,186 @@
+.dark-primary-color    { background: #0288D1; }
+.default-primary-color { background: #03A9F4; }
+.light-primary-color   { background: #B3E5FC; }
+.text-primary-color    { color: #FFFFFF; }
+.accent-color          { background: #536DFE; }
+.primary-text-color    { color: #212121; }
+.secondary-text-color  { color: #757575; }
+.divider-color         { border-color: #BDBDBD; }
+
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	background-color: #0288d1;
+	color: #fff;
+}
+
+hr {
+	border: 0;
+	border-bottom: 1px solid #bdbdbd;
+	margin-bottom: 10rem;
+}
+
+a {
+	color: #fff;
+	text-decoration: none;
+	border-bottom: .1em solid #b3e5fc;
+	transition: .1s;
+}
+
+a:hover {
+	border-bottom: .1em solid #03a9f4;
+	transition: .2s;
+}
+
+::selection {
+	background-color: #536dfe;
+	color: #fff;
+}
+
+article {
+	padding: 3rem 3rem 6rem 3rem;
+}
+
+div {
+	margin: 0 auto;
+	max-width: 700px;
+}
+
+div.playground__item {
+	width: 100%;
+	margin-bottom: 6rem;
+	padding-bottom: 3rem;
+	border-bottom: 1px solid #bdbdbd;
+}
+
+img {
+	width: 100%;
+	/*mix-blend-mode: multiply;*/
+	margin-bottom: 3rem;
+}
+
+h1 {
+	font-size: 5rem;
+	font-weight: 400;
+	padding: 0 0 3rem 0;
+	margin-bottom: 0;
+}
+
+h2 {
+	font-size: 3.5rem;
+	font-weight: 500;
+	padding: 0 0 1rem 0;
+	margin-bottom: 0;
+}
+
+h3 {
+	font-size: 2.5rem;
+	font-weight: 500;
+	padding: 0 0 1rem 0;
+	margin-bottom: 0;
+}
+
+p {
+	font-size: 2rem;
+	line-height: 1.4;
+	margin: 0 0 2rem 0;
+}
+
+ul {
+	display: inline-block;
+	width: 100%;
+	list-style: none;
+	padding: 0;
+	margin-bottom: .5rem;
+}
+
+li {
+	width: 100%;
+	float: left;
+	clear: both;
+	font-size: 2rem;
+	margin-bottom: .75rem;
+	padding-bottom: 0;
+}
+
+li:first-child {
+	font-weight: 500;
+}
+
+.u-weight-700 {
+	font-weight: 700;
+}
+
+.u-nowrap {
+	white-space: nowrap;
+}
+
+/* Responsive */
+
+@media screen and (max-width: 768px) {
+	hr {
+		margin-bottom: 8rem;
+	}
+
+	div.playground__item {
+		margin-bottom: 4rem;
+	}
+
+	h1 {
+		font-size: 5rem;
+		margin-top: 0;
+	}
+
+	h2 {
+		font-size: 2.5rem;
+		margin-top: 0;
+	}
+
+	h3 {
+		font-size: 2rem;
+		margin-top: 0;
+	}
+
+	p, li {
+		font-size: 1.2rem;
+		line-height: 1.5;
+	}
+
+	li {
+		margin-bottom: .25rem;
+	}
+
+	article {
+		padding: 2rem;
+	}
+}
+
+@media screen and (max-width: 550px) {
+	hr {
+		margin-bottom: 6rem;
+	}
+
+	h1 {
+		font-size: 4rem;
+	}
+
+	h2 {
+		font-size: 2rem;
+	}
+
+	h3 {
+		font-size: 1.5rem;
+		margin-top: 0;
+	}
+
+	p {
+		font-size: 1.2rem;
+	}
+
+	article {
+		padding: 1rem;
+	}
+
+	img {
+		margin-bottom: 2rem;
+	}
+}
