@@ -4,6 +4,18 @@
 		<meta charset="utf-8">
 		<title>Mikael UI</title>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/0.5.0/aframe.min.js"></script>
+
+		<script type="text/javascript">
+			AFRAME.registerComponent("collider-check", {
+				dependencies: ["raycaster"],
+
+				init: function () {
+					this.el.addEventListener("raycaster-intersected", function () {
+						console.log("Player hit something!");
+					});
+				}
+			});
+		</script>
 	</head>
 
 	<body>
@@ -25,11 +37,15 @@
 
 			<a-sky color="gray"></a-sky>
 
-			<a-obj-model src="#board-obj" mtl="#board-mtl" position="0 0 0"></a-obj-model>
+			<a-obj-model src="#board-obj" mtl="#board-mtl" position="0 0 0" class="collidable"></a-obj-model>
 			<a-obj-model src="#cross-obj" mtl="#cross-mtl" position="2 0.15 0"></a-obj-model>
 			<a-obj-model src="#circle-obj" mtl="#circle-mtl" position="-2 0.15 2"></a-obj-model>
 
 			<!--<a-entity id="lightSphere" geometry="primitive: sphere" color="#fff" shader="flat" light="type: point; color: #BBB"></a-entity>-->
+
+			<a-entity id="player" collider-check>
+				<a-entity raycaster="objects: .collidable" position="0 -0.9 0" rotation="90 0 0"></a-entity>
+			</a-entity>
 
 			<a-entity>
 				<a-entity text="value: Hello World;"></a-entity>
