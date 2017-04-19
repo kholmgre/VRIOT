@@ -6,6 +6,7 @@ export class Client {
     currentGame: GameState = null;
     socket: any;
     readonly boardElement: HTMLElement = document.getElementById('board');
+    currentTurnPlayerId: string;
 
     constructor(socket: any) {
         this.socket = socket;
@@ -37,14 +38,19 @@ export class Client {
                 zpos = 0.8;
             }
 
-            const html = '<a-obj-model id="' + prop + '" src="#board-obj" mtl="#board-mtl" position="' + row + ' 0 ' + zpos + '" scale="0.2 1 0.2"></a-obj-model>';
+            const html = '<a-obj-model cursor-listener id="' + prop + '" src="#board-obj" mtl="#board-mtl" position="' + row + ' 0 ' + zpos + '" scale="0.2 1 0.2"></a-obj-model>';
 
             this.boardElement.setAttribute("position", "-0.5 0 -0.5");
 
             const newElement = document.createElement('a-entity');
-            newElement.setAttribute('id', prop);
-            newElement.setAttribute('cursor-listener', '');
             newElement.innerHTML = html;
+
+            const textElement = document.createElement('a-text');
+            textElement.setAttribute('sides', 'both');
+            textElement.setAttribute('value', prop);
+            textElement.setAttribute('rotation', '-90 0 0');
+            textElement.setAttribute('position', '0 0.1 0');
+            newElement.appendChild(textElement);
 
             this.boardElement.appendChild(newElement);
             count++;
@@ -131,6 +137,7 @@ export class Client {
         console.log('starting game');
         console.log(gameState);
         this.currentGame = gameState;
+        this.currentTurnPlayerId = gameState.playerCurrentTurn.id;
         this.cleanBoard();
         // Create board
         this.createBoard();
@@ -147,24 +154,31 @@ export class Client {
     gameUpdate(markerPlaced: MarkerPlaced): void {
         const boxElement = document.getElementById(markerPlaced.boxId);
 
-        let element: HTMLElement = null;
-        const position = '0 0 0';
-        const scale = '0.2 1 0.2';
+        this.currentTurnPlayerId = markerPlaced.currentTurnPlayerId;
+
+        let element: HTMLElement = document.createElement('a-obj-model');
+        const position = '0 0.15 0';
+        const scale = '1 1 1';
+        let src = '';
+        let mtl = '';
+
 
         if (markerPlaced.playerName === 'Cross') {
-            element = document.createElement('a-obj-model');
-            element.setAttribute('src', '#cross-obj');
-            element.setAttribute('mtl', '#cross-mtl');
-            element.setAttribute('position', position);
-            element.setAttribute('scale', position);
+            src = '#cross-obj';
+            mtl = '#cross-mtl';
         } else if (markerPlaced.playerName === 'Circle') {
-            element = document.createElement('a-obj-model');
-            element.setAttribute('src', '#circle-obj');
-            element.setAttribute('mtl', '#circle-mtl');
-            element.setAttribute('position', position);
-            element.setAttribute('scale', position);
+            src = '#circle-obj';
+            mtl = '#circle-mtl';
+        } else {
+            throw 'Unacceptable playername';
         }
 
+        const html = `<a-obj-model src="${src}" mtl="${mtl}" position="${position}" scale="${scale}"></a-obj-model>`;
+
+        element.innerHTML = html;
+
         boxElement.appendChild(element);
+
+        console.log(element.getAttribute('position'));
     }
 }

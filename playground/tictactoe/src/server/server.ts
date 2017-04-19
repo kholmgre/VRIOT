@@ -25,6 +25,8 @@ io.on('connection', function (socket: any) {
 	let playername = 'unkown';
 	let currentGame: GameSession = null;
 
+	console.log(`player ${socket.id} connected`);
+
 	socket.on('create-game', function () {
 		console.log('creating game');
 
@@ -36,27 +38,32 @@ io.on('connection', function (socket: any) {
 	socket.on('join-game', () => {
 		const games = gameSessions.filter((gs: GameSession) => gs.status === GameStatus.Lobby);
 
-		console.log('joining game');
-		console.log('available games ' + games.length);
-
 		if (games.length > 0) {
 			EventHandlers.joinGame(playerId, games[0], socket, io);
+
+			currentGame = games[0];
 		}
 	});
 
 	socket.on('place-marker', (boxId: string) => {
 
-		console.log(`player ${playerId} placing marker on ${boxId}`);
-
 		const markerWasPlaced = currentGame.placeMarker(playerId, boxId);
 
 		if (markerWasPlaced === true) {
+			console.log(`player ${playerId} placed marker on ${boxId}`);
 			if (currentGame.status === GameStatus.Finished.valueOf()) {
-				socket.to(currentGame.id).emit('game-ended', currentGame);
+				io.sockets.in(currentGame.id).emit('game-ended', currentGame);
 			} else {
-				const currentGamePlayerName = currentGame.players.find((p: Player) => p.id === playerId);
-				socket.to(currentGame.id).emit('marker-placed', new MarkerPlaced(currentGamePlayerName.name, boxId));
+				const currentGamePlayerName = currentGame.playerCurrentTurn.name;
+
+				console.log(`should be player ${currentGamePlayerName} turn`);
+
+				const playerThatMadeMoveName = currentGame.players.find((p: Player) => p.id === playerId).name;
+
+				io.sockets.in(currentGame.id).emit('marker-placed', new MarkerPlaced(playerThatMadeMoveName, boxId, currentGame.playerCurrentTurn.id));
 			}
+		} else {
+			console.log(`player ${playerId} did not place a marker`);
 		}
 	});
 

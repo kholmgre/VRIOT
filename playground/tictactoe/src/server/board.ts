@@ -75,6 +75,6 @@ export class Board {
     }
 
     private checkBox(boxId: string, playerId: string): boolean {
-        return this.boxes[boxId].playerId === playerId && this.boxes[boxId].checked === true;
+        return this.boxes[boxId].playerId === playerId && this.boxes[boxId].checked;
     }
 }
