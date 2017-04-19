@@ -1,6 +1,7 @@
-/node_modules/**/* 
+/node_modules/**/*
 npm-debug.log"
 /spyvsspy/dist/**/*
 /spyvsspy/npm-debug.log
 /**/*.zip
 /playground/tictactoe/dist/**/*
+/**/*.pem
