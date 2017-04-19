@@ -3,8 +3,8 @@ import { Board } from './board';
 
 export enum GameStatus {
     Lobby = 0,
-    InProgress,
-    Finished
+    InProgress = 1,
+    Finished = 2
 }
 
 function generateGuid() {
@@ -22,11 +22,12 @@ export class GameSession {
     players: Player[] = [];
     board: Board;
     id: string;
-    status: GameStatus = GameStatus.Lobby;
-    currentTurnPlayer: Player;
+    status: GameStatus;
+    playerCurrentTurn: Player;
 
     constructor(startedByPlayer: Player) {
         this.id = generateGuid();
+        this.status = GameStatus.Lobby;
         this.board = new Board();
         this.addPlayer(startedByPlayer);
     }
@@ -43,11 +44,11 @@ export class GameSession {
 
     public startGame() {
         this.status = GameStatus.InProgress;
-        this.currentTurnPlayer = this.players[0];
+        this.playerCurrentTurn = this.players[0];
     }
 
     public placeMarker(playerId: string, boxId: string) {
-        if (playerId !== this.currentTurnPlayer.id) {
+        if (playerId !== this.playerCurrentTurn.id) {
             console.log('Player tried to place marker when it was not that players turn..');
             return;
         }
@@ -57,7 +58,7 @@ export class GameSession {
         if (this.board.finished === true) {
             this.status = GameStatus.Finished;
         } else {
-            this.currentTurnPlayer = this.players.find((p: Player) => p.id !== playerId);
+            this.playerCurrentTurn = this.players.find((p: Player) => p.id !== playerId);
         }
 
     }

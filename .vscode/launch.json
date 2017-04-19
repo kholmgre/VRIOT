@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch game server",
-            "program": "${workspaceRoot}/spyvsspy/dist/server.js",
+            "program": "${workspaceRoot}/playground/tictactoe/dist/server.js",
             "sourceMaps": true,
             "cwd": "${workspaceRoot}",
             "restart": true
