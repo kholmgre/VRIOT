@@ -1,0 +1,2 @@
+# Start-Process 'C:\Program Files\PuTTY\pscp.exe' -ArgumentList ("-scp -vriot2 -pw Temp1234.!!! " + $PSScriptRoot + "tictactoe.zip vriot2@52.232.37.52:/home/vriot2/")
+Send-PowerShellServerFile -Server 52.232.37.52 -AuthMode password -User vriot2 -Password Temp1234.!!! -RemoteFile /home/vriot2/tictactoe.zip -LocalFile tictactoe.zip

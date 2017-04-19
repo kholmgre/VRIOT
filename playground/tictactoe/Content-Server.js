@@ -1,12 +1,18 @@
-var express = require('express')
-var path = require('path');
-var app = express()
-app.set('etag', false);
+var fs = require('fs'),
+    https = require('https'),
+    express = require('express'),
+    path = require('path'),
+    app = express();
 
-app.use(express.static(__dirname));
+    app.use('/dist',express.static(__dirname + '/dist'));
+    app.use('/assets',express.static(__dirname + '/assets'));
 
-app.get('/', function (req, res) {
-  res.sendFile(path.join(__dirname + '/Index.html'));
-});
+    https.createServer({
+      key: fs.readFileSync('key.pem'),
+      cert: fs.readFileSync('cert.pem')
+    }, app).listen(8080);
 
-app.listen(8080);
+    app.get('/', function (req, res) {
+      res.header('Content-type', 'text/html');
+      res.sendFile(path.join(__dirname + '/index.html'));
+    });

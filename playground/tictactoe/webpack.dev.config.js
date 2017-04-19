@@ -6,7 +6,7 @@ var fs = require('fs');
 
 const client = {
     entry: {
-        client: "./playground/tictactoe/src/client/client.ts"
+        client: "./playground/tictactoe/src/client/main.ts"
     },
     output: {
         filename: "[name].js",
