@@ -1,6 +1,6 @@
-import { GameState, } from '../shared/gameState';
+import { GameState } from '../shared/gameState';
 import { ListGames } from '../shared/listGames';
-import { GameStatus } from '../server/gameSession';
+import { MarkerPlaced } from '../shared/markerPlaced';
 
 export class Client {
     currentGame: GameState = null;
@@ -10,10 +10,10 @@ export class Client {
     constructor(socket: any) {
         this.socket = socket;
 
-        this.socket.on('game-update', this.gameUpdate.bind(this));
+        this.socket.on('marker-placed', this.gameUpdate.bind(this));
         this.socket.on('game-created', this.gameCreated.bind(this));
         this.socket.on('game-started', this.startGame.bind(this));
-        this.socket.on('game-ended', this.createGameOver.bind(this));
+        this.socket.on('game-ended', this.endGame.bind(this));
         this.socket.on('player-disconnected', this.gameCancelled.bind(this));
 
         this.createMenu();
@@ -60,9 +60,13 @@ export class Client {
         this.cleanBoard();
 
         const menuHtml =
-            `<a-box position='0 0 0' material='opacity: 0.5;'>
-            <a-text value="New game" id="newgame" sides="both" rotation="-90 0 0" menu-select position="-0.5 0.5 0.3"></a-text>
-            <a-text value="Join game" id="joingame" sides="both" rotation="-90 0 0" menu-select position="-0.5 0.5 -0.3"></a-text>
+            `<a-box position='0 0 0' material='opacity: 1;'>
+            <a-plane position="0 0.7 0.2" rotation="-90 0 0" height="0.4" width="1" menu-select color="red" id="newgame">
+                <a-text value="New game" color="black" sides="both" rotation="0 0 0" position="-0.5 -0.4 0.1"></a-text>
+            </a-plane>
+            <a-plane position="0 0.7 -0.2" rotation="-90 0 0" height="0.4" width="1" menu-select color="green" id="joingame">
+                <a-text value="Join game" color="black" sides="both" rotation="0 0 0" position="-0.5 0.4 0.1"></a-text>
+            </a-plane>
         </a-box>`;
 
         this.boardElement.innerHTML = menuHtml;
@@ -88,8 +92,21 @@ export class Client {
         this.boardElement.innerHTML = '';
     }
 
-    private createGameOver(winningPlayer: string): void {
+    private createGameOver(winningPlayer: string, message?: string): void {
         // Create element to show winning players name
+        console.log(`Player ${winningPlayer} won!`);
+
+        this.cleanBoard();
+
+        // Display trophy or skull, display winning player name
+
+        setTimeout(() => {
+            this.createMenu();
+        });
+    }
+
+    private placeMarker(boxId: string): void {
+
     }
 
     gameCreated(gameState: GameState): void {
@@ -109,26 +126,43 @@ export class Client {
     }
 
     startGame(gameState: GameState): void {
+        console.log('starting game');
+        console.log(gameState);
+        this.currentGame = gameState;
         this.cleanBoard();
         // Create board
         this.createBoard();
     }
 
     endGame(): void {
-        this.createGameOver();
+        this.createGameOver(this.currentGame.board.winner);
 
         setTimeout(() => {
             this.createMenu();
         }, 8000);
     }
 
-    gameUpdate(gameState: GameState) {
-        // examine changes in state and update accordingly
-        // an update can be one of two things: 
-        // a player has placed a marker
-        // or the game is over
-        // if a player has moved this should be represented by an animation of placing the marker
-        // if a player has won, the screen should fade to black and the winning players name showed
-        // after x seconds, set currentGame to null and return to lobby
+    gameUpdate(markerPlaced: MarkerPlaced): void {
+        const boxElement = document.getElementById(markerPlaced.boxId);
+
+        let element: HTMLElement = null;
+        const position = '0 0 0';
+        const scale = '0.2 1 0.2';
+
+        if (markerPlaced.playerName === 'Cross') {
+            element = document.createElement('a-obj-model');
+            element.setAttribute('src', '#cross-obj');
+            element.setAttribute('mtl', '#cross-mtl');
+            element.setAttribute('position', position);
+            element.setAttribute('scale', position);
+        } else if (markerPlaced.playerName === 'Circle') {
+            element = document.createElement('a-obj-model');
+            element.setAttribute('src', '#circle-obj');
+            element.setAttribute('mtl', '#circle-mtl');
+            element.setAttribute('position', position);
+            element.setAttribute('scale', position);
+        }
+
+        boxElement.appendChild(element);
     }
 }

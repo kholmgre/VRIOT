@@ -14,11 +14,8 @@ window.addEventListener("load", function () {
                 // check element id, send message with name of element id 
                 // to create or join game
                 if (evt.currentTarget.id === 'newgame') {
-                    console.log('creating game');
                     socket.emit('create-game');
                 } else {
-                    // Not sure if this is the best place to handle the join channel logic
-                    console.log('joining game');
                     socket.emit('join-game');
                 }
             });

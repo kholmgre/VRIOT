@@ -31,16 +31,18 @@ export class Board {
         }
     }
 
-    placeMarker(playerId: string, boxId: string) {
+    placeMarker(playerId: string, boxId: string) : boolean {
         if (this.boxes[boxId] === null || this.boxes[boxId] === undefined)
-            throw 'Invalid boxId';
+            return false;
 
         if (this.boxes[boxId].checked === true) {
-            throw 'Cannot place marker on already checked box';
+            return false;
         }
 
         this.boxes[boxId].placeMarker(playerId);
         this.checkVictoryConditions(playerId);
+
+        return true;
     }
 
     private checkVictoryConditions(playerId: string) {

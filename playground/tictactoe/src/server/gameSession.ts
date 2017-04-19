@@ -47,19 +47,23 @@ export class GameSession {
         this.playerCurrentTurn = this.players[0];
     }
 
-    public placeMarker(playerId: string, boxId: string) {
+    public placeMarker(playerId: string, boxId: string): boolean {
         if (playerId !== this.playerCurrentTurn.id) {
             console.log('Player tried to place marker when it was not that players turn..');
-            return;
+            return false;
         }
 
-        this.board.placeMarker(playerId, boxId);
+        const markerPlaced = this.board.placeMarker(playerId, boxId);
 
-        if (this.board.finished === true) {
-            this.status = GameStatus.Finished;
+        if (markerPlaced === true) {
+            if (this.board.finished === true) {
+                this.status = GameStatus.Finished;
+            } else {
+                this.playerCurrentTurn = this.players.find((p: Player) => p.id !== playerId);
+            }
+            return true;
         } else {
-            this.playerCurrentTurn = this.players.find((p: Player) => p.id !== playerId);
+            return false;
         }
-
     }
 }

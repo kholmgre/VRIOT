@@ -4,3 +4,4 @@ npm-debug.log"
 /spyvsspy/npm-debug.log
 /**/*.zip
 /playground/tictactoe/dist/**/*
+**/*.pem
