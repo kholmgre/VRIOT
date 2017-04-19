@@ -39,6 +39,8 @@ export class Client {
 
             const html = '<a-obj-model id="' + prop + '" src="#board-obj" mtl="#board-mtl" position="' + row + ' 0 ' + zpos + '" scale="0.2 1 0.2"></a-obj-model>';
 
+            this.boardElement.setAttribute("position", "-0.5 0 -0.5");
+
             const newElement = document.createElement('a-entity');
             newElement.setAttribute('id', prop);
             newElement.setAttribute('cursor-listener', '');
