@@ -25,6 +25,15 @@ io.on('connection', function (socket: any) {
 	let playername = 'unkown';
 	let currentGame: GameSession = null;
 
+	function removeCurrentGame() {
+		const gameIndex = gameSessions.findIndex((gs: GameSession) => gs.id === currentGame.id);
+		
+		if (gameIndex === -1)
+			return;
+
+		gameSessions.splice(gameIndex, 1);
+	}
+
 	console.log(`player ${socket.id} connected`);
 
 	socket.on('create-game', function () {
@@ -53,8 +62,10 @@ io.on('connection', function (socket: any) {
 			console.log(`player ${playerId} placed marker on ${boxId}`);
 			if (currentGame.status.valueOf() === GameStatus.Finished.valueOf()) {
 				io.sockets.in(currentGame.id).emit('game-ended', currentGame.players.find((p: Player) => p.id === currentGame.board.winner).name);
+				removeCurrentGame();
 			} else if (currentGame.status.valueOf() === GameStatus.Draw.valueOf()) {
 				io.sockets.in(currentGame.id).emit('game-draw', 'Game was a draw!');
+				removeCurrentGame();
 			} else if (currentGame.status.valueOf() === GameStatus.InProgress.valueOf()) {
 				const currentGamePlayerName = currentGame.playerCurrentTurn.name;
 
@@ -66,7 +77,7 @@ io.on('connection', function (socket: any) {
 			} else {
 				console.log('Unkown game-state');
 				socket.leave(currentGame.id);
-				currentGame = null;
+				removeCurrentGame();
 			}
 		} else {
 			console.log(`player ${playerId} did not place a marker`);
@@ -84,12 +95,7 @@ io.on('connection', function (socket: any) {
 			io.sockets.in(currentGame.id).emit('player-disconnected', 'You won! Other player left the game.');
 		}
 
-		const gameIndex = gameSessions.findIndex((gs: GameSession) => gs.id === currentGame.id);
-
-		if (gameIndex === -1)
-			return;
-
-		gameSessions.splice(gameIndex, 1);
+		removeCurrentGame();
 
 		console.log(`${gameSessions.length} games left`);
 	});

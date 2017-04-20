@@ -45,6 +45,7 @@ export class GameSession {
 
     public startGame() {
         this.status = GameStatus.InProgress;
+        // Randomize this?
         this.playerCurrentTurn = this.players[0];
     }
 
