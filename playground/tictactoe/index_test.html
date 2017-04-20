@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8" />
-		<title>Hello AR!</title>
+		<title>Hello AR! (DEBUG)</title>
 		<link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
 		<link rel="icon" type="image/png" href="/assets/icons/favicon-32x32.png" sizes="32x32">
 		<link rel="icon" type="image/png" href="/assets/icons/favicon-16x16.png" sizes="16x16">
@@ -20,10 +20,9 @@
 	</script>
 	<script src="https://unpkg.com/aframe-particle-system-component@1.0.x/dist/aframe-particle-system-component.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.slim.js"></script>
-	<script src="dist/client.js"></script>
 
 	<body style='margin : 0px; overflow: hidden;'>
-		<a-scene embedded artoolkit='sourceType: webcam;'>
+		<a-scene>
 			<a-assets>
 				<a-asset-item id="board-obj" src="/assets/models/boardunit/boardunit.obj"></a-asset-item>
 				<a-asset-item id="board-mtl" src="/assets/models/boardunit/boardunit.mtl"></a-asset-item>
@@ -33,30 +32,29 @@
 
 				<a-asset-item id="circle-obj" src="/assets/models/circle/circle.obj"></a-asset-item>
 				<a-asset-item id="circle-mtl" src="/assets/models/circle/circle.mtl"></a-asset-item>
+
+				<a-asset-item id="trophy-obj" src="/assets/models/trophy/trophy.obj"></a-asset-item>
+				<a-asset-item id="trophy-mtl" src="/assets/models/trophy/trophy.mtl"></a-asset-item>
 			</a-assets>
 
-			<a-entity id="board" style="display: none" position="0 0 0">
+			<a-entity id="board" position="0 0 -5">
+				<a-obj-model src="#board-obj" mtl="#board-mtl" position="0 0 0" scale="0.2 0.2 0.2"></a-obj-model>
+				<a-obj-model src="#board-obj" mtl="#board-mtl" position="0.4 0 0" scale="0.2 0.2 0.2"></a-obj-model>
+				<a-obj-model src="#board-obj" mtl="#board-mtl" position="0.8 0 0" scale="0.2 0.2 0.2"></a-obj-model>
 
+				<a-obj-model src="#board-obj" mtl="#board-mtl" position="0 0 0.4" scale="0.2 0.2 0.2"></a-obj-model>
+				<a-obj-model src="#board-obj" mtl="#board-mtl" position="0.4 0 0.4" scale="0.2 0.2 0.2"></a-obj-model>
+				<a-obj-model src="#board-obj" mtl="#board-mtl" position="0.8 0 0.4" scale="0.2 0.2 0.2">
+					<a-obj-model src="#trophy-obj" mtl="#trophy-mtl" position="0.8 0.2 0.4" scale="1 1 1"></a-obj-model>
+				</a-obj-model>
+
+				<a-obj-model src="#board-obj" mtl="#board-mtl" position="0 0 0.8" scale="0.2 0.2 0.2"></a-obj-model>
+				<a-obj-model src="#board-obj" mtl="#board-mtl" position="0.4 0 0.8" scale="0.2 0.2 0.2"></a-obj-model>
+				<a-obj-model src="#board-obj" mtl="#board-mtl" position="0.8 0 0.8" scale="0.2 0.2 0.2"></a-obj-model>
 			</a-entity>
 
-			<a-entity light="type: directional; color: #fefefe; intensity: 1.5" position="-1 1 0"></a-entity>
-
-			<a-entity position="0 5.25 -5" particle-system="preset: dust; texture: ./assets/textures/particle-texture_001.png; velocityValue: 0 15 0; velocitySpread: 10 7.5 10; accelerationValue: 0 5 0; size: 2; color: #0000FF,#00FF00,#FF0000;"></a-entity>
-
-			<a-marker-camera preset='hiro'>
-				<a-entity cursor="fuse: false" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.02"
-						  material="color: black; shader: flat; opacity: 0.5">
-				</a-entity>
-			</a-marker-camera>
+			<a-entity position="0 5.25 -5" particle-system="preset: dust; texture: ./assets/textures/particle-texture_001.png; velocityValue: 0 15 0; velocitySpread: 10 7.5 10; accelerationValue: 0 5 0; size: 6; color: #0000FF,#00FF00,#FF0000;"></a-entity>
 		</a-scene>
-
-		<script>
-			if ("serviceWorker" in navigator) {
-				navigator.serviceWorker.register("dist/sw.js").then(function() {
-					console.log("Service Worker Registered");
-				});
-			}
-		</script>
 	</body>
 
 </html>
