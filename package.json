@@ -13,7 +13,7 @@
     "buildTicClient": "webpack -w --config playground/tictactoe/webpack.client.config.js",
     "buildTicServerTests": "webpack -w --config playground/tictactoe/webpack.test.config.js",
     "ticserver": "node playground/tictactoe/dist/server.js",
-    "servertests": "mocha playground/tictactoe/test/servertests.js -w --no-exit"
+    "servertests": "mocha playground/tictactoe/test/servertests.js -w --no-exit --debug-brk"
   },
   "repository": {
     "type": "git",

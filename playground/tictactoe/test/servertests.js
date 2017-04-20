@@ -189,6 +189,7 @@ class Board {
             8: new BoxState(),
             9: new BoxState()
         };
+        this.winner = null;
     }
     placeMarker(playerId, boxId) {
         if (this.boxes[boxId] === null || this.boxes[boxId] === undefined)
@@ -201,7 +202,6 @@ class Board {
         return true;
     }
     checkVictoryConditions(playerId) {
-        console.log(JSON.stringify(this));
         if (this.checkBox("1", playerId) === true && this.checkBox("2", playerId) === true && this.checkBox("3", playerId) === true)
             this.playerWon(playerId);
         if (this.checkBox("4", playerId) === true && this.checkBox("5", playerId) === true && this.checkBox("6", playerId) === true)
@@ -255,14 +255,84 @@ const player_1 = __webpack_require__(1);
 const chai_1 = __webpack_require__(2);
 __webpack_require__(5);
 describe('GameSession', () => {
-    describe('Victory condition', () => {
-        it('should set state of gameSession to finished', () => {
+    describe('When player joins', () => {
+        it('should set state of gameSession to in progress', () => {
             const player1 = new player_1.Player('1', 'Cross');
             const player2 = new player_1.Player('1', 'Circle');
             const session = new gameSession_1.GameSession(player1);
             session.addPlayer(player2);
-            console.log(JSON.stringify(session));
             chai_1.expect(session.status.valueOf()).to.be.equal(gameSession_1.GameStatus.InProgress.valueOf());
+        });
+    });
+});
+describe('Victory conditions', () => {
+    describe('When player gets one row of markers', () => {
+        it('should set state of gameSession to finished and set correct winner', () => {
+            const player1 = new player_1.Player('player1', 'Cross');
+            const player2 = new player_1.Player('player2', 'Circle');
+            const session = new gameSession_1.GameSession(player1);
+            session.addPlayer(player2);
+            session.placeMarker(player1.id, "1");
+            session.placeMarker(player2.id, "4");
+            session.placeMarker(player1.id, "2");
+            session.placeMarker(player2.id, "5");
+            session.placeMarker(player1.id, "3");
+            console.log(session.status);
+            chai_1.expect(session.status.valueOf()).to.be.equal(gameSession_1.GameStatus.Finished.valueOf());
+            chai_1.expect(session.board.winner).to.be.equal(player1.id);
+        });
+    });
+    describe('When player gets one column of markers', () => {
+        it('should set state of gameSession to finished and set correct winner', () => {
+            const player1 = new player_1.Player('player1', 'Cross');
+            const player2 = new player_1.Player('player2', 'Circle');
+            const session = new gameSession_1.GameSession(player1);
+            session.addPlayer(player2);
+            session.placeMarker(player1.id, "1");
+            session.placeMarker(player2.id, "2");
+            session.placeMarker(player1.id, "4");
+            session.placeMarker(player2.id, "3");
+            session.placeMarker(player1.id, "7");
+            console.log(session.status);
+            chai_1.expect(session.status.valueOf()).to.be.equal(gameSession_1.GameStatus.Finished.valueOf());
+            chai_1.expect(session.board.winner).to.be.equal(player1.id);
+        });
+    });
+    describe('When player gets one diagonal of markers', () => {
+        it('should set state of gameSession to finished and set correct winner', () => {
+            const player1 = new player_1.Player('player1', 'Cross');
+            const player2 = new player_1.Player('player2', 'Circle');
+            const session = new gameSession_1.GameSession(player1);
+            session.addPlayer(player2);
+            session.placeMarker(player1.id, "1");
+            session.placeMarker(player2.id, "2");
+            session.placeMarker(player1.id, "5");
+            session.placeMarker(player2.id, "3");
+            session.placeMarker(player1.id, "9");
+            console.log(session.status);
+            chai_1.expect(session.status.valueOf()).to.be.equal(gameSession_1.GameStatus.Finished.valueOf());
+            chai_1.expect(session.board.winner).to.be.equal(player1.id);
+        });
+    });
+    describe('When there is a draw', () => {
+        it('should set state of gameSession to draw and set winner to null', () => {
+            const player1 = new player_1.Player('player1', 'Cross');
+            const player2 = new player_1.Player('player2', 'Circle');
+            const session = new gameSession_1.GameSession(player1);
+            session.addPlayer(player2);
+            session.placeMarker(player1.id, "2");
+            session.placeMarker(player2.id, "1");
+            session.placeMarker(player1.id, "3");
+            session.placeMarker(player2.id, "6");
+            session.placeMarker(player1.id, "5");
+            session.placeMarker(player2.id, "8");
+            session.placeMarker(player1.id, "4");
+            session.placeMarker(player2.id, "7");
+            session.placeMarker(player1.id, "9");
+            console.log(session.status);
+            console.log(session.status);
+            chai_1.expect(session.status.valueOf()).to.be.equal(gameSession_1.GameStatus.Draw.valueOf());
+            chai_1.expect(session.board.winner).to.be.equal(null);
         });
     });
 });

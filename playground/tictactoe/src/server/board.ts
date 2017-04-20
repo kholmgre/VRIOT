@@ -29,6 +29,8 @@ export class Board {
             8: new BoxState(),
             9: new BoxState()
         }
+
+        this.winner = null;
     }
 
     placeMarker(playerId: string, boxId: string): boolean {
@@ -46,8 +48,6 @@ export class Board {
     }
 
     private checkVictoryConditions(playerId: string) {
-
-        console.log(JSON.stringify(this));
 
         // Check rows
         if (this.checkBox("1", playerId) === true && this.checkBox("2", playerId) === true && this.checkBox("3", playerId) === true)
