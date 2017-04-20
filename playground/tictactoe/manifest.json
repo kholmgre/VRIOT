@@ -3,26 +3,21 @@
 	"name": "Tic-Tac-Toe (AR)",
 	"icons": [
 		{
-			"src": "assets/icons/apple-touch-icon-57x57.jpg",
-			"type": "image/jpg",
-			"sizes": "57x57"
+			"src": "/assets/icons/android-chrome-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png"
 		},
 		{
-			"src": "assets/icons/apple-touch-icon-114x114.jpg",
-			"type": "image/jpg",
-			"sizes": "114x114"
-		},
-		{
-			"src": "assets/icons/apple-touch-icon-152x152.jpg",
-			"type": "image/jpg",
-			"sizes": "152x152"
+			"src": "/assets/icons/android-chrome-512x512.png",
+			"sizes": "512x512",
+			"type": "image/png"
 		}
 	],
 	"start_url": "/index.html",
 	"display": "fullscreen",
 	"description": "Tic-Tac-Toe in AR with A-Frame",
-	"background_color": "#1daded",
-	"theme_color": "#1daded",
+	"theme_color": "#2b8ccc",
+	"background_color": "#2b8ccc",
 	"orientation": "portrait-primary",
 	"dir": "ltr",
 	"lang": "en-US"
