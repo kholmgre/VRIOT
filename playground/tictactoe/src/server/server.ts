@@ -51,9 +51,11 @@ io.on('connection', function (socket: any) {
 
 		if (markerWasPlaced === true) {
 			console.log(`player ${playerId} placed marker on ${boxId}`);
-			if (currentGame.status === GameStatus.Finished.valueOf()) {
-				io.sockets.in(currentGame.id).emit('game-ended', currentGame);
-			} else {
+			if (currentGame.status.valueOf() === GameStatus.Finished.valueOf()) {
+				io.sockets.in(currentGame.id).emit('game-ended', currentGame.players.find((p: Player) => p.id === currentGame.board.winner).name);
+			} else if (currentGame.status.valueOf() === GameStatus.Draw.valueOf()) {
+				io.sockets.in(currentGame.id).emit('game-draw', 'Game was a draw!');
+			} else if (currentGame.status.valueOf() === GameStatus.InProgress.valueOf()) {
 				const currentGamePlayerName = currentGame.playerCurrentTurn.name;
 
 				console.log(`should be player ${currentGamePlayerName} turn`);
@@ -61,6 +63,10 @@ io.on('connection', function (socket: any) {
 				const playerThatMadeMoveName = currentGame.players.find((p: Player) => p.id === playerId).name;
 
 				io.sockets.in(currentGame.id).emit('marker-placed', new MarkerPlaced(playerThatMadeMoveName, boxId, currentGame.playerCurrentTurn.id));
+			} else {
+				console.log('Unkown game-state');
+				socket.leave(currentGame.id);
+				currentGame = null;
 			}
 		} else {
 			console.log(`player ${playerId} did not place a marker`);
@@ -70,13 +76,12 @@ io.on('connection', function (socket: any) {
 	socket.on('disconnect', function () {
 
 		console.log('player disconnected');
-		console.log(JSON.stringify(currentGame));
 
 		if (currentGame === null)
 			return;
 
-		if (currentGame.status === GameStatus.InProgress) {
-			socket.to(currentGame.id).emit('player-disconnected', 'Other player left the game :(');
+		if (currentGame.status.valueOf() === GameStatus.InProgress.valueOf()) {
+			io.sockets.in(currentGame.id).emit('player-disconnected', 'You won! Other player left the game.');
 		}
 
 		const gameIndex = gameSessions.findIndex((gs: GameSession) => gs.id === currentGame.id);

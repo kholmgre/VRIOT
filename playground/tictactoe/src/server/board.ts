@@ -31,7 +31,7 @@ export class Board {
         }
     }
 
-    placeMarker(playerId: string, boxId: string) : boolean {
+    placeMarker(playerId: string, boxId: string): boolean {
         if (this.boxes[boxId] === null || this.boxes[boxId] === undefined)
             return false;
 
@@ -46,27 +46,46 @@ export class Board {
     }
 
     private checkVictoryConditions(playerId: string) {
+
+        console.log(JSON.stringify(this));
+
         // Check rows
-        if (this.checkBox("1", playerId) && this.checkBox("2", playerId) && this.checkBox("3", playerId))
+        if (this.checkBox("1", playerId) === true && this.checkBox("2", playerId) === true && this.checkBox("3", playerId) === true)
             this.playerWon(playerId);
-        if (this.checkBox("4", playerId) && this.checkBox("5", playerId) && this.checkBox("6", playerId))
+        if (this.checkBox("4", playerId) === true && this.checkBox("5", playerId) === true && this.checkBox("6", playerId) === true)
             this.playerWon(playerId);
-        if (this.checkBox("7", playerId) && this.checkBox("8", playerId) && this.checkBox("9", playerId))
+        if (this.checkBox("7", playerId) === true && this.checkBox("8", playerId) === true && this.checkBox("9", playerId) === true)
             this.playerWon(playerId);
-        
+
         // Check columns
-        if (this.checkBox("1", playerId) && this.checkBox("4", playerId) && this.checkBox("7", playerId))
+        if (this.checkBox("1", playerId) === true && this.checkBox("4", playerId) === true && this.checkBox("7", playerId) === true)
             this.playerWon(playerId);
-        if (this.checkBox("2", playerId) && this.checkBox("5", playerId) && this.checkBox("8", playerId))
+        if (this.checkBox("2", playerId) === true && this.checkBox("5", playerId) === true && this.checkBox("8", playerId) === true)
             this.playerWon(playerId);
-        if (this.checkBox("3", playerId) && this.checkBox("6", playerId) && this.checkBox("9", playerId))
+        if (this.checkBox("3", playerId) === true && this.checkBox("6", playerId) === true && this.checkBox("9", playerId) === true)
             this.playerWon(playerId);
-        
+
         // Check diagonal
-        if (this.checkBox("1", playerId) && this.checkBox("5", playerId) && this.checkBox("9", playerId))
+        if (this.checkBox("1", playerId) === true && this.checkBox("5", playerId) === true && this.checkBox("9", playerId) === true)
             this.playerWon(playerId);
-        if (this.checkBox("3", playerId) && this.checkBox("5", playerId) && this.checkBox("7", playerId))
+        if (this.checkBox("3", playerId) === true && this.checkBox("5", playerId) === true && this.checkBox("7", playerId) === true)
             this.playerWon(playerId);
+
+        let allBoxesChecked = true;
+
+        for(let box in this.boxes){
+            if(this.boxes[box].checked === false)
+                allBoxesChecked = false;
+        }
+
+        if(allBoxesChecked === true && this.winner === null){
+            this.draw();
+        }
+    }
+
+    private draw(){
+        this.finished = true;
+        this.winner = null;
     }
 
     private playerWon(playerId: string) {
@@ -75,6 +94,7 @@ export class Board {
     }
 
     private checkBox(boxId: string, playerId: string): boolean {
-        return this.boxes[boxId].playerId === playerId && this.boxes[boxId].checked;
+        const checkedByPlayer = this.boxes[boxId].byPlayer === playerId && this.boxes[boxId].checked;
+        return checkedByPlayer;
     }
 }
