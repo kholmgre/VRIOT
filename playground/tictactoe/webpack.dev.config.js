@@ -35,13 +35,15 @@ const client = {
 			minify: true,
 			//verbose: true,
 			staticFileGlobs: [
-				"dist/aframe-ar.js",
-				"dist/aframe.min.js",
-				"dist/client.js",
-				"dist/server.js",
-				"assets/**/*.{wav,obj,mtl,png,svg,jpg}",
-				//! + "assets/textures/sources/**/*",
-				//! + "assets/textures/psd/**/*"
+				"playground/tictactoe/dist/aframe-ar.js",
+				"playground/tictactoe/dist/aframe.min.js",
+				"playground/tictactoe/dist/client.js",
+				"playground/tictactoe/dist/server.js",
+				"playground/tictactoe/assets/audio/**/*.wav",
+				"playground/tictactoe/assets/icons/**/*",
+				"playground/tictactoe/assets/markers/**/*",
+				"playground/tictactoe/assets/models/**/*.{obj,mtl}",
+				"playground/tictactoe/assets/textures/**/*.jpg"
 			],
 			runtimeCaching: [{
 				handler: "cacheFirst",
