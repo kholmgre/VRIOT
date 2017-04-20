@@ -4,7 +4,8 @@ import { Board } from './board';
 export enum GameStatus {
     Lobby = 0,
     InProgress = 1,
-    Finished = 2
+    Finished = 2,
+    Draw = 3
 }
 
 function generateGuid() {
@@ -44,6 +45,7 @@ export class GameSession {
 
     public startGame() {
         this.status = GameStatus.InProgress;
+        // Randomize this?
         this.playerCurrentTurn = this.players[0];
     }
 
@@ -57,7 +59,11 @@ export class GameSession {
 
         if (markerPlaced === true) {
             if (this.board.finished === true) {
-                this.status = GameStatus.Finished;
+                if (this.board.winner === null) {
+                    this.status = GameStatus.Draw;
+                } else {
+                    this.status = GameStatus.Finished;
+                }
             } else {
                 this.playerCurrentTurn = this.players.find((p: Player) => p.id !== playerId);
             }

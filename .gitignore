@@ -4,8 +4,6 @@ npm-debug.log"
 /spyvsspy/npm-debug.log
 /**/*.zip
 /playground/tictactoe/dist/**/*
-<<<<<<< HEAD
-**/*.pem
-=======
 /**/*.pem
->>>>>>> 0f8c35a871b3e475f092f94c8a6413d2d2e724d9
+playground/tictactoe/test/*.js
+

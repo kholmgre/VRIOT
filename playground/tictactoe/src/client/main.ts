@@ -26,7 +26,7 @@ window.addEventListener("load", function () {
 		init: function () {
 			this.el.addEventListener('click', function (evt: any) {
 				// check element id, send message with name "place-marker"
-				if (client.currentGame.playerCurrentTurn === socket.id) {
+				if (client.currentTurnPlayerId === socket.id) {
 					socket.emit('place-marker', evt.currentTarget.id);
 				}
 			});

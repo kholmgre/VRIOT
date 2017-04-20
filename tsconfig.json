@@ -1,17 +1,17 @@
 {
     "compilerOptions": {
-        "outDir": "./spyvsspy/dist/",
-        "sourceMap": true,
+        "outDir": "./playground/tictactoe/dist/",
+        // "sourceMap": true,
         "noImplicitAny": true,
         "module": "commonjs",
         "target": "es6",
         "declaration": true,
         "removeComments": true,
         "jsx": "react",
-        "sourceRoot": "../spyvsspy/src/**/*.ts"
+        "sourceRoot": "../playground/tictactoe/src/**/*.ts"
     },
     "include": [
-        "./spyvsspy/src/**/*"
+        "./playground/tictactoe/src/**/*"
     ],
     "exclude": [
         "./node_modules/**/*"

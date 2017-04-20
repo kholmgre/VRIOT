@@ -72,7 +72,6 @@ fs.readdirSync('./node_modules/')
 		return ['.bin'].indexOf(x) === -1;
 	})
 	.forEach(function (mod) {
-		console.log(mod);
 		nodeModules[mod] = 'commonjs ' + mod;
 	});
 
@@ -86,8 +85,8 @@ const server = {
 		path: __dirname + "/dist"
 	},
 
-	// Enable sourcemaps for debugging webpack's output.
-	devtool: "source-map",
+    // Enable sourcemaps for debugging webpack's output.
+    // devtool: "source-map",
 
 	resolve: {
 		// Add '.ts' and '.tsx' as resolvable extensions.
@@ -117,4 +116,37 @@ const server = {
 	externals: nodeModules
 };
 
-module.exports = [server, client];
+const servertests = {
+	target: 'node',
+	entry: {
+		servertests: "./playground/tictactoe/src/server/tests/server.tests.ts"
+	},
+	output: {
+		filename: "[name].js",
+		path: __dirname + "/test/"
+	},
+
+    // Enable sourcemaps for debugging webpack's output.
+    // devtool: "source-map",
+
+	resolve: {
+		// Add '.ts' and '.tsx' as resolvable extensions.
+		extensions: [".ts"]
+	},
+	module: {
+		rules: [
+			{
+				enforce: 'pre',
+				test: /\.js$/,
+				loader: "source-map-loader"
+			},
+			{
+				test: /\.tsx?$/,
+				loader: "awesome-typescript-loader"
+			}
+		]
+	},
+	externals: nodeModules
+};
+
+module.exports = [server, client, servertests];

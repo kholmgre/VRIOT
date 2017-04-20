@@ -25,6 +25,17 @@ io.on('connection', function (socket: any) {
 	let playername = 'unkown';
 	let currentGame: GameSession = null;
 
+	function removeCurrentGame() {
+		const gameIndex = gameSessions.findIndex((gs: GameSession) => gs.id === currentGame.id);
+		
+		if (gameIndex === -1)
+			return;
+
+		gameSessions.splice(gameIndex, 1);
+	}
+
+	console.log(`player ${socket.id} connected`);
+
 	socket.on('create-game', function () {
 		console.log('creating game');
 
@@ -36,48 +47,55 @@ io.on('connection', function (socket: any) {
 	socket.on('join-game', () => {
 		const games = gameSessions.filter((gs: GameSession) => gs.status === GameStatus.Lobby);
 
-		console.log('joining game');
-		console.log('available games ' + games.length);
-
 		if (games.length > 0) {
 			EventHandlers.joinGame(playerId, games[0], socket, io);
+
+			currentGame = games[0];
 		}
 	});
 
 	socket.on('place-marker', (boxId: string) => {
 
-		console.log(`player ${playerId} placing marker on ${boxId}`);
-
 		const markerWasPlaced = currentGame.placeMarker(playerId, boxId);
 
 		if (markerWasPlaced === true) {
-			if (currentGame.status === GameStatus.Finished.valueOf()) {
-				socket.to(currentGame.id).emit('game-ended', currentGame);
+			console.log(`player ${playerId} placed marker on ${boxId}`);
+			if (currentGame.status.valueOf() === GameStatus.Finished.valueOf()) {
+				io.sockets.in(currentGame.id).emit('game-ended', currentGame.players.find((p: Player) => p.id === currentGame.board.winner).name);
+				removeCurrentGame();
+			} else if (currentGame.status.valueOf() === GameStatus.Draw.valueOf()) {
+				io.sockets.in(currentGame.id).emit('game-draw', 'Game was a draw!');
+				removeCurrentGame();
+			} else if (currentGame.status.valueOf() === GameStatus.InProgress.valueOf()) {
+				const currentGamePlayerName = currentGame.playerCurrentTurn.name;
+
+				console.log(`should be player ${currentGamePlayerName} turn`);
+
+				const playerThatMadeMoveName = currentGame.players.find((p: Player) => p.id === playerId).name;
+
+				io.sockets.in(currentGame.id).emit('marker-placed', new MarkerPlaced(playerThatMadeMoveName, boxId, currentGame.playerCurrentTurn.id));
 			} else {
-				const currentGamePlayerName = currentGame.players.find((p: Player) => p.id === playerId);
-				socket.to(currentGame.id).emit('marker-placed', new MarkerPlaced(currentGamePlayerName.name, boxId));
+				console.log('Unkown game-state');
+				socket.leave(currentGame.id);
+				removeCurrentGame();
 			}
+		} else {
+			console.log(`player ${playerId} did not place a marker`);
 		}
 	});
 
 	socket.on('disconnect', function () {
 
 		console.log('player disconnected');
-		console.log(JSON.stringify(currentGame));
 
 		if (currentGame === null)
 			return;
 
-		if (currentGame.status === GameStatus.InProgress) {
-			socket.to(currentGame.id).emit('player-disconnected', 'Other player left the game :(');
+		if (currentGame.status.valueOf() === GameStatus.InProgress.valueOf()) {
+			io.sockets.in(currentGame.id).emit('player-disconnected', 'You won! Other player left the game.');
 		}
 
-		const gameIndex = gameSessions.findIndex((gs: GameSession) => gs.id === currentGame.id);
-
-		if (gameIndex === -1)
-			return;
-
-		gameSessions.splice(gameIndex, 1);
+		removeCurrentGame();
 
 		console.log(`${gameSessions.length} games left`);
 	});
