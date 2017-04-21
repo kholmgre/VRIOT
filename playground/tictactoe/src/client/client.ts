@@ -113,14 +113,12 @@ export class Client {
 
 		const trophyEntityObjHtml =
 			`<a-obj-model src="#${model}-obj" mtl="#${model}-mtl" position="0 0 0" scale="${scale}">
-				<a-entity geometry="primitive: plane; width: 2; height: 0.75;" material="color: transparent; opacity: 0" position="0 1.5 0" rotation="0 0 0" material="shader: flat;" text="align: center; color: black; value: ${message}; width: 6; zOffset: 0.1"></a-entity>
+				<a-entity geometry="primitive: plane; width: 2; height: 0.75;" material="color: transparent; opacity: 0" position="0 1.5 0" rotation="0 0 0" material="shader: flat;" text="align: center; color: white; value: ${message}; width: 6; zOffset: 0.1"></a-entity>
 			</a-obj-model>`;
 
 		trophyEntity.innerHTML = trophyEntityObjHtml;
 
 		trophyEntity.setAttribute('sound', `src:#${snd}; autoplay: true`);
-
-		// trophyEntity.setAttribute('sound', 'src:#place; autoplay: true');
 
 		this.boardElement.appendChild(trophyEntity);
 
