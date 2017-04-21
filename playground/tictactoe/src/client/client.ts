@@ -39,7 +39,7 @@ export class Client {
 				zpos = 0.8;
 			}
 
-			let rotations : Array<number> = [0, 90, 180, 270];
+			let rotations: Array<number> = [0, 90, 180, 270];
 			let rotation = rotations[Math.floor(Math.random() * rotations.length)];
 
 			const html = `<a-obj-model cursor-listener id=${prop} src="#board-obj" mtl="#board-mtl" position="${zpos} 0 ${row}" scale="0.2 1 0.2" rotation="0 ${rotation} 0"></a-obj-model>`;
@@ -67,14 +67,13 @@ export class Client {
 		this.cleanBoard();
 
 		const menuHtml =
-		`<a-box position='0 0 0' material='opacity: 1;'>
+			`<a-box position='0 0 0' material='opacity: 1;'>
 				<a-plane position="0 0.7 0.2" rotation="-90 0 0" height="0.4" width="1" menu-select color="red" id="newgame">
-					<a-text value="New game" color="black" side="both" rotation="0 0 0" position="-0.5 -0.4 0.1"></a-text>
+					<a-text font="https://cdn.aframe.io/fonts/Exo2SemiBold.fnt" value="New game" color="black" side="both" rotation="0 0 0" position="-0.5 -0.4 0.1"></a-text>
 				</a-plane>
 				<a-plane position="0 0.7 -0.2" rotation="-90 0 0" height="0.4" width="1" menu-select color="green" id="joingame">
-					<a-text value="Join game" color="black" side="both" rotation="0 0 0" position="-0.5 0.4 0.1"></a-text>
-				</a-plane>
-		</a-box>`;
+					<a-text font="https://cdn.aframe.io/fonts/Exo2SemiBold.fnt" value="Join game" color="black" side="both" rotation="0 0 0" position="-0.5 0.4 0.1"></a-text>
+				</a-plane>`;
 
 		this.boardElement.innerHTML = menuHtml;
 	}
@@ -84,7 +83,7 @@ export class Client {
 
 		const lobbyHtml =
 			`<a-box position='0 0 0' material='opacity: 0.5;'>
-			<a-text value="Waiting.." id="newgame" side="both" rotation="-90 0 0" menu-select position="-0.5 0.5 -0.3"></a-text>
+			<a-text font="https://cdn.aframe.io/fonts/Exo2SemiBold.fnt" value="Waiting.." id="newgame" side="both" rotation="-90 0 0" menu-select position="-0.5 0.5 -0.3"></a-text>
 		</a-box>`;
 
 		this.boardElement.innerHTML = lobbyHtml;
@@ -100,7 +99,7 @@ export class Client {
 
 		const trophyEntity = document.createElement('a-entity');
 
-		let snd : string = "";
+		let snd: string = "";
 		let scale: string = '';
 
 		if (model === "skull") {
@@ -114,7 +113,7 @@ export class Client {
 
 		const trophyEntityObjHtml =
 			`<a-obj-model src="#${model}-obj" mtl="#${model}-mtl" position="0 0 0" scale="${scale}" sound="src: #${snd}, autoplay: true">
-				<a-text value="${message}" side="both" rotation="0 0 0" position="-1 1.5 0"></a-text>
+				<a-text font= "https://cdn.aframe.io/fonts/Exo2SemiBold.fnt" value="${message}" side="both" rotation="0 0 0" position="-1 1.5 0"></a-text>
 			</a-obj-model>`;
 
 		trophyEntity.innerHTML = trophyEntityObjHtml;
@@ -129,7 +128,7 @@ export class Client {
 		}, 10000);
 	}
 
-	private resetElementPosition(){
+	private resetElementPosition() {
 
 	}
 
