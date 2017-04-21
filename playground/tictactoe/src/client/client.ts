@@ -33,6 +33,9 @@ export class Client {
 		let column = 0;
 		let row = 0;
 
+		const boardContainer = document.createElement('a-entity');
+		boardContainer.setAttribute('position', '0 0 0');
+
 		for (const prop in this.currentGame.board.boxes) {
 
 			let zpos = 0;
@@ -53,12 +56,10 @@ export class Client {
 
 			const html = `<a-obj-model cursor-listener id=${prop} src="#board-obj" mtl="#board-mtl${mtl}" position="${zpos} 0 ${row}" scale="0.2 1 0.2" rotation="0 ${rotation} 0"></a-obj-model>`;
 
-			this.boardElement.setAttribute("position", "-0.5 0 -0.5");
-
 			const newElement = document.createElement('a-entity');
 			newElement.innerHTML = html;
 
-			this.boardElement.appendChild(newElement);
+			boardContainer.appendChild(newElement);
 			count++;
 			if (count > 3 && count < 6) {
 				row = 0.4;
@@ -66,6 +67,10 @@ export class Client {
 				row = 0.8;
 			}
 		};
+
+		boardContainer.setAttribute("position", "-0.5 0 -0.5");
+
+		this.boardElement.appendChild(boardContainer);
 	}
 
 	public createMenu(): void {
@@ -101,10 +106,11 @@ export class Client {
 
 		let snd: string = "";
 		let scale: string = '';
+		let position = '0 0 0';
 
 		if (model === "skull") {
 			snd = "lose";
-			scale = '1 1 1';
+			scale = '2 2 2';
 		}
 		else if (model === "trophy") {
 			snd = "win";
@@ -112,8 +118,8 @@ export class Client {
 		}
 
 		const trophyEntityObjHtml =
-			`<a-obj-model src="#${model}-obj" mtl="#${model}-mtl" position="0 0 0" scale="${scale}">
-				<a-entity geometry="primitive: plane; width: 2; height: 0.75;" material="color: transparent; opacity: 0" position="0 1.5 0" rotation="0 0 0" material="shader: flat;" text="align: center; color: white; value: ${message}; width: 6; zOffset: 0.1"></a-entity>
+			`<a-obj-model src="#${model}-obj" mtl="#${model}-mtl" position="${position}" scale="${scale}">
+				<a-entity geometry="primitive: plane; width: 2; height: 0.75;" material="color: transparent; opacity: 0" position="0 0.8 0" rotation="0 0 0" material="shader: flat;" text="align: center; color: white; value: ${message}; width: 6; zOffset: 0.1"></a-entity>
 			</a-obj-model>`;
 
 		trophyEntity.innerHTML = trophyEntityObjHtml;
@@ -121,6 +127,9 @@ export class Client {
 		trophyEntity.setAttribute('sound', `src:#${snd}; autoplay: true`);
 
 		this.boardElement.appendChild(trophyEntity);
+
+		console.log(this.boardElement.getAttribute('position'));
+		console.log(trophyEntity.getAttribute('position'));
 
 		setTimeout(() => {
 			this.currentGame = null;

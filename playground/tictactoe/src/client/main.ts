@@ -12,7 +12,7 @@ window.addEventListener("load", function () {
             this.el.addEventListener('click', function (evt: any) {
                 // check element id, send message with name of element id 
                 // to create or join game
-                if (evt.currentTarget.id === 'newgame') {
+                if (evt.currentTarget.id === 'creategame') {
                     socket.emit('create-game');
                 } else {
                     socket.emit('join-game');
