@@ -39,7 +39,7 @@ export class Client {
 				zpos = 0.8;
 			}
 
-			let rotations : Array<Number> = [0, 90, 180, 270];
+			let rotations : Array<number> = [0, 90, 180, 270];
 			let rotation = rotations[Math.floor(Math.random() * rotations.length)];
 
 			const html = `<a-obj-model cursor-listener id=${prop} src="#board-obj" mtl="#board-mtl" position="${zpos} 0 ${row}" scale="0.2 1 0.2" rotation="0 ${rotation} 0"></a-obj-model>`;
@@ -67,13 +67,13 @@ export class Client {
 		this.cleanBoard();
 
 		const menuHtml =
-			`<a-box position='0 0 0' material='opacity: 1;'>
-			<a-plane position="0 0.7 0.2" rotation="-90 0 0" height="0.4" width="1" menu-select color="red" id="newgame">
-				<a-text value="New game" color="black" side="both" rotation="0 0 0" position="-0.5 -0.4 0.1"></a-text>
-			</a-plane>
-			<a-plane position="0 0.7 -0.2" rotation="-90 0 0" height="0.4" width="1" menu-select color="green" id="joingame">
-				<a-text value="Join game" color="black" side="both" rotation="0 0 0" position="-0.5 0.4 0.1"></a-text>
-			</a-plane>
+		`<a-box position='0 0 0' material='opacity: 1;'>
+				<a-plane position="0 0.7 0.2" rotation="-90 0 0" height="0.4" width="1" menu-select color="red" id="newgame">
+					<a-text value="New game" color="black" side="both" rotation="0 0 0" position="-0.5 -0.4 0.1"></a-text>
+				</a-plane>
+				<a-plane position="0 0.7 -0.2" rotation="-90 0 0" height="0.4" width="1" menu-select color="green" id="joingame">
+					<a-text value="Join game" color="black" side="both" rotation="0 0 0" position="-0.5 0.4 0.1"></a-text>
+				</a-plane>
 		</a-box>`;
 
 		this.boardElement.innerHTML = menuHtml;
@@ -100,17 +100,20 @@ export class Client {
 
 		const trophyEntity = document.createElement('a-entity');
 
-		let snd : String = "";
+		let snd : string = "";
+		let scale: string = '';
 
 		if (model === "skull") {
 			snd = "lose";
+			scale = '0.25 0.25 0.25';
 		}
 		else if (model === "trophy") {
 			snd = "win";
+			scale = '2 2 2';
 		}
 
 		const trophyEntityObjHtml =
-			`<a-obj-model src="#${model}-obj" mtl="#${model}-mtl" position="0 0 0" scale="2 2 2" sound="src: #${snd}, autoplay: true">
+			`<a-obj-model src="#${model}-obj" mtl="#${model}-mtl" position="0 0 0" scale="${scale}" sound="src: #${snd}, autoplay: true">
 				<a-text value="${message}" side="both" rotation="0 0 0" position="-1 1.5 0"></a-text>
 			</a-obj-model>`;
 
@@ -118,16 +121,16 @@ export class Client {
 
 		this.boardElement.appendChild(trophyEntity);
 
-		// Create element to show winning players name
-		console.log(`Endmessage: ${message}`);
-		console.log(`model: ${model}`);
-
 		setTimeout(() => {
 			this.currentGame = null;
 			this.currentTurnPlayerId = null;
 			this.cleanBoard();
 			this.createMenu();
 		}, 10000);
+	}
+
+	private resetElementPosition(){
+
 	}
 
 	gameCreated(gameState: GameState): void {
@@ -182,12 +185,13 @@ export class Client {
 
 		let fxElement: HTMLElement = document.createElement("a-plane");
 
-		const fxHtml = `<a-plane src="#placement" opacity="0.9" position="0 0.17 0" height="1" width="1" rotation="-90 0 0"><a-animation attribute="rotation" dur="10000" fill="forwards" to="0 360 0" repeat="3"></a-animation></a-plane>`;
+		const fxHtml = `<a-plane src="#placement" opacity="0.9" position="0 0.06 0" height="1" width="1" rotation="-90 0 0">
+							<a-animation attribute="rotation" ease="ease-out" dur="1000" fill="forwards" to="-90 360 0" repeat="3"></a-animation>
+							<a-animation attribute="scale" ease="ease-in" dur="3500" fill="forwards" to="0 0 0" repeat="0"></a-animation>
+						</a-plane>`;
 
 		fxElement.innerHTML = fxHtml;
 
 		element.appendChild(fxElement);
-
-		//console.log(element.getAttribute('position'));
 	}
 }
