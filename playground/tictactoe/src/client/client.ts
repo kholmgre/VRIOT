@@ -69,10 +69,10 @@ export class Client {
 		const menuHtml =
 			`<a-box position='0 0 0' material='opacity: 1;'>
 			<a-plane position="0 0.7 0.2" rotation="-90 0 0" height="0.4" width="1" menu-select color="red" id="newgame">
-				<a-text value="New game" color="black" side="both" rotation="0 0 0" position="-0.5 -0.4 0.1"></a-text>
+				<a-text font="https://cdn.aframe.io/fonts/Exo2SemiBold.fnt" value="New game" color="black" side="both" rotation="0 0 0" position="-0.5 -0.4 0.1"></a-text>
 			</a-plane>
 			<a-plane position="0 0.7 -0.2" rotation="-90 0 0" height="0.4" width="1" menu-select color="green" id="joingame">
-				<a-text value="Join game" color="black" side="both" rotation="0 0 0" position="-0.5 0.4 0.1"></a-text>
+				<a-text font="https://cdn.aframe.io/fonts/Exo2SemiBold.fnt" value="Join game" color="black" side="both" rotation="0 0 0" position="-0.5 0.4 0.1"></a-text>
 			</a-plane>
 		</a-box>`;
 
@@ -84,7 +84,7 @@ export class Client {
 
 		const lobbyHtml =
 			`<a-box position='0 0 0' material='opacity: 0.5;'>
-			<a-text value="Waiting.." id="newgame" side="both" rotation="-90 0 0" menu-select position="-0.5 0.5 -0.3"></a-text>
+			<a-text font="https://cdn.aframe.io/fonts/Exo2SemiBold.fnt" value="Waiting.." id="newgame" side="both" rotation="-90 0 0" menu-select position="-0.5 0.5 -0.3"></a-text>
 		</a-box>`;
 
 		this.boardElement.innerHTML = lobbyHtml;
@@ -111,7 +111,7 @@ export class Client {
 
 		const trophyEntityObjHtml =
 			`<a-obj-model src="#${model}-obj" mtl="#${model}-mtl" position="0 0 0" scale="2 2 2" sound="src: #${snd}, autoplay: true">
-				<a-text value="${message}" side="both" rotation="0 0 0" position="-1 1.5 0"></a-text>
+				<a-text font="https://cdn.aframe.io/fonts/Exo2SemiBold.fnt" value="${message}" side="both" rotation="0 0 0" position="-1 1.5 0"></a-text>
 			</a-obj-model>`;
 
 		trophyEntity.innerHTML = trophyEntityObjHtml;
