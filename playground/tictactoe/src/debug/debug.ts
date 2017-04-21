@@ -10,5 +10,5 @@ client.currentTurnPlayerId = "1";
 // client.gameUpdate(new MarkerPlaced('Cross', '1', '1'));
 
 // client.createMenu();    
-client.createGameOver('skull', 'lol');
+client.createGameOver('skull', 'You lost!');
 // client.createGameOver('trophy', 'You won!');
