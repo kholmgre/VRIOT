@@ -41,6 +41,7 @@ const client = {
 				"playground/tictactoe/dist/server.js",
 				"playground/tictactoe/assets/audio/**/*.wav",
 				"playground/tictactoe/assets/icons/**/*",
+				"playground/tictactoe/assets/fonts/**/*",
 				"playground/tictactoe/assets/markers/**/*",
 				"playground/tictactoe/assets/models/**/*.{obj,mtl}",
 				"playground/tictactoe/assets/textures/**/*.jpg"
@@ -85,8 +86,8 @@ const server = {
 		path: __dirname + "/dist"
 	},
 
-    // Enable sourcemaps for debugging webpack's output.
-    // devtool: "source-map",
+	// Enable sourcemaps for debugging webpack's output.
+	// devtool: "source-map",
 
 	resolve: {
 		// Add '.ts' and '.tsx' as resolvable extensions.
@@ -126,8 +127,8 @@ const servertests = {
 		path: __dirname + "/test/"
 	},
 
-    // Enable sourcemaps for debugging webpack's output.
-    // devtool: "source-map",
+	// Enable sourcemaps for debugging webpack's output.
+	// devtool: "source-map",
 
 	resolve: {
 		// Add '.ts' and '.tsx' as resolvable extensions.
