@@ -3,6 +3,7 @@ import { Player } from './player';
 import { ListGames } from '../shared/listGames';
 import { EventHandlers } from './eventHandlers';
 import { MarkerPlaced } from '../shared/markerPlaced';
+import { GameVictory } from '../shared/gameVictory';
 
 const express = require('express');
 const https = require('https');
@@ -61,7 +62,9 @@ io.on('connection', function (socket: any) {
 		if (markerWasPlaced === true) {
 			console.log(`player ${playerId} placed marker on ${boxId}`);
 			if (currentGame.status.valueOf() === GameStatus.Finished.valueOf()) {
-				io.sockets.in(currentGame.id).emit('game-ended', currentGame.players.find((p: Player) => p.id === currentGame.board.winner).name);
+				const winningPlayer = currentGame.players.find((p: Player) => p.id === currentGame.board.winner);
+				const gameVictory = new GameVictory(winningPlayer);
+				io.sockets.in(currentGame.id).emit('game-ended', gameVictory);
 				removeCurrentGame();
 			} else if (currentGame.status.valueOf() === GameStatus.Draw.valueOf()) {
 				io.sockets.in(currentGame.id).emit('game-draw', 'Game was a draw!');

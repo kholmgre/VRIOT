@@ -1,6 +1,7 @@
 import { GameState } from '../shared/gameState';
 import { ListGames } from '../shared/listGames';
 import { MarkerPlaced } from '../shared/markerPlaced';
+import { GameVictory } from '../shared/gameVictory';
 
 export class Client {
 	currentGame: GameState = null;
@@ -104,19 +105,21 @@ export class Client {
 
 		if (model === "skull") {
 			snd = "lose";
-			scale = '0.25 0.25 0.25';
+			scale = '1 1 1';
 		}
 		else if (model === "trophy") {
 			snd = "win";
-			scale = '2 2 2';
+			scale = '1 1 1';
 		}
 
 		const trophyEntityObjHtml =
-			`<a-obj-model src="#${model}-obj" mtl="#${model}-mtl" position="0 0 0" scale="${scale}" sound="src: #${snd}, autoplay: true">
+			`<a-obj-model src="#${model}-obj" mtl="#${model}-mtl" position="0 0 0" scale="${scale}">
 				<a-text font= "https://cdn.aframe.io/fonts/Exo2SemiBold.fnt" value="${message}" side="both" rotation="0 0 0" position="-1 1.5 0"></a-text>
 			</a-obj-model>`;
 
 		trophyEntity.innerHTML = trophyEntityObjHtml;
+
+		trophyEntity.setAttribute('sound', 'src: #${snd}, autoplay: true')
 
 		this.boardElement.appendChild(trophyEntity);
 
@@ -152,8 +155,12 @@ export class Client {
 		this.createBoard();
 	}
 
-	endGame(winningPlayer: string): void {
-		this.createGameOver('trophy', `Player ${winningPlayer} won!`);
+	endGame(gameVictory: GameVictory): void {
+		if(gameVictory.winningPlayerId === this.socket.id){
+			this.createGameOver('trophy', `You won!`);
+		} else {
+			this.createGameOver('skull', `You lost!`);
+		}
 	}
 
 	gameUpdate(markerPlaced: MarkerPlaced): void {
@@ -177,8 +184,10 @@ export class Client {
 			throw 'Unacceptable playername';
 		}
 
-		const html = `<a-obj-model src="${src}" mtl="${mtl}" position="${position}" scale="${scale}" sound="src:#place; autoplay: true"></a-obj-model>`;
+		const html = `<a-obj-model src="${src}" mtl="${mtl}" position="${position}" scale="${scale}"></a-obj-model>`;
 		element.innerHTML = html;
+
+		element.setAttribute('sound', 'src:#place; autoplay: true');
 
 		boxElement.appendChild(element);
 

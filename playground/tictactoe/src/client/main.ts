@@ -3,10 +3,9 @@ import { Client } from './client';
 declare var io: any;
 declare var process: any;
 declare var AFRAME: any;
-const url: string = process.env.API_URL;
 
 window.addEventListener("load", function () {
-	const socket = io.connect('https://localhost:3000', { reconnection: false });
+	const socket = io.connect('https://52.233.190.54:3000', { reconnection: false });
 
     AFRAME.registerComponent('menu-select', {
         init: function () {
