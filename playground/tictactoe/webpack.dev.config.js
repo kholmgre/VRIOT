@@ -44,7 +44,7 @@ const client = {
 				"playground/tictactoe/assets/fonts/**/*",
 				"playground/tictactoe/assets/markers/**/*",
 				"playground/tictactoe/assets/models/**/*.{obj,mtl}",
-				"playground/tictactoe/assets/textures/**/*.jpg"
+				"playground/tictactoe/assets/textures/**/*.{jpg,png}"
 			],
 			runtimeCaching: [{
 				handler: "cacheFirst",
