@@ -22,12 +22,12 @@ io.on('connection', function (socket: any) {
 
 	// Mutable "session" data
 	const playerId = socket.id;
-	let playername = 'unkown';
+	let playername = 'unknown';
 	let currentGame: GameSession = null;
 
 	function removeCurrentGame() {
 		const gameIndex = gameSessions.findIndex((gs: GameSession) => gs.id === currentGame.id);
-		
+
 		if (gameIndex === -1)
 			return;
 
@@ -37,7 +37,7 @@ io.on('connection', function (socket: any) {
 	console.log(`player ${socket.id} connected`);
 
 	socket.on('create-game', function () {
-		console.log('creating game');
+		console.log('Creating game');
 
 		const newGame = EventHandlers.createGame(playerId, gameSessions, socket);
 
@@ -69,13 +69,13 @@ io.on('connection', function (socket: any) {
 			} else if (currentGame.status.valueOf() === GameStatus.InProgress.valueOf()) {
 				const currentGamePlayerName = currentGame.playerCurrentTurn.name;
 
-				console.log(`should be player ${currentGamePlayerName} turn`);
+				console.log(`Should be player ${currentGamePlayerName} turn`);
 
 				const playerThatMadeMoveName = currentGame.players.find((p: Player) => p.id === playerId).name;
 
 				io.sockets.in(currentGame.id).emit('marker-placed', new MarkerPlaced(playerThatMadeMoveName, boxId, currentGame.playerCurrentTurn.id));
 			} else {
-				console.log('Unkown game-state');
+				console.log('Unknown game-state');
 				socket.leave(currentGame.id);
 				removeCurrentGame();
 			}

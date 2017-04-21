@@ -21,11 +21,17 @@
 </script>
 <script src="https://unpkg.com/aframe-particle-system-component@1.0.x/dist/aframe-particle-system-component.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.slim.js"></script>
-<script src="dist/client.js"></script>
+<!--<script src="dist/client.js"></script>-->
 
 <body style='margin : 0px; overflow: hidden;'>
-	<a-scene embedded artoolkit='sourceType: webcam;'>
+	<a-scene fog="type: linear; color: #AAB; far: 25; near: 0" embedded artoolkit='sourceType: webcam;'>
 		<a-assets>
+			<img id="placement" src="assets/textures/place-texture_001.png">
+
+			<audio id="place" src="assets/audio/audio_place.wav" preload="auto"></audio>
+			<audio id="win" src="assets/audio/audio_win.wav" preload="auto"></audio>
+			<audio id="lose" src="assets/audio/audio_lose.wav" preload="auto"></audio>
+
 			<a-asset-item id="board-obj" src="/assets/models/boardunit/boardunit.obj"></a-asset-item>
 			<a-asset-item id="board-mtl" src="/assets/models/boardunit/boardunit.mtl"></a-asset-item>
 
@@ -43,16 +49,39 @@
 		</a-assets>
 
 		<a-entity id="board" position="0 0 0">
+			<a-entity id="board" position="0 0 -5">
+				<a-obj-model src="#board-obj" mtl="#board-mtl" position="0 0 0" scale="0.2 0.2 0.2"></a-obj-model>
+					<a-obj-model src="#skull-obj" mtl="#skull-mtl" position="0 0.1 0" rotation="-25 0 0" scale="0.25 0.25 0.25" sound="src: #lose; autoplay: true"></a-obj-model>
+				<a-obj-model src="#board-obj" mtl="#board-mtl" position="0.4 0 0" scale="0.2 0.2 0.2"></a-obj-model>
+				<a-obj-model src="#board-obj" mtl="#board-mtl" position="0.8 0 0" scale="0.2 0.2 0.2"></a-obj-model>
+
+				<a-obj-model src="#board-obj" mtl="#board-mtl" position="0 0 0.4" scale="0.2 0.2 0.2" material="shader: standard; roughness: 1; metalness: 0"></a-obj-model>
+				<a-obj-model src="#board-obj" mtl="#board-mtl" position="0.4 0 0.4" scale="0.2 0.2 0.2" rotation="0 90 0"></a-obj-model>
+				<a-obj-model src="#board-obj" mtl="#board-mtl" position="0.8 0 0.4" scale="0.2 0.2 0.2">
+					<a-obj-model src="#trophy-obj" mtl="#trophy-mtl" position="0 0 0" scale="2 2 2" sound="src: #win; autoplay: true">
+						<a-plane src="#placement" opacity="0.9" position="0 0.06 0" height="1" width="1" rotation="-90 0 0">
+							<a-animation attribute="rotation" ease="ease-out" dur="1000" fill="forwards" to="-90 360 0" repeat="3"></a-animation>
+							<a-animation attribute="scale" ease="ease-in" dur="3500" fill="forwards" to="0 0 0" repeat="0"></a-animation>
+						</a-plane>
+					</a-obj-model>
+				</a-obj-model>
+
+				<a-obj-model src="#board-obj" mtl="#board-mtl" position="0 0 0.8" scale="0.2 0.2 0.2"></a-obj-model>
+				<a-obj-model src="#board-obj" mtl="#board-mtl" position="0.4 0 0.8" scale="0.2 0.2 0.2"></a-obj-model>
+				<a-obj-model src="#board-obj" mtl="#board-mtl" position="0.8 0 0.8" scale="0.2 0.2 0.2"></a-obj-model>
+			</a-entity>
 		</a-entity>
 
-		<a-entity light="type: directional; color: #fefefe; intensity: 1.5" position="-1 1 0"></a-entity>
+		<a-entity light="type: directional; color: #fefefe; intensity: 1.5" position="-1 2 0"></a-entity>
 
 		<a-entity position="0 5.25 -5" particle-system="preset: dust; texture: ./assets/textures/particle-texture_001.png; velocityValue: 0 15 0; velocitySpread: 10 7.5 10; accelerationValue: 0 5 0; size: 2; color: #0000FF,#00FF00,#FF0000;"></a-entity>
 
+		<!--
 		<a-marker-camera preset='hiro'>
 			<a-entity cursor="fuse: false" position="0 0 -1" geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.02" material="color: black; shader: flat; opacity: 0.5">
 			</a-entity>
 		</a-marker-camera>
+		-->
 	</a-scene>
 
 	<script>

@@ -3,171 +3,191 @@ import { ListGames } from '../shared/listGames';
 import { MarkerPlaced } from '../shared/markerPlaced';
 
 export class Client {
-    currentGame: GameState = null;
-    socket: any;
-    readonly boardElement: HTMLElement = document.getElementById('board');
-    currentTurnPlayerId: string;
+	currentGame: GameState = null;
+	socket: any;
+	readonly boardElement: HTMLElement = document.getElementById('board');
+	currentTurnPlayerId: string;
 
-    constructor(socket: any) {
-        this.socket = socket;
+	constructor(socket: any) {
+		this.socket = socket;
 
-        this.socket.on('marker-placed', this.gameUpdate.bind(this));
-        this.socket.on('game-created', this.gameCreated.bind(this));
-        this.socket.on('game-started', this.startGame.bind(this));
-        this.socket.on('game-ended', this.endGame.bind(this));
-        this.socket.on('player-disconnected', this.gameCancelled.bind(this));
-        this.socket.on('game-draw', this.gameDraw.bind(this));
+		this.socket.on('marker-placed', this.gameUpdate.bind(this));
+		this.socket.on('game-created', this.gameCreated.bind(this));
+		this.socket.on('game-started', this.startGame.bind(this));
+		this.socket.on('game-ended', this.endGame.bind(this));
+		this.socket.on('player-disconnected', this.gameCancelled.bind(this));
+		this.socket.on('game-draw', this.gameDraw.bind(this));
 
-        this.createMenu();
-    }
+		this.createMenu();
+	}
 
-    public createBoard(): void {
+	public createBoard(): void {
 
-        let count = 1;
-        let column = 0;
-        let row = 0;
+		let count = 1;
+		let column = 0;
+		let row = 0;
 
-        for (const prop in this.currentGame.board.boxes) {
+		for (const prop in this.currentGame.board.boxes) {
 
-            let zpos = 0;
+			let zpos = 0;
 
-            if (count === 1 || count === 4 || count === 7) {
-                zpos = 0;
-            } else if (count === 2 || count === 5 || count === 8) {
-                zpos = 0.4;
-            } else if (count === 3 || count === 6 || count === 9) {
-                zpos = 0.8;
-            }
+			if (count === 1 || count === 4 || count === 7) {
+				zpos = 0;
+			} else if (count === 2 || count === 5 || count === 8) {
+				zpos = 0.4;
+			} else if (count === 3 || count === 6 || count === 9) {
+				zpos = 0.8;
+			}
 
-            const html = '<a-obj-model cursor-listener id="' + prop + '" src="#board-obj" mtl="#board-mtl" position="' + zpos + ' 0 ' + row + '" scale="0.2 1 0.2"></a-obj-model>';
+			let rotations : Array<Number> = [0, 90, 180, 270];
+			let rotation = rotations[Math.floor(Math.random() * rotations.length)];
 
-            this.boardElement.setAttribute("position", "-0.5 0 -0.5");
+			const html = `<a-obj-model cursor-listener id=${prop} src="#board-obj" mtl="#board-mtl" position="${zpos} 0 ${row}" scale="0.2 1 0.2" rotation="0 ${rotation} 0"></a-obj-model>`;
 
-            const newElement = document.createElement('a-entity');
-            newElement.innerHTML = html;
+			//const html = '<a-obj-model cursor-listener id="' + prop + '" src="#board-obj" mtl="#board-mtl" position="' + zpos + ' 0 ' + row + '" scale="0.2 1 0.2" rotation="${asd} 0 0"></a-obj-model>';
 
-            this.boardElement.appendChild(newElement);
-            count++;
-            if (count > 3 && count < 6) {
-                row = 0.4;
-            } else if (count > 6) {
-                row = 0.8;
-            }
-        };
-    }
+			this.boardElement.setAttribute("position", "-0.5 0 -0.5");
 
-    private createMenu(): void {
-        // Create plane elements for create game and join game
+			const newElement = document.createElement('a-entity');
+			newElement.innerHTML = html;
 
-        this.cleanBoard();
+			this.boardElement.appendChild(newElement);
+			count++;
+			if (count > 3 && count < 6) {
+				row = 0.4;
+			} else if (count > 6) {
+				row = 0.8;
+			}
+		};
+	}
 
-        const menuHtml =
-            `<a-box position='0 0 0' material='opacity: 1;'>
-            <a-plane position="0 0.7 0.2" rotation="-90 0 0" height="0.4" width="1" menu-select color="red" id="newgame">
-                <a-text value="New game" color="black" side="both" rotation="0 0 0" position="-0.5 -0.4 0.1"></a-text>
-            </a-plane>
-            <a-plane position="0 0.7 -0.2" rotation="-90 0 0" height="0.4" width="1" menu-select color="green" id="joingame">
-                <a-text value="Join game" color="black" side="both" rotation="0 0 0" position="-0.5 0.4 0.1"></a-text>
-            </a-plane>
-        </a-box>`;
+	private createMenu(): void {
+		// Create plane elements for create game and join game
 
-        this.boardElement.innerHTML = menuHtml;
-    }
+		this.cleanBoard();
 
-    private createLobby(): void {
-        this.cleanBoard();
+		const menuHtml =
+			`<a-box position='0 0 0' material='opacity: 1;'>
+			<a-plane position="0 0.7 0.2" rotation="-90 0 0" height="0.4" width="1" menu-select color="red" id="newgame">
+				<a-text value="New game" color="black" side="both" rotation="0 0 0" position="-0.5 -0.4 0.1"></a-text>
+			</a-plane>
+			<a-plane position="0 0.7 -0.2" rotation="-90 0 0" height="0.4" width="1" menu-select color="green" id="joingame">
+				<a-text value="Join game" color="black" side="both" rotation="0 0 0" position="-0.5 0.4 0.1"></a-text>
+			</a-plane>
+		</a-box>`;
 
-        const lobbyHtml =
-            `<a-box position='0 0 0' material='opacity: 0.5;'>
-            <a-text value="Waiting.." id="newgame" side="both" rotation="-90 0 0" menu-select position="-0.5 0.5 -0.3"></a-text>
-        </a-box>`;
+		this.boardElement.innerHTML = menuHtml;
+	}
 
-        this.boardElement.innerHTML = lobbyHtml;
-    }
+	private createLobby(): void {
+		this.cleanBoard();
 
-    private cleanBoard(): void {
-        // Remove board entity from dom
-        this.boardElement.innerHTML = '';
-    }
+		const lobbyHtml =
+			`<a-box position='0 0 0' material='opacity: 0.5;'>
+			<a-text value="Waiting.." id="newgame" side="both" rotation="-90 0 0" menu-select position="-0.5 0.5 -0.3"></a-text>
+		</a-box>`;
 
-    private createGameOver(model: string, message: string): void {
-        this.cleanBoard();
+		this.boardElement.innerHTML = lobbyHtml;
+	}
 
-        const trophyEntity = document.createElement('a-entity');
+	private cleanBoard(): void {
+		// Remove board entity from dom
+		this.boardElement.innerHTML = '';
+	}
 
-        const trophyEntityObjHtml = 
-            `<a-obj-model src="#${model}-obj" mtl="#${model}-mtl" position="0 0 0" scale="2 2 2">
-                <a-text value="${message}" side="both" rotation="0 0 0" position="-1 1.5 0"></a-text>
-            </a-obj-model>`;
+	private createGameOver(model: string, message: string): void {
+		this.cleanBoard();
 
-        trophyEntity.innerHTML = trophyEntityObjHtml;
+		const trophyEntity = document.createElement('a-entity');
 
-        this.boardElement.appendChild(trophyEntity);
-        
-        // Create element to show winning players name
-        console.log(`Endmessage: ${message}`);
-        console.log(`model: ${model}`);
+		let snd : String = "";
 
-        setTimeout(() => {
-            this.currentGame = null;
-            this.currentTurnPlayerId = null;
-            this.cleanBoard();
-            this.createMenu();
-        }, 10000);
-    }
+		if (model === "skull") {
+			snd = "lose";
+		}
+		else if (model === "trophy") {
+			snd = "win";
+		}
 
-    gameCreated(gameState: GameState): void {
-        this.currentGame = gameState;
-        this.createLobby();
-    }
+		const trophyEntityObjHtml =
+			`<a-obj-model src="#${model}-obj" mtl="#${model}-mtl" position="0 0 0" scale="2 2 2" sound="src: #${snd}, autoplay: true">
+				<a-text value="${message}" side="both" rotation="0 0 0" position="-1 1.5 0"></a-text>
+			</a-obj-model>`;
 
-    gameCancelled(message: string): void {
-        this.createGameOver('trophy', message);
-    }
+		trophyEntity.innerHTML = trophyEntityObjHtml;
 
-    gameDraw(message: string): void {
-        this.createGameOver('skull', message);
-    }
+		this.boardElement.appendChild(trophyEntity);
 
-    startGame(gameState: GameState): void {
-        this.currentGame = gameState;
-        this.currentTurnPlayerId = gameState.playerCurrentTurn.id;
-        this.cleanBoard();
-        this.createBoard();
-    }
+		// Create element to show winning players name
+		console.log(`Endmessage: ${message}`);
+		console.log(`model: ${model}`);
 
-    endGame(winningPlayer: string): void {
-        this.createGameOver('trophy', `Player ${winningPlayer} won!`);
-    }
+		setTimeout(() => {
+			this.currentGame = null;
+			this.currentTurnPlayerId = null;
+			this.cleanBoard();
+			this.createMenu();
+		}, 10000);
+	}
 
-    gameUpdate(markerPlaced: MarkerPlaced): void {
-        const boxElement = document.getElementById(markerPlaced.boxId);
+	gameCreated(gameState: GameState): void {
+		this.currentGame = gameState;
+		this.createLobby();
+	}
 
-        this.currentTurnPlayerId = markerPlaced.currentTurnPlayerId;
+	gameCancelled(message: string): void {
+		this.createGameOver('trophy', message);
+	}
 
-        let element: HTMLElement = document.createElement('a-obj-model');
-        const position = '0 0.15 0';
-        const scale = '1 1 1';
-        let src = '';
-        let mtl = '';
+	gameDraw(message: string): void {
+		this.createGameOver('skull', message);
+	}
 
+	startGame(gameState: GameState): void {
+		this.currentGame = gameState;
+		this.currentTurnPlayerId = gameState.playerCurrentTurn.id;
+		this.cleanBoard();
+		this.createBoard();
+	}
 
-        if (markerPlaced.playerName === 'Cross') {
-            src = '#cross-obj';
-            mtl = '#cross-mtl';
-        } else if (markerPlaced.playerName === 'Circle') {
-            src = '#circle-obj';
-            mtl = '#circle-mtl';
-        } else {
-            throw 'Unacceptable playername';
-        }
+	endGame(winningPlayer: string): void {
+		this.createGameOver('trophy', `Player ${winningPlayer} won!`);
+	}
 
-        const html = `<a-obj-model src="${src}" mtl="${mtl}" position="${position}" scale="${scale}"></a-obj-model>`;
+	gameUpdate(markerPlaced: MarkerPlaced): void {
+		const boxElement = document.getElementById(markerPlaced.boxId);
 
-        element.innerHTML = html;
+		this.currentTurnPlayerId = markerPlaced.currentTurnPlayerId;
 
-        boxElement.appendChild(element);
+		let element: HTMLElement = document.createElement('a-obj-model');
+		const position = '0 0.15 0';
+		const scale = '1 1 1';
+		let src = '';
+		let mtl = '';
 
-        console.log(element.getAttribute('position'));
-    }
+		if (markerPlaced.playerName === 'Cross') {
+			src = '#cross-obj';
+			mtl = '#cross-mtl';
+		} else if (markerPlaced.playerName === 'Circle') {
+			src = '#circle-obj';
+			mtl = '#circle-mtl';
+		} else {
+			throw 'Unacceptable playername';
+		}
+
+		const html = `<a-obj-model src="${src}" mtl="${mtl}" position="${position}" scale="${scale}" sound="src:#place; autoplay: true"></a-obj-model>`;
+		element.innerHTML = html;
+
+		boxElement.appendChild(element);
+
+		let fxElement: HTMLElement = document.createElement("a-plane");
+
+		const fxHtml = `<a-plane src="#placement" opacity="0.9" position="0 0.17 0" height="1" width="1" rotation="-90 0 0"><a-animation attribute="rotation" dur="10000" fill="forwards" to="0 360 0" repeat="3"></a-animation></a-plane>`;
+
+		fxElement.innerHTML = fxHtml;
+
+		element.appendChild(fxElement);
+
+		//console.log(element.getAttribute('position'));
+	}
 }
