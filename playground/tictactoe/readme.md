@@ -121,6 +121,23 @@ The game should now be accessible by opening your browser and going to [https://
 
 To check if the processes have started you can use the command `ps aux`. Another alternative is to type `forever -list` and check if you have to processes running. [Forever](https://github.com/foreverjs/forever) writes logs from its running processes – check its documentation if you need info on how to do that.
 
+## Assets
+Tic Tac Toe comprises a number of assets of varying type: audio, textures and 3D models with material description files. Assets are created in any standard tool for the content type. In our case we have used CFXR for audio, Blender for 3D models and Photoshop CC for textures.
+
+### Asset management
+Assets are sorted in a content type order, but you could of course use whatever kind of file structure you want.
+
+### Audio
+Audio files have been exported to 16-bit, 44100Hz WAV files. A-Frame should be able to support MP3 files as well.
+
+### Textures
+Textures are exported to mid-compressed 8-bit JPGs in sizes that are "powers of two", like 128x128, 256x256, 1024x1024 and similar. There is also one transparent PNG texture for the placement effect. We had to apply a bit of programmatic opacity through HTML to get this to work correctly.
+
+Any old image should work when it comes to texturing, but using sizes that conform to powers of two makes rendering significantly faster, so make sure your work uses such size textures!
+
+### Models
+A-Frame supports several model types. We opted for OBJs which were exported from Blender. Accompanying the OBJs are MTL files, which were edited to contain a correct relative path to the model's texture (this was needed because the automatically exported path did not correspond to our project file structure). If you happen to see an untextured model, make sure that the path in the MTL is correct.
+
 ## Built With
 
 ### Server
