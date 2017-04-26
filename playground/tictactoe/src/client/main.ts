@@ -1,7 +1,6 @@
 import { Client } from './client';
 
 declare var io: any;
-declare var process: any;
 declare var AFRAME: any;
 
 window.addEventListener("load", function () {
