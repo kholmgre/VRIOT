@@ -24,7 +24,7 @@ https://nodejs.org/
 https://github.com/kholmgre/VRIOT.git
 ```
 
-Go to the root folder of the project and run the following command to install all npm dependencies
+Go to the root folder of the project and run the following command to install all npm dependencies.
 
 ```
 npm install
@@ -33,7 +33,7 @@ npm install
 #### Run the server
 The package.json contains some scripts that enables us to build the client and server. It also contains scripts that starts a Node https enabled server to serve files. We also have a Node server that runs the game-logic using sockets.
 
-To build the client and server, issue these command:
+To build the client and server, issue these commands:
 
 ```
 npm run buildTicServer
@@ -82,7 +82,7 @@ The second task launches mocha, which will watch servertests.js for changes and 
 We have deployed the system to an Ubuntu instance on Azure. To get the environment ready you must first install Node. After Node is installed you will need to install Forever, Express and Socket.io. You will also use Forever to start the Node servers and keep them running indefinitely.
 
 ### Install dependencies
-Run the commands
+Run the following commands in succession:
 
 ```
 npm install forever -g
@@ -105,13 +105,13 @@ When you have installed Node and forever, copy the following files from you loca
 Don't forget to also copy your key.pem and cert.pem and place then in /home/username/.
 
 ### Start servers
-To start the content-server run
+To start the content-server run:
 
 ```
 nohup forever start Content-Server.js
 ```
 
-To start the game-server issue run
+To start the game-server issue run:
 
 ```
 nohup forever start server.js
