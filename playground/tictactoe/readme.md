@@ -41,7 +41,7 @@ npm run buildTicClient
 
 The commands above should start instances of webpack that builds .js files to the /dist/ folder using the files in src as source.
 
-The next step is to acquire ssl-certificates for the https-servers. To do this there are two ways; ask Kristofer Holmgren or Mikael Vesavuori or generate your own using openssl http://stackoverflow.com/questions/10175812/how-to-create-a-self-signed-certificate-with-openssl
+The next step is to acquire SSL-certificates for the https-servers. To do this there are two ways; ask Kristofer Holmgren or Mikael Vesavuori or generate your own using openssl http://stackoverflow.com/questions/10175812/how-to-create-a-self-signed-certificate-with-openssl
 
 Place the key.pem and cert.pem in the root folder.
 
@@ -109,7 +109,7 @@ To start the game-server issue this command
 nohup forever start server.js
 ```
 
-The game should now be accessable by opening your browser and typing: https://your.ip.address:8080/
+The game should now be accessible by opening your browser and going to [https://your.ip.address:8080/](https://your.ip.address:8080/)
 
 To check if the processes have started you can use the command ps aux. Another alternative is to type forever -list and check if you have to processes running. Forever writes logs from its running processes, check the documentation for forever on info on how to do that.
 
@@ -130,7 +130,7 @@ To check if the processes have started you can use the command ps aux. Another a
 ## Authors
 
 * **Kristofer Holmgren** - *Client and server code*
-* **Mikael Vesavuori** - *Testing, 3d-models, Ideas*
+* **Mikael Vesavuori** - *Testing, assets, ideas*
 
 ## Troubleshooting
 Send an mail to kristofer.holmgren@sogeti.se
@@ -139,5 +139,5 @@ Send an mail to kristofer.holmgren@sogeti.se
 
 ## Acknowledgments
 
-* Many big thanks to Jerome Etienne for ar.js and his decication to helping & supporting users of ar.js
+* Many big thanks to [Jerome Etienne](https://github.com/jeromeetienne) for [AR.js](https://github.com/jeromeetienne/AR.js) and his decication to helping & supporting its users
 * Also many big thanks to the team behind [a-frame](https://aframe.io/)
