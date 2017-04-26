@@ -40,7 +40,7 @@ npm run buildTicServer
 npm run buildTicClient
 ```
 
-The commands above should start instances of webpack that builds .js files to the /dist/ folder using the files in src as source.
+The commands above should start instances of Webpack that builds .js files to the /dist/ folder using the files in src as source.
 
 #### Get SSL certificates
 The next step is to acquire SSL certificates for the https servers. To do this there are two ways: either ask Kristofer Holmgren or Mikael Vesavuori, or [generate your own key using openssl](http://stackoverflow.com/questions/10175812/how-to-create-a-self-signed-certificate-with-openssl).
@@ -72,7 +72,7 @@ npm run buildTicServerTests
 npm run runTicServerTests
 ```
 
-The first task builds the test using webpack. The entry point is located in playground/tictactoe/src/server/tests/. Webpack emits the .js file to
+The first task builds the test using Webpack. The entry point is located in playground/tictactoe/src/server/tests/. Webpack emits the resulting .js file to
 playground/tictactoe/test/.
 
 The second task launches mocha, which will watch servertests.js for changes and run the tests.
