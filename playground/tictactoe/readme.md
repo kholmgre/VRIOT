@@ -81,6 +81,7 @@ The second task launches mocha that watches the servertests.js for changes and r
 
 We have deployed the system to an Ubuntu instance on Azure. To get the environment ready you must install Node. After node is installed we will install forever, express and socket.io. You will also use Forever to start the node servers and keep them running.
 
+### Install dependencies
 Run the commands
 
 ```
@@ -89,18 +90,22 @@ sudo npm install express
 sudo npm install socket.io
 ```
 
+### Copy files
 When you have installed Node and forever, copy the following files from you local computer to the ubuntu-server (/home/username/):
 
+```
 /playground/tictactoe/index.html
 /playground/tictactoe/package.json
 /playground/tictactoe/Content-server.js
 /playground/tictactoe/manifest.json
 /playground/tictactoe/dist/*
 /playground/tictactoe/assets/*
+```
 
 Don't forget to also copy your key.pem and cert.pem and place then in /home/username/.
 
-To start the content-server issue this command
+### Start servers
+To start the content-server run
 
 ```
 nohup forever start Content-Server.js
