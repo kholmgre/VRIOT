@@ -11,12 +11,10 @@
 <body>
   <a-scene>
     <a-assets>
-      <audio id="sound" src="sound.mp3"></audio>
-      <img id="space" src="space.png">
-      <img id="earth" src="earth-sumner.jpg">
-      <a-asset-item id="monkey" src="test.dae"></a-asset-item>
+      <audio id="sound" src="assets/sound.mp3"></audio>
+      <img id="space" src="assets/space.png">
+      <img id="earth" src="assets/earth.jpg">
     </a-assets>
-    <a-collada-model src="#monkey"></a-collada-model>
     <a-sound src="#sound" autoplay="true" position="0 2 5" loop="true"></a-sound>
     <a-sphere position="0 1.25 -1" radius="1" src="#earth"></a-sphere>
     <a-sky src="#space"></a-sky>
