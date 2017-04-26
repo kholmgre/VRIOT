@@ -60,7 +60,7 @@ You should see two options placed above the image: create game & join game
 
 ## Tests
 
-At the moment we only test for the server. 
+At the moment we only have tests for the server. 
 
 There are two tasks involved when running tests: 
 
