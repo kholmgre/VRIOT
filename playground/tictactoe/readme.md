@@ -18,7 +18,7 @@ https://nodejs.org/
 
 ### Installing
 
-Clone the VRIOT repository
+#### Clone the VRIOT repository
 
 ```
 https://github.com/kholmgre/VRIOT.git
@@ -30,6 +30,7 @@ Go to the root folder of the project and run the following command to install al
 npm install
 ```
 
+#### Run the server
 The package.json contains some scripts that enables us to build the client and server. It also contains scripts that starts a node https-enabled server to serve files. We also have a node server that runs the game-logic using sockets.
 
 To build the client and server, issue these command:
@@ -41,22 +42,24 @@ npm run buildTicClient
 
 The commands above should start instances of webpack that builds .js files to the /dist/ folder using the files in src as source.
 
-The next step is to acquire SSL-certificates for the https-servers. To do this there are two ways; ask Kristofer Holmgren or Mikael Vesavuori or generate your own using openssl http://stackoverflow.com/questions/10175812/how-to-create-a-self-signed-certificate-with-openssl
+#### Get SSL certificates
+The next step is to acquire SSL certificates for the https servers. To do this there are two ways: either ask Kristofer Holmgren or Mikael Vesavuori, or [generate your own key using openssl](http://stackoverflow.com/questions/10175812/how-to-create-a-self-signed-certificate-with-openssl).
 
-Place the key.pem and cert.pem in the root folder.
+When you have the keys (key.pem and cert.pem), place them in the root folder.
 
-To be able to run a game on your local computer you can issue the following commands:
+#### Start a game
+To be able to run a game on your local computer you can run the following commands:
 
 ```
 npm run runTicContentserver
 npm run runTicServer
 ```
 
-When both servers are running, open up chrome and type: https://localhost:8080/
+When both servers are running, open up Chrome and go to [https://localhost:8080/](https://localhost:8080/)
 
-Hold a printout of a hiro image (a hiro image is located in /playground/tictactoe/HIRO.jpg)
+Hold a printout of a hiro marker image. You can find a hiro image located in /playground/tictactoe/HIRO.jpg.
 
-You should see two options placed above the image: create game & join game
+You should now see two options placed above the image: "Create game" and "Join game".
 
 ## Tests
 
@@ -111,7 +114,7 @@ nohup forever start server.js
 
 The game should now be accessible by opening your browser and going to [https://your.ip.address:8080/](https://your.ip.address:8080/)
 
-To check if the processes have started you can use the command ps aux. Another alternative is to type forever -list and check if you have to processes running. Forever writes logs from its running processes, check the documentation for forever on info on how to do that.
+To check if the processes have started you can use the command `ps aux`. Another alternative is to type forever -list and check if you have to processes running. Forever writes logs from its running processes, check the documentation for forever on info on how to do that.
 
 ## Built With
 
