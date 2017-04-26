@@ -1,6 +1,6 @@
 # Tic tac toe
 
-This is documentation for the WebAR project Tic tac toe. 
+This is documentation for the WebAR project Tic tac toe.
 
 ## Getting Started
 
@@ -30,9 +30,9 @@ Go to the root folder of the project and run the following command to install al
 npm install
 ```
 
-The package.json contains some scripts that enables us to build the client and server. It also contains scripts that starts a node https-enabled server to serve files. We also have a node server that runs the game-logic using sockets. 
+The package.json contains some scripts that enables us to build the client and server. It also contains scripts that starts a node https-enabled server to serve files. We also have a node server that runs the game-logic using sockets.
 
-To build the client and server, issue these command: 
+To build the client and server, issue these command:
 
 ```
 npm run buildTicServer
@@ -45,14 +45,14 @@ The next step is to acquire ssl-certificates for the https-servers. To do this t
 
 Place the key.pem and cert.pem in the root folder.
 
-To be able to run a game on your local computer you can issue the following commands: 
+To be able to run a game on your local computer you can issue the following commands:
 
 ```
-npm run runtTicContentserver
+npm run runTicContentserver
 npm run runTicServer
 ```
 
-When both servers are running, open up chrome and type: https://localhost:8080/ 
+When both servers are running, open up chrome and type: https://localhost:8080/
 
 Hold a printout of a hiro image (a hiro image is located in /playground/tictactoe/HIRO.jpg)
 
@@ -60,33 +60,33 @@ You should see two options placed above the image: create game & join game
 
 ## Tests
 
-At the moment we only have tests for the server. 
+At the moment we only have tests for the server.
 
-There are two tasks involved when running tests: 
+There are two tasks involved when running tests:
 
 ```
 npm run buildTicServerTests
 npm run runTicServerTests
 ```
 
-The first task builds the test using webpack. The entry point is located in playground/tictactoe/src/server/tests/. Webpack emits the .js file to 
-playground/tictactoe/test/. 
+The first task builds the test using webpack. The entry point is located in playground/tictactoe/src/server/tests/. Webpack emits the .js file to
+playground/tictactoe/test/.
 
-The second task launches mocha that watches the servertests.js for changes and runs the tests. 
+The second task launches mocha that watches the servertests.js for changes and runs the tests.
 
 ## Deployment
 
-We have deployed the system to an Ubuntu instance on Azure. To get the environment ready you must install nodejs. After node is installed we will install forever, express and socket.io. You will also use Forever to start the node servers and keep them running. 
+We have deployed the system to an Ubuntu instance on Azure. To get the environment ready you must install nodejs. After node is installed we will install forever, express and socket.io. You will also use Forever to start the node servers and keep them running.
 
 Run the commands
 
 ```
 npm install forever -g
-sudo npm install express 
-sudo npm install socket.io 
+sudo npm install express
+sudo npm install socket.io
 ```
 
-When you have installed nodejs and forever, copy the following files from you local computer to the ubuntu-server (/home/username/): 
+When you have installed nodejs and forever, copy the following files from you local computer to the ubuntu-server (/home/username/):
 
 /playground/tictactoe/index.html
 /playground/tictactoe/package.json
@@ -100,18 +100,18 @@ Don't forget to also copy your key.pem and cert.pem and place then in /home/user
 To start the content-server issue this command
 
 ```
-nohup forever start Content-Server.js 
+nohup forever start Content-Server.js
 ```
 
 To start the game-server issue this command
 
 ```
-nohup forever start server.js 
+nohup forever start server.js
 ```
 
 The game should now be accessable by opening your browser and typing: https://your.ip.address:8080/
 
-To check if the processes have started you can use the command ps aux. Another alternative is to type forever -list and check if you have to processes running. Forever writes logs from its running processes, check the documentation for forever on info on how to do that. 
+To check if the processes have started you can use the command ps aux. Another alternative is to type forever -list and check if you have to processes running. Forever writes logs from its running processes, check the documentation for forever on info on how to do that.
 
 ## Built With
 

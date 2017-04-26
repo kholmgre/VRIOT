@@ -4,51 +4,51 @@
   "description": "internal webvr project",
   "main": "index.js",
   "scripts": {
-    "buildSpyServer": "webpack -w --config spyvsspy/webpack.server.config.js",
-    "buildSpyClient": "webpack -w --config spyvsspy/webpack.client.config.js",
-    "runSpygserver": "node spyvsspy/dist/server.js",
-    
-    "runPlaygroundServer": "node playground/server.js",
-    
-    "buildTicServer": "webpack -w --config playground/tictactoe/webpack.server.config.js",
-    "buildTicClient": "webpack -w --config playground/tictactoe/webpack.client.config.js",
-    "buildTicServerTests": "webpack -w --config playground/tictactoe/webpack.test.config.js",
-    "runTicServer": "node playground/tictactoe/dist/server.js",
-    "runtTicContentserver": "node playground/tictactoe/Content-Server.js",
-    "runTicServerTests": "mocha playground/tictactoe/test/servertests.js -w --no-exit",
-    "runTicClientdebug": "webpack -w --config playground/tictactoe/webpack.debug.config.js"
+	"buildSpyServer": "webpack -w --config spyvsspy/webpack.server.config.js",
+	"buildSpyClient": "webpack -w --config spyvsspy/webpack.client.config.js",
+	"runSpygserver": "node spyvsspy/dist/server.js",
+
+	"runPlaygroundServer": "node playground/server.js",
+
+	"buildTicServer": "webpack -w --config playground/tictactoe/webpack.server.config.js",
+	"buildTicClient": "webpack -w --config playground/tictactoe/webpack.client.config.js",
+	"buildTicServerTests": "webpack -w --config playground/tictactoe/webpack.test.config.js",
+	"runTicServer": "node playground/tictactoe/dist/server.js",
+	"runTicContentserver": "node playground/tictactoe/Content-Server.js",
+	"runTicServerTests": "mocha playground/tictactoe/test/servertests.js -w --no-exit",
+	"runTicClientdebug": "webpack -w --config playground/tictactoe/webpack.debug.config.js"
   },
   "repository": {
-    "type": "git",
-    "url": "git+https://github.com/kholmgre/VRIOT.git"
+	"type": "git",
+	"url": "git+https://github.com/kholmgre/VRIOT.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/kholmgre/VRIOT/issues"
+	"url": "https://github.com/kholmgre/VRIOT/issues"
   },
   "homepage": "https://github.com/kholmgre/VRIOT#readme",
   "devDependencies": {
-    "@types/chai": "^3.5.1",
-    "@types/express": "^4.0.35",
-    "@types/mocha": "^2.2.41",
-    "@types/node": "^7.0.12",
-    "@types/socket.io": "^1.4.28",
-    "@types/socket.io-client": "^1.4.29",
-    "awesome-typescript-loader": "^3.1.1",
-    "chai": "^3.5.0",
-    "http-server": "^0.9.0",
-    "mocha": "^3.2.0",
-    "source-map-loader": "^0.1.6",
-    "sw-precache": "^5.1.0",
-    "sw-precache-webpack-plugin": "^0.9.1",
-    "sw-toolbox": "^3.6.0",
-    "typescript": "^2.2.1",
-    "webpack": "^2.3.3"
+	"@types/chai": "^3.5.1",
+	"@types/express": "^4.0.35",
+	"@types/mocha": "^2.2.41",
+	"@types/node": "^7.0.12",
+	"@types/socket.io": "^1.4.28",
+	"@types/socket.io-client": "^1.4.29",
+	"awesome-typescript-loader": "^3.1.1",
+	"chai": "^3.5.0",
+	"http-server": "^0.9.0",
+	"mocha": "^3.2.0",
+	"source-map-loader": "^0.1.6",
+	"sw-precache": "^5.1.0",
+	"sw-precache-webpack-plugin": "^0.9.1",
+	"sw-toolbox": "^3.6.0",
+	"typescript": "^2.2.1",
+	"webpack": "^2.3.3"
   },
   "dependencies": {
-    "aframe-sprite-component": "^0.1.0",
-    "express": "^4.15.2",
-    "socket.io": "^1.7.3"
+	"aframe-sprite-component": "^0.1.0",
+	"express": "^4.15.2",
+	"socket.io": "^1.7.3"
   }
 }
