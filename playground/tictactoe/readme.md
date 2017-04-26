@@ -1,24 +1,24 @@
-# Tic tac toe
+# Tic Tac Toe
 
-This is documentation for the WebAR project Tic tac toe. 
+This is documentation for the WebAR project **Tic Tac Toe**.
 
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
 ## Overall system description
-Tic tac toe consists of one client and two servers. Both servers are node applications built using express. One server serves content such as the index.html for the client. The other server runs games and communicates with clients using sockets. The client is built using aframe and ar.js.
+Tic Tac Toe consists of one client and two servers. Both servers are Node applications built using Express. One server serves content such as the index.html for the client. The other server runs games and communicates with clients using sockets. The client is built using [A-Frame](https://aframe.io/) and [AR.js](https://github.com/jeromeetienne/AR.js).
 
 ### Prerequisites
 
-You will need the following to get the project running
+You will need the following to get the project running:
 
-#### Nodejs
+#### NodeJS
 https://nodejs.org/
 
 ### Installing
 
-Clone the VRIOT repository
+#### Clone the VRIOT repository
 
 ```
 https://github.com/kholmgre/VRIOT.git
@@ -30,9 +30,10 @@ Go to the root folder of the project and run the following command to install al
 npm install
 ```
 
-The package.json contains some scripts that enables us to build the client and server. It also contains scripts that starts a node https-enabled server to serve files. We also have a node server that runs the game-logic using sockets. 
+#### Run the server
+The package.json contains some scripts that enables us to build the client and server. It also contains scripts that starts a Node https enabled server to serve files. We also have a Node server that runs the game-logic using sockets.
 
-To build the client and server, issue these command: 
+To build the client and server, issue these command:
 
 ```
 npm run buildTicServer
@@ -41,77 +42,84 @@ npm run buildTicClient
 
 The commands above should start instances of webpack that builds .js files to the /dist/ folder using the files in src as source.
 
-The next step is to acquire ssl-certificates for the https-servers. To do this there are two ways; ask Kristofer Holmgren or Mikael Vesavuori or generate your own using openssl http://stackoverflow.com/questions/10175812/how-to-create-a-self-signed-certificate-with-openssl
+#### Get SSL certificates
+The next step is to acquire SSL certificates for the https servers. To do this there are two ways: either ask Kristofer Holmgren or Mikael Vesavuori, or [generate your own key using openssl](http://stackoverflow.com/questions/10175812/how-to-create-a-self-signed-certificate-with-openssl).
 
-Place the key.pem and cert.pem in the root folder.
+When you have the keys (key.pem and cert.pem), place them in the root folder.
 
-To be able to run a game on your local computer you can issue the following commands: 
+#### Start a game
+To be able to run a game on your local computer you can run the following commands:
 
 ```
-npm run runtTicContentserver
+npm run runTicContentserver
 npm run runTicServer
 ```
 
-When both servers are running, open up chrome and type: https://localhost:8080/ 
+When both servers are running, open up Chrome and go to [https://localhost:8080/](https://localhost:8080/)
 
-Hold a printout of a hiro image (a hiro image is located in /playground/tictactoe/HIRO.jpg)
+Hold a printout of a hiro marker image. You can find a hiro image located in /playground/tictactoe/HIRO.jpg.
 
-You should see two options placed above the image: create game & join game
+You should now see two options placed above the image: "Create game" and "Join game".
 
 ## Tests
 
-At the moment we only have tests for the server. 
+At the moment we only have tests for the server.
 
-There are two tasks involved when running tests: 
+There are two tasks involved when running tests:
 
 ```
 npm run buildTicServerTests
 npm run runTicServerTests
 ```
 
-The first task builds the test using webpack. The entry point is located in playground/tictactoe/src/server/tests/. Webpack emits the .js file to 
-playground/tictactoe/test/. 
+The first task builds the test using webpack. The entry point is located in playground/tictactoe/src/server/tests/. Webpack emits the .js file to
+playground/tictactoe/test/.
 
-The second task launches mocha that watches the servertests.js for changes and runs the tests. 
+The second task launches mocha that watches the servertests.js for changes and runs the tests.
 
 ## Deployment
 
-We have deployed the system to an Ubuntu instance on Azure. To get the environment ready you must install nodejs. After node is installed we will install forever, express and socket.io. You will also use Forever to start the node servers and keep them running. 
+We have deployed the system to an Ubuntu instance on Azure. To get the environment ready you must install Node. After node is installed we will install forever, express and socket.io. You will also use Forever to start the node servers and keep them running.
 
+### Install dependencies
 Run the commands
 
 ```
 npm install forever -g
-sudo npm install express 
-sudo npm install socket.io 
+sudo npm install express
+sudo npm install socket.io
 ```
 
-When you have installed nodejs and forever, copy the following files from you local computer to the ubuntu-server (/home/username/): 
+### Copy files
+When you have installed Node and forever, copy the following files from you local computer to the ubuntu-server (/home/username/):
 
+```
 /playground/tictactoe/index.html
 /playground/tictactoe/package.json
 /playground/tictactoe/Content-server.js
 /playground/tictactoe/manifest.json
 /playground/tictactoe/dist/*
 /playground/tictactoe/assets/*
+```
 
 Don't forget to also copy your key.pem and cert.pem and place then in /home/username/.
 
-To start the content-server issue this command
+### Start servers
+To start the content-server run
 
 ```
-nohup forever start Content-Server.js 
+nohup forever start Content-Server.js
 ```
 
-To start the game-server issue this command
+To start the game-server issue run
 
 ```
-nohup forever start server.js 
+nohup forever start server.js
 ```
 
-The game should now be accessable by opening your browser and typing: https://your.ip.address:8080/
+The game should now be accessible by opening your browser and going to [https://your.ip.address:8080/](https://your.ip.address:8080/)
 
-To check if the processes have started you can use the command ps aux. Another alternative is to type forever -list and check if you have to processes running. Forever writes logs from its running processes, check the documentation for forever on info on how to do that. 
+To check if the processes have started you can use the command `ps aux`. Another alternative is to type `forever -list` and check if you have to processes running. [Forever](https://github.com/foreverjs/forever) writes logs from its running processes – check its documentation if you need info on how to do that.
 
 ## Built With
 
@@ -124,13 +132,13 @@ To check if the processes have started you can use the command ps aux. Another a
 
 ### Client
 
-* [a-frame](https://aframe.io/) - Virtual reality web framework
-* [ar.js](https://github.com/jeromeetienne/AR.js) - Augmented Reality for the Web
+* [A-Frame](https://aframe.io/) - Virtual reality web framework
+* [AR.js](https://github.com/jeromeetienne/AR.js) - Augmented Reality for the Web
 
 ## Authors
 
 * **Kristofer Holmgren** - *Client and server code*
-* **Mikael Vesavuori** - *Testing, 3d-models, Ideas*
+* **Mikael Vesavuori** - *Testing, assets, ideas*
 
 ## Troubleshooting
 Send an mail to kristofer.holmgren@sogeti.se
@@ -139,5 +147,5 @@ Send an mail to kristofer.holmgren@sogeti.se
 
 ## Acknowledgments
 
-* Many big thanks to Jerome Etienne for ar.js and his decication to helping & supporting users of ar.js
-* Also many big thanks to the team behind [a-frame](https://aframe.io/)
+* Many big thanks to [Jerome Etienne](https://github.com/jeromeetienne) for [AR.js](https://github.com/jeromeetienne/AR.js) and his dedication to helping and supporting its users
+* Also many big thanks to the team behind [A-Frame](https://aframe.io/)
