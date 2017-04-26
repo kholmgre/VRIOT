@@ -111,7 +111,7 @@ To start the content-server run
 nohup forever start Content-Server.js
 ```
 
-To start the game-server issue this command
+To start the game-server issue run
 
 ```
 nohup forever start server.js
@@ -119,7 +119,7 @@ nohup forever start server.js
 
 The game should now be accessible by opening your browser and going to [https://your.ip.address:8080/](https://your.ip.address:8080/)
 
-To check if the processes have started you can use the command `ps aux`. Another alternative is to type forever -list and check if you have to processes running. Forever writes logs from its running processes, check the documentation for forever on info on how to do that.
+To check if the processes have started you can use the command `ps aux`. Another alternative is to type `forever -list` and check if you have to processes running. [Forever](https://github.com/foreverjs/forever) writes logs from its running processes – check its documentation if you need info on how to do that.
 
 ## Built With
 
