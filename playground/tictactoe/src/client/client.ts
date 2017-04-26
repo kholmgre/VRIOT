@@ -107,6 +107,7 @@ export class Client {
 		let snd: string = "";
 		let scale: string = '';
 		let position = '0 0 0';
+		let textPosition = '0 0.8 0';
 
 		if (model === "skull") {
 			snd = "lose";
@@ -115,11 +116,12 @@ export class Client {
 		else if (model === "trophy") {
 			snd = "win";
 			scale = '1 1 1';
+			textPosition = '0 2 0';
 		}
 
 		const trophyEntityObjHtml =
 			`<a-obj-model src="#${model}-obj" mtl="#${model}-mtl" position="${position}" scale="${scale}">
-				<a-entity geometry="primitive: plane; width: 2; height: 0.75;" material="color: transparent; opacity: 0" position="0 0.8 0" rotation="0 0 0" material="shader: flat;" text="align: center; color: white; value: ${message}; width: 6; zOffset: 0.1"></a-entity>
+				<a-entity geometry="primitive: plane; width: 2; height: 0.75;" material="color: transparent; opacity: 0" position="${textPosition}" rotation="0 0 0" material="shader: flat;" text="align: center; color: white; value: ${message}; width: 6; zOffset: 0.1"></a-entity>
 			</a-obj-model>`;
 
 		trophyEntity.innerHTML = trophyEntityObjHtml;
