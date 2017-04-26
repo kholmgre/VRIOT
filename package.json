@@ -4,9 +4,10 @@
   "description": "internal webvr project",
   "main": "index.js",
   "scripts": {
-    "buildSpyServer": "webpack -w --config spyvsspy/webpack.server.config.js",
-    "buildSpyClient": "webpack -w --config spyvsspy/webpack.client.config.js",
-    "runSpygserver": "node spyvsspy/dist/server.js",
+    "buildSpyServer": "webpack -w --config playground/spyvsspy/webpack.server.config.js",
+    "buildSpyClient": "webpack -w --config playground/spyvsspy/webpack.client.config.js",
+    "runSpygserver": "node playground/spyvsspy/dist/server.js",
+    "runSpyVsSpyContentServer": "node playground/spyvsspy/Content-Server.js",
     
     "runPlaygroundServer": "node playground/server.js",
     
