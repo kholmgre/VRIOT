@@ -24,7 +24,7 @@ https://nodejs.org/
 https://github.com/kholmgre/VRIOT.git
 ```
 
-Go to the root folder of the project and run the following command to install all npm dependencies
+Go to the root folder of the project and run the following command to install all npm dependencies.
 
 ```
 npm install
@@ -33,14 +33,14 @@ npm install
 #### Run the server
 The package.json contains some scripts that enables us to build the client and server. It also contains scripts that starts a Node https enabled server to serve files. We also have a Node server that runs the game-logic using sockets.
 
-To build the client and server, issue these command:
+To build the client and server, issue these commands:
 
 ```
 npm run buildTicServer
 npm run buildTicClient
 ```
 
-The commands above should start instances of webpack that builds .js files to the /dist/ folder using the files in src as source.
+The commands above should start instances of Webpack that builds .js files to the /dist/ folder using the files in src as source.
 
 #### Get SSL certificates
 The next step is to acquire SSL certificates for the https servers. To do this there are two ways: either ask Kristofer Holmgren or Mikael Vesavuori, or [generate your own key using openssl](http://stackoverflow.com/questions/10175812/how-to-create-a-self-signed-certificate-with-openssl).
@@ -72,17 +72,17 @@ npm run buildTicServerTests
 npm run runTicServerTests
 ```
 
-The first task builds the test using webpack. The entry point is located in playground/tictactoe/src/server/tests/. Webpack emits the .js file to
+The first task builds the test using Webpack. The entry point is located in playground/tictactoe/src/server/tests/. Webpack emits the resulting .js file to
 playground/tictactoe/test/.
 
-The second task launches mocha that watches the servertests.js for changes and runs the tests.
+The second task launches mocha, which will watch servertests.js for changes and run the tests.
 
 ## Deployment
 
-We have deployed the system to an Ubuntu instance on Azure. To get the environment ready you must install Node. After node is installed we will install forever, express and socket.io. You will also use Forever to start the node servers and keep them running.
+We have deployed the system to an Ubuntu instance on Azure. To get the environment ready you must first install Node. After Node is installed you will need to install Forever, Express and Socket.io. You will also use Forever to start the Node servers and keep them running indefinitely.
 
 ### Install dependencies
-Run the commands
+Run the following commands in succession:
 
 ```
 npm install forever -g
@@ -105,13 +105,13 @@ When you have installed Node and forever, copy the following files from you loca
 Don't forget to also copy your key.pem and cert.pem and place then in /home/username/.
 
 ### Start servers
-To start the content-server run
+To start the content-server run:
 
 ```
 nohup forever start Content-Server.js
 ```
 
-To start the game-server issue run
+To start the game-server issue run:
 
 ```
 nohup forever start server.js
