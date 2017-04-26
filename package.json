@@ -4,17 +4,19 @@
   "description": "internal webvr project",
   "main": "index.js",
   "scripts": {
-    "bserver": "webpack -w --config spyvsspy/webpack.server.config.js",
-    "bclient": "webpack -w --config spyvsspy/webpack.client.config.js",
-    "gserver": "node spyvsspy/dist/server.js",
-    "playgroundserver": "node playground/playground-server.js",
-    "cserver": "node playground/tictactoe/Content-Server.js",
+    "buildSpyServer": "webpack -w --config spyvsspy/webpack.server.config.js",
+    "buildSpyClient": "webpack -w --config spyvsspy/webpack.client.config.js",
+    "runSpygserver": "node spyvsspy/dist/server.js",
+    
+    "runPlaygroundServer": "node playground/server.js",
+    
     "buildTicServer": "webpack -w --config playground/tictactoe/webpack.server.config.js",
     "buildTicClient": "webpack -w --config playground/tictactoe/webpack.client.config.js",
     "buildTicServerTests": "webpack -w --config playground/tictactoe/webpack.test.config.js",
-    "ticserver": "node playground/tictactoe/dist/server.js",
-    "servertests": "mocha playground/tictactoe/test/servertests.js -w --no-exit",
-    "debug": "webpack -w --config playground/tictactoe/webpack.debug.config.js"
+    "runTicServer": "node playground/tictactoe/dist/server.js",
+    "runtTicContentserver": "node playground/tictactoe/Content-Server.js",
+    "runTicServerTests": "mocha playground/tictactoe/test/servertests.js -w --no-exit",
+    "runTicClientdebug": "webpack -w --config playground/tictactoe/webpack.debug.config.js"
   },
   "repository": {
     "type": "git",

@@ -48,8 +48,8 @@ Place the key.pem and cert.pem in the root folder.
 To be able to run a game on your local computer you can issue the following commands: 
 
 ```
-npm run cserver
-npm run ticserver
+npm run runtTicContentserver
+npm run runTicServer
 ```
 
 When both servers are running, open up chrome and type: https://localhost:8080/ 
@@ -66,7 +66,7 @@ There are two tasks involved when running tests:
 
 ```
 npm run buildTicServerTests
-npm run servertests
+npm run runTicServerTests
 ```
 
 The first task builds the test using webpack. The entry point is located in playground/tictactoe/src/server/tests/. Webpack emits the .js file to 
@@ -99,11 +99,15 @@ Don't forget to also copy your key.pem and cert.pem and place then in /home/user
 
 To start the content-server issue this command
 
+```
 nohup forever start Content-Server.js 
+```
 
 To start the game-server issue this command
 
+```
 nohup forever start server.js 
+```
 
 The game should now be accessable by opening your browser and typing: https://your.ip.address:8080/
 
@@ -128,9 +132,10 @@ To check if the processes have started you can use the command ps aux. Another a
 * **Kristofer Holmgren** - *Client and server code*
 * **Mikael Vesavuori** - *Testing, 3d-models, Ideas*
 
-## License
+## Troubleshooting
+Send an mail to kristofer.holmgren@sogeti.se
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
 
 ## Acknowledgments
 
