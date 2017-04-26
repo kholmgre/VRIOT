@@ -9,7 +9,7 @@
     "runSpygserver": "node playground/spyvsspy/dist/server.js",
     "runSpyVsSpyContentServer": "node playground/spyvsspy/Content-Server.js",
     
-    "runPlaygroundServer": "node playground/server.js",
+    "runPlaygroundServer": "node playground-server.js",
     
     "buildTicServer": "webpack -w --config playground/tictactoe/webpack.server.config.js",
     "buildTicClient": "webpack -w --config playground/tictactoe/webpack.client.config.js",
