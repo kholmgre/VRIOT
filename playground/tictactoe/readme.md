@@ -2,6 +2,9 @@
 
 This is documentation for the WebAR project **Tic Tac Toe**.
 
+## NOTE!
+This will not work on IOS. Atm there is no support for WebRTC.
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
